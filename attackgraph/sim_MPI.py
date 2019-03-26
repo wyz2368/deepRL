@@ -45,8 +45,8 @@ def sim_and_modifiy(game, rank, size):
             idx_def, idx_att = position_list[rank]
             str_path_def = dir_def + def_str_list[idx_def]
             str_path_att = dir_att + att_str_list[idx_att]
-            nn_def = load_action(str_path_def, game)
-            nn_att = load_action(str_path_att,game)
+            nn_def = load_action.load_action(str_path_def, game)
+            nn_att = load_action.load_action(str_path_att,game)
             data[position_list[rank]] = parallel_sim(env,nn_att, nn_def, num_episodes)
     else:
         num_task_per_proc = num_tasks // size
@@ -59,16 +59,16 @@ def sim_and_modifiy(game, rank, size):
                 idx_def, idx_att = position_list[rank*num_task_per_proc_p1+i]
                 str_path_def = dir_def + def_str_list[idx_def]
                 str_path_att = dir_att + att_str_list[idx_att]
-                nn_def = load_action(str_path_def, game)
-                nn_att = load_action(str_path_att, game)
+                nn_def = load_action.load_action(str_path_def, game)
+                nn_att = load_action.load_action(str_path_att, game)
                 data[position_list[rank*num_task_per_proc_p1+i]] = parallel_sim(env,nn_att, nn_def, num_episodes)
         else:
             for i in range(num_task_per_proc):
                 idx_def, idx_att = position_list[rank*num_task_per_proc+1]
                 str_path_def = dir_def + def_str_list[idx_def]
                 str_path_att = dir_att + att_str_list[idx_att]
-                nn_def = load_action(str_path_def, game)
-                nn_att = load_action(str_path_att, game)
+                nn_def = load_action.load_action(str_path_def, game)
+                nn_att = load_action.load_action(str_path_att, game)
                 data[position_list[rank*num_task_per_proc+1]] = parallel_sim(env,nn_att, nn_def, num_episodes)
 
     return data

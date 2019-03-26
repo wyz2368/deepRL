@@ -26,7 +26,7 @@ class Defender(object):
         self.set_current_strategy(nn)
         while not isDup:
             def_input = self.def_obs_constructor(G, timeleft)
-            x = self.nn_def(def_input[None], mask)[0] #corrensponding to baselines
+            x = self.nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
             if not isinstance(x,int):
                 raise ValueError("The chosen action is not an integer.")
             action_space = self.get_def_actionspace(G)
@@ -44,7 +44,7 @@ class Defender(object):
 
         while not isDup:
             def_input = self.def_obs_constructor(G, timeleft)
-            x = nn_def(def_input[None], mask)[0] #corrensponding to baselines
+            x = nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
             if not isinstance(x,int):
                 raise ValueError("The chosen action is not an integer.")
             action_space = self.get_def_actionspace(G)
@@ -60,7 +60,7 @@ class Defender(object):
         wasdef = self.get_def_wasDefended(G)
         indef = self.get_def_inDefenseSet(G)
         def_input = self.prev_obs + self.observation + wasdef + indef + [timeleft]
-        return np.array(def_input)
+        return np.array(def_input, dtype=np.float32)
 
     # TODO: Can we do matrix operation to get this vector?
     def get_def_wasDefended(self, G):

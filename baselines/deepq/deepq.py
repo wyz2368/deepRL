@@ -207,7 +207,7 @@ def learn(env,
     # by cloudpickle when serializing make_obs_ph
 
 
-    # TODO: make everythin smooth.
+    # TODO: make everything smooth.
     if training_flag == 0:
         observation_space_shape = [env.obs_dim_def()]
     elif training_flag == 1:
@@ -227,8 +227,7 @@ def learn(env,
         optimizer=tf.train.AdamOptimizer(learning_rate=lr),
         gamma=gamma,
         grad_norm_clipping=10,
-        param_noise=param_noise,
-        training_flag=training_flag
+        param_noise=param_noise
     )
 
     act_params = {
@@ -307,7 +306,7 @@ def learn(env,
             else:
                 raise ValueError("training flag error!")
 
-            action = act(np.array(obs)[None], mask_t, update_eps=update_eps, **kwargs)[0]
+            action = act(np.array(obs)[None], mask_t, training_flag, update_eps=update_eps, **kwargs)[0]
             #TODO: Modification done.
             env_action = action
             reset = False
@@ -338,7 +337,7 @@ def learn(env,
                     mask_tp1 = mask_generator_att(env,obses_tp1) #TODO: check if we need mask for t here.
                 else:
                     raise ValueError("training flag error!")
-                td_errors = train(obses_t, actions, rewards, obses_tp1, dones, weights, mask_tp1)
+                td_errors = train(obses_t, actions, rewards, obses_tp1, dones, weights, mask_tp1, training_flag)
                 # TODO: Modification Done
                 if prioritized_replay:
                     new_priorities = np.abs(td_errors) + prioritized_replay_eps

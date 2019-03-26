@@ -144,7 +144,7 @@ def default_param_noise_filter(var):
     return False
 
 
-def build_act(make_obs_ph, q_func, num_actions, training_flag, scope="deepq", reuse=None):
+def build_act(make_obs_ph, q_func, num_actions, scope="deepq", reuse=None):
     """Creates the act function:
 
     Parameters
@@ -182,6 +182,7 @@ def build_act(make_obs_ph, q_func, num_actions, training_flag, scope="deepq", re
         stochastic_ph = tf.placeholder(tf.bool, (), name="stochastic")
         update_eps_ph = tf.placeholder(tf.float32, (), name="update_eps")
         mask_ph = tf.placeholder(tf.float32, [None, num_actions], name="mask") # TODO: mask cannot be None. should be zeros.
+        training_flag_ph = tf.placeholder(tf.bool, (), name="training_flag")
 
         eps = tf.get_variable("eps", (), initializer=tf.constant_initializer(0))
 
@@ -189,19 +190,33 @@ def build_act(make_obs_ph, q_func, num_actions, training_flag, scope="deepq", re
 
         # TODO: check the type and shape for q_values and random_actions.
         # TODO: check q_values and mask shape match.
-        if training_flag == 1:
-            q_values = q_values + mask_ph
-        deterministic_actions = tf.argmax(q_values, axis=1)
+        # if training_flag == 1:
+        #     q_values = q_values + mask_ph
+        # deterministic_actions = tf.argmax(q_values, axis=1)
+        #
+        # batch_size = tf.shape(observations_ph.get())[0]
+        # # When attacker is training, mask illegal actions, even for random action
+        # if training_flag == 0:
+        #     random_actions = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
+        # elif training_flag == 1:
+        #     q_vals = tf.random.uniform(shape=[batch_size,num_actions],dtype=tf.float32) + mask_ph
+        #     random_actions = tf.argmax(q_vals, axis=1)
+        # else:
+        #     raise ValueError('Training flag is abnormal within the build_graph.')
+
+        q_values_masked = q_values + mask_ph
+        q_values_selected = tf.cond(training_flag_ph, lambda: q_values_masked, lambda: q_values)
+        deterministic_actions = tf.argmax(q_values_selected, axis=1)
 
         batch_size = tf.shape(observations_ph.get())[0]
-        # When attacker is training, mask illegal actions, even for random action
-        if training_flag == 0:
-            random_actions = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
-        elif training_flag == 1:
-            q_vals = tf.random.uniform(shape=[batch_size,num_actions],dtype=tf.float32) + mask_ph
-            random_actions = tf.argmax(q_vals, axis=1)
-        else:
-            raise ValueError('Training flag is abnormal within the build_graph.')
+
+        random_actions_0 = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
+
+        q_vals = tf.random.uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
+        random_actions_1 = tf.argmax(q_vals, axis=1)
+
+        random_actions = tf.cond(training_flag_ph, lambda: random_actions_1, lambda: random_actions_0)
+
         #TODO: modification done
 
         chose_random = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=1, dtype=tf.float32) < eps
@@ -209,16 +224,16 @@ def build_act(make_obs_ph, q_func, num_actions, training_flag, scope="deepq", re
 
         output_actions = tf.cond(stochastic_ph, lambda: stochastic_actions, lambda: deterministic_actions)
         update_eps_expr = eps.assign(tf.cond(update_eps_ph >= 0, lambda: update_eps_ph, lambda: eps))
-        _act = U.function(inputs=[observations_ph, mask_ph, stochastic_ph, update_eps_ph],
+        _act = U.function(inputs=[observations_ph, mask_ph, training_flag_ph, stochastic_ph, update_eps_ph],
                          outputs=output_actions,
                          givens={update_eps_ph: -1.0, stochastic_ph: True},
                          updates=[update_eps_expr])
-        def act(ob, mask, stochastic=True, update_eps=-1): #TODO:check this is correct
-            return _act(ob, mask, stochastic, update_eps)
+        def act(ob, mask, training_flag, stochastic=True, update_eps=-1): #TODO:check this is correct
+            return _act(ob, mask, training_flag, stochastic, update_eps)
         return act
 
-
-def build_act_with_param_noise(make_obs_ph, q_func, num_actions, training_flag, scope="deepq", reuse=None, param_noise_filter_func=None):
+# TODO: modify training flag.
+def build_act_with_param_noise(make_obs_ph, q_func, num_actions, scope="deepq", reuse=None, param_noise_filter_func=None):
     """Creates the act function with support for parameter space noise exploration (https://arxiv.org/abs/1706.01905):
 
     Parameters
@@ -262,6 +277,7 @@ def build_act_with_param_noise(make_obs_ph, q_func, num_actions, training_flag, 
         update_param_noise_threshold_ph = tf.placeholder(tf.float32, (), name="update_param_noise_threshold")
         update_param_noise_scale_ph = tf.placeholder(tf.bool, (), name="update_param_noise_scale")
         mask_ph = tf.placeholder(tf.float32, [None, num_actions], name="mask")  # TODO: mask cannot be None. should be zeros.
+        training_flag_ph = tf.placeholder(tf.bool, (), name="training_flag")
         reset_ph = tf.placeholder(tf.bool, (), name="reset")
 
         eps = tf.get_variable("eps", (), initializer=tf.constant_initializer(0))
@@ -313,17 +329,32 @@ def build_act_with_param_noise(make_obs_ph, q_func, num_actions, training_flag, 
 
         # Put everything together.
         #TODO: mask illegal actions
-        if training_flag == 1:
-            q_values_perturbed = q_values_perturbed + mask_ph
-        deterministic_actions = tf.argmax(q_values_perturbed, axis=1)
+
+        # if training_flag == 1:
+        #     q_values_perturbed = q_values_perturbed + mask_ph
+        # deterministic_actions = tf.argmax(q_values_perturbed, axis=1)
+        # batch_size = tf.shape(observations_ph.get())[0]
+        # if training_flag == 0:
+        #     random_actions = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
+        # elif training_flag == 1:
+        #     q_vals = tf.random.uniform(shape=[batch_size, num_actions]) + mask_ph
+        #     random_actions = tf.argmax(q_vals, axis=1)
+        # else:
+        #     raise ValueError("Training flag error!")
+
+        q_values_masked = q_values_perturbed + mask_ph
+        q_values_selected = tf.cond(training_flag_ph, lambda: q_values_masked, lambda: q_values_perturbed)
+        deterministic_actions = tf.argmax(q_values_selected, axis=1)
+
         batch_size = tf.shape(observations_ph.get())[0]
-        if training_flag == 0:
-            random_actions = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
-        elif training_flag == 1:
-            q_vals = tf.random.uniform(shape=[batch_size, num_actions]) + mask_ph
-            random_actions = tf.argmax(q_vals, axis=1)
-        else:
-            raise ValueError("Training flag error!")
+
+        random_actions_0 = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
+
+        q_vals = tf.random.uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
+        random_actions_1 = tf.argmax(q_vals, axis=1)
+
+        random_actions = tf.cond(training_flag_ph, lambda: random_actions_1, lambda: random_actions_0)
+
         #TODO: Modification done
         chose_random = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=1, dtype=tf.float32) < eps
         stochastic_actions = tf.where(chose_random, random_actions, deterministic_actions)
@@ -336,16 +367,16 @@ def build_act_with_param_noise(make_obs_ph, q_func, num_actions, training_flag, 
             tf.cond(update_param_noise_scale_ph, lambda: update_scale(), lambda: tf.Variable(0., trainable=False)),
             update_param_noise_threshold_expr,
         ]
-        _act = U.function(inputs=[observations_ph, mask_ph, stochastic_ph, update_eps_ph, reset_ph, update_param_noise_threshold_ph, update_param_noise_scale_ph],
+        _act = U.function(inputs=[observations_ph, mask_ph, training_flag_ph, stochastic_ph, update_eps_ph, reset_ph, update_param_noise_threshold_ph, update_param_noise_scale_ph],
                          outputs=output_actions,
                          givens={update_eps_ph: -1.0, stochastic_ph: True, reset_ph: False, update_param_noise_threshold_ph: False, update_param_noise_scale_ph: False},
                          updates=updates)
-        def act(ob, mask, reset=False, update_param_noise_threshold=False, update_param_noise_scale=False, stochastic=True, update_eps=-1):
-            return _act(ob, mask, stochastic, update_eps, reset, update_param_noise_threshold, update_param_noise_scale)
+        def act(ob, mask, training_flag, reset=False, update_param_noise_threshold=False, update_param_noise_scale=False, stochastic=True, update_eps=-1):
+            return _act(ob, mask, training_flag, stochastic, update_eps, reset, update_param_noise_threshold, update_param_noise_scale)
         return act
 
 
-def build_train(make_obs_ph, q_func, num_actions, optimizer, training_flag, grad_norm_clipping=None, gamma=1.0,
+def build_train(make_obs_ph, q_func, num_actions, optimizer, grad_norm_clipping=None, gamma=1.0,
     double_q=True, scope="deepq", reuse=None, param_noise=False, param_noise_filter_func=None):
     """Creates the train function:
 
@@ -401,10 +432,10 @@ def build_train(make_obs_ph, q_func, num_actions, optimizer, training_flag, grad
         a bunch of functions to print debug data like q_values.
     """
     if param_noise:
-        act_f = build_act_with_param_noise(make_obs_ph, q_func, num_actions, training_flag, scope=scope, reuse=reuse,
+        act_f = build_act_with_param_noise(make_obs_ph, q_func, num_actions, scope=scope, reuse=reuse,
             param_noise_filter_func=param_noise_filter_func)
     else:
-        act_f = build_act(make_obs_ph, q_func, num_actions, training_flag, scope=scope, reuse=reuse)
+        act_f = build_act(make_obs_ph, q_func, num_actions, scope=scope, reuse=reuse)
 
     # TODO: mask illegal actions.
     with tf.variable_scope(scope, reuse=reuse):
@@ -416,6 +447,7 @@ def build_train(make_obs_ph, q_func, num_actions, optimizer, training_flag, grad
         done_mask_ph = tf.placeholder(tf.float32, [None], name="done")
         importance_weights_ph = tf.placeholder(tf.float32, [None], name="weight")
         mask_tp1_ph = tf.placeholder(tf.float32, [None, num_actions], name="mask_tp1")
+        training_flag_ph = tf.placeholder(tf.bool, (), name="training_flag_buildgraph")
 
         # q network evaluation
         q_t = q_func(obs_t_input.get(), num_actions, scope="q_func", reuse=True)  # reuse parameters from act
@@ -430,22 +462,35 @@ def build_train(make_obs_ph, q_func, num_actions, optimizer, training_flag, grad
 
         # compute estimate of best possible value starting from state at t + 1
         # TODO: mask in double q, mask should be for s'.
+        # if double_q:
+        #     if training_flag == 0:
+        #         q_tp1_using_online_net = q_func(obs_tp1_input.get(), num_actions, scope="q_func", reuse=True)
+        #         q_tp1_best_using_online_net = tf.argmax(q_tp1_using_online_net,1)  # TODO: make sure this is right.
+        #         q_tp1_best = tf.reduce_sum(q_tp1 * tf.one_hot(q_tp1_best_using_online_net, num_actions), 1)
+        #     elif training_flag == 1:
+        #         q_tp1_using_online_net = q_func(obs_tp1_input.get(), num_actions, scope="q_func", reuse=True)
+        #         q_tp1_best_using_online_net = tf.argmax(q_tp1_using_online_net + mask_tp1_ph, 1) #TODO: make sure this is right.
+        #         q_tp1_best = tf.reduce_sum(q_tp1 * tf.one_hot(q_tp1_best_using_online_net, num_actions), 1)
+        #     else:
+        #         raise ValueError("Training flag error!")
+        # else:
+        #     if training_flag == 0:
+        #         q_tp1_best = tf.reduce_max(q_tp1, 1)
+        #     else:
+        #         q_tp1_best = tf.reduce_max(q_tp1+mask_tp1_ph, 1)
+
         if double_q:
-            if training_flag == 0:
-                q_tp1_using_online_net = q_func(obs_tp1_input.get(), num_actions, scope="q_func", reuse=True)
-                q_tp1_best_using_online_net = tf.argmax(q_tp1_using_online_net,1)  # TODO: make sure this is right.
-                q_tp1_best = tf.reduce_sum(q_tp1 * tf.one_hot(q_tp1_best_using_online_net, num_actions), 1)
-            elif training_flag == 1:
-                q_tp1_using_online_net = q_func(obs_tp1_input.get(), num_actions, scope="q_func", reuse=True)
-                q_tp1_best_using_online_net = tf.argmax(q_tp1_using_online_net + mask_tp1_ph, 1) #TODO: make sure this is right.
-                q_tp1_best = tf.reduce_sum(q_tp1 * tf.one_hot(q_tp1_best_using_online_net, num_actions), 1)
-            else:
-                raise ValueError("Training flag error!")
+            q_tp1_using_online_net = q_func(obs_tp1_input.get(), num_actions, scope="q_func", reuse=True)
+            q_tp1_best_using_online_net = tf.argmax(q_tp1_using_online_net,1)
+            q_tp1_best_using_online_net_masked = tf.argmax(q_tp1_using_online_net + mask_tp1_ph, 1)
+            q_tp1_best_using_online_net_selected = tf.cond(training_flag_ph, lambda: q_tp1_best_using_online_net_masked, lambda: q_tp1_best_using_online_net)
+            q_tp1_best = tf.reduce_sum(q_tp1 * tf.one_hot(q_tp1_best_using_online_net_selected, num_actions), 1)
+
         else:
-            if training_flag == 0:
-                q_tp1_best = tf.reduce_max(q_tp1, 1)
-            else:
-                q_tp1_best = tf.reduce_max(q_tp1+mask_tp1_ph, 1)
+            q_tp1_best_0 = tf.reduce_max(q_tp1, 1)
+            q_tp1_best_1 = tf.reduce_max(q_tp1 + mask_tp1_ph, 1)
+            q_tp1_best = tf.cond(training_flag_ph, lambda: q_tp1_best_1, lambda: q_tp1_best_0)
+
         #TODO: Modification done
         q_tp1_best_masked = (1.0 - done_mask_ph) * q_tp1_best
 
@@ -483,7 +528,8 @@ def build_train(make_obs_ph, q_func, num_actions, optimizer, training_flag, grad
                 obs_tp1_input,
                 done_mask_ph,
                 importance_weights_ph,
-                mask_tp1_ph
+                mask_tp1_ph,
+                training_flag_ph
             ],
             outputs=td_error,
             updates=[optimize_expr]

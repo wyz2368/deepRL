@@ -23,7 +23,7 @@ class Attacker(object):
         self.set_current_strategy(nn)
         while not isDup:
             att_input = self.att_obs_constructor(G, timeleft)
-            x = self.nn_att(att_input[None], mask)[0] #corrensponding to baselines
+            x = self.nn_att(att_input[None], mask, 1)[0] #corrensponding to baselines
             action = self.actionspace[x]
             if action == 'pass':
                 break
@@ -37,7 +37,7 @@ class Attacker(object):
         mask = np.array([self.get_att_canAttack(G)], dtype=np.float32)
         while not isDup:
             att_input = self.att_obs_constructor(G, timeleft)
-            x = nn_att(att_input[None], mask)[0] #corrensponding to baselines
+            x = nn_att(att_input[None], mask, 1)[0] #corrensponding to baselines
             action = self.actionspace[x]
             if action == 'pass':
                 break
@@ -49,7 +49,7 @@ class Attacker(object):
     def att_obs_constructor(self, G, timeleft):
         canAttack, inAttackSet = self.get_att_canAttack_inAttackSet(G)
         att_input = self.observation + canAttack + inAttackSet + [timeleft]
-        return np.array(att_input)
+        return np.array(att_input, dtype=np.float32)
 
     # This function can also be used as masking illegal actions.
     def get_att_canAttack(self, G):

@@ -81,6 +81,7 @@ def sample_both_strategies(env, att_str_set, att_mix_str, def_str_set, def_mix_s
     return act_att, act_def
 
 #TODO: check the input dim of nn and check if this could initialize nn.
+#TODO: check when to set training flag
 def rand_str_generator(env, game):
     # Generate random nn for attacker.
     num_layers = game.num_layers
