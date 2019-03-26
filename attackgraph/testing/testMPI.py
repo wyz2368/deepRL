@@ -1,5 +1,6 @@
 import multiprocessing as mp
 import time
+import os
 import subprocess
 
 def call_and_wait_with_timeout(command_str):
@@ -15,4 +16,4 @@ def call_and_wait_with_timeout(command_str):
     my_process.kill()
 
 
-command_str = "python "
+print(os.getcwd())

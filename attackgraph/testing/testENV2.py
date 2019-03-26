@@ -1,4 +1,4 @@
-import DagGenerator as dag
+from attackgraph import DagGenerator as dag
 import numpy as np
 import random
 

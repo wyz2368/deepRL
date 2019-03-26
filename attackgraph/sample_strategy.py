@@ -7,6 +7,7 @@ import os
 DIR = os.getcwd() + '/'
 DIR_def = os.getcwd() + '/defender_strategies/'
 DIR_att = os.getcwd() + '/attacker_strategies/'
+print(DIR_att)
 
 def sample_strategy_from_mixed(env, str_set, mix_str, identity):
 
@@ -85,12 +86,14 @@ def rand_str_generator(env, game):
     num_layers = game.num_layers
     num_hidden = game.num_hidden
 
+    env.set_training_flag(1)
     act_att = deepq.learn(
         env,
         network=models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
         total_timesteps=0
     )
 
+    env.set_training_flag(0)
     act_def = deepq.learn(
         env,
         network=models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),

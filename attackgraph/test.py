@@ -1,13 +1,13 @@
-import numpy as np
-import math
+# import numpy as np
+# import math
 import os
-# import networkx as nx
-# import random
-# import itertools
-# import time
-# import training
-# import tensorflow as tf
-import pickle as pk
+# # import networkx as nx
+# # import random
+# # import itertools
+# # import time
+# # import training
+# # import tensorflow as tf
+# import pickle as pk
 
 # G = nx.DiGraph()
 #
@@ -92,6 +92,8 @@ import pickle as pk
 
 
 from baselines.deepq.deepq import learn
+
+print(os.getcwd())
 
 
 

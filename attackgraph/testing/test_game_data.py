@@ -1,9 +1,9 @@
-import game_data
-import DagGenerator as dag
+from attackgraph import game_data
+from attackgraph import DagGenerator as dag
 import numpy as np
 import random
 import time
-import util
+from attackgraph import util
 
 random.seed(2)
 np.random.seed(2)

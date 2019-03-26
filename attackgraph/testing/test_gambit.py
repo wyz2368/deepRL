@@ -1,6 +1,6 @@
-import gambit_analysis as ga
+from attackgraph import gambit_analysis as ga
 import numpy as np
-import file_op as fp
+from attackgraph import file_op as fp
 import time
 
 # poDef = np.array([[3,0],[1,2]])

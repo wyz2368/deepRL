@@ -1,8 +1,11 @@
-import DagGenerator as dag
+from attackgraph import DagGenerator as dag
 import random
 import numpy as np
 import time
-import rand_strategies_payoff as rp
+from attackgraph import rand_strategies_payoff as rp
+from attackgraph.sample_strategy import rand_str_generator
+from attackgraph import game_data
+from attackgraph.util import set_global_seed
 
 env = dag.Environment(numNodes=5, numEdges=4, numRoot=2, numGoals=1)
 
@@ -41,8 +44,9 @@ env.save_graph_copy()
 
 # print(env.G.nodes.data()[4])
 # print(env.G.edges.data())
-
+set_global_seed(5)
 env.create_players()
+game = game_data.Game_data(env,4,256,[256,256],400)
 
 #test attacker
 # print(env.attacker.ORedges)
@@ -164,23 +168,26 @@ env.create_players()
 
 # Test sim using random strategies
 
-t1 = time.time()
-# payoff_att, payoff_def, ta, tb, tc = rp.parallel_sim(env,1000)
-a,b  = rp.rand_parallel_sim(env,1000)
-t2 = time.time()
+# t1 = time.time()
+# # payoff_att, payoff_def, ta, tb, tc = rp.parallel_sim(env,1000)
+# a,b  = rp.rand_parallel_sim(env,1000)
+# t2 = time.time()
+#
+# t3 = time.time()
+# payoff_att, payoff_def, tz, tx = rp.rand_strategies_payoff(env,1000)
+# t4 = time.time()
+#
+# # print(payoff_def,payoff_att)
+#
+# # print(t2-t1,t4-t3, ta, tb, tc)
+#
+# # print(tz,tx)
+#
+# print(t2-t1,t4-t3)
+# # print(a,b)
 
-t3 = time.time()
-payoff_att, payoff_def, tz, tx = rp.rand_strategies_payoff(env,1000)
-t4 = time.time()
-
-# print(payoff_def,payoff_att)
-
-# print(t2-t1,t4-t3, ta, tb, tc)
-
-# print(tz,tx)
-
-print(t2-t1,t4-t3)
-# print(a,b)
+#Test creating new random strategies
+rand_str_generator(env,game)
 
 
 
