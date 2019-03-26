@@ -3,8 +3,8 @@ import numpy as np
 import sys
 import random
 # import matplotlib.pyplot as plt
-import attacker
-import defender
+from attackgraph import attacker
+from attackgraph import defender
 
 class Environment(object):
     #TODO: all representations are logically sorted.！！！！

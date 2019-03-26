@@ -14,7 +14,7 @@ from baselines.common import set_global_seeds
 
 from baselines import deepq
 from baselines.deepq.replay_buffer import ReplayBuffer, PrioritizedReplayBuffer
-from baselines.deepq.utils import ObservationInput
+# from baselines.deepq.utils import ObservationInput
 
 from baselines.common.tf_util import get_session
 from baselines.deepq.models import build_q_func

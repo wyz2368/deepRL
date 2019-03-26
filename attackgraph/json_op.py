@@ -1,5 +1,5 @@
 import json
-import file_op as fp
+from attackgraph import file_op as fp
 import os
 
 DIR_json = os.getcwd() + '/json_dir/'

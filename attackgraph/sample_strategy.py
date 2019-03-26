@@ -1,5 +1,5 @@
 import numpy as np
-import file_op as fp
+from attackgraph import file_op as fp
 from baselines import deepq
 from baselines.common import models
 import os

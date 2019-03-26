@@ -1,6 +1,6 @@
 import random
 import numpy as np
-import sample_strategy as ss
+from attackgraph import sample_strategy as ss
 
 
 class Attacker(object):

@@ -1,6 +1,6 @@
 import numpy as np
-import subproc
-import file_op as fp
+from attackgraph import subproc
+from attackgraph import file_op as fp
 import os
 
 # Input arguments: payoff matrix for the defender, poDef; payoff matrix for the attacker, poAtt.

@@ -1,7 +1,7 @@
-from parallel_sim import parallel_sim
+from attackgraph.parallel_sim import parallel_sim
 import numpy as np
-from load_action import load_action
-import file_op as fp
+from baselines.deepq.load_action import load_action
+from attackgraph import file_op as fp
 import os
 
 

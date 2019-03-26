@@ -1,8 +1,7 @@
 from mpi4py import MPI
-from parallel_sim import parallel_sim
-from rand_strategies_payoff import rand_parallel_sim
-from deepq import load_action
-import file_op as fp
+from attackgraph.parallel_sim import parallel_sim
+from baselines.deepq import load_action
+from attackgraph import file_op as fp
 
 
 #TODO: assign epoch
