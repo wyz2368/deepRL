@@ -3,6 +3,7 @@ from attackgraph import file_op as fp
 from baselines import deepq
 from baselines.common import models
 import os
+from baselines.deepq.deepq import learn_multi_nets
 
 DIR = os.getcwd() + '/'
 DIR_def = os.getcwd() + '/defender_strategies/'
@@ -82,20 +83,13 @@ def sample_both_strategies(env, att_str_set, att_mix_str, def_str_set, def_mix_s
 
 #TODO: check the input dim of nn and check if this could initialize nn.
 #TODO: check when to set training flag
-def rand_str_generator(env, game):
+def rand_att_str_generator(env, game):
     # Generate random nn for attacker.
     num_layers = game.num_layers
     num_hidden = game.num_hidden
 
     env.set_training_flag(1)
-    act_att = deepq.learn(
-        env,
-        network=models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
-        total_timesteps=0
-    )
-
-    env.set_training_flag(0)
-    act_def = deepq.learn(
+    act_att = learn_multi_nets(
         env,
         network=models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
         total_timesteps=0
@@ -104,6 +98,23 @@ def rand_str_generator(env, game):
     print("Saving attacker's model to pickle. Epoch name is equal to 1.")
     act_att.save(DIR_att + "att_str_epoch" + str(1) + ".pkl")
     game.att_str.append("att_str_epoch" + str(1) + ".pkl")
+    # tf.reset_default_graph()
+
+
+def rand_def_str_generator(env, game):
+    # Generate random nn for attacker.
+    num_layers = game.num_layers
+    num_hidden = game.num_hidden
+
+    # sess = tf.get_default_session()
+    # tf.reset_default_graph()
+
+    env.set_training_flag(0)
+    act_def = learn_multi_nets(
+        env,
+        network=models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
+        total_timesteps=0
+    )
 
     print("Saving defender's model to pickle. Epoch in name is equal to 1.")
     act_def.save(DIR_def + "def_str_epoch" + str(1) + ".pkl")

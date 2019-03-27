@@ -3,9 +3,12 @@ import random
 import numpy as np
 import time
 from attackgraph import rand_strategies_payoff as rp
-from attackgraph.sample_strategy import rand_str_generator
+from attackgraph.sample_strategy import rand_att_str_generator, rand_def_str_generator
 from attackgraph import game_data
 from attackgraph.util import set_global_seed
+from baselines import deepq
+import tensorflow as tf
+from baselines.common import models
 
 env = dag.Environment(numNodes=5, numEdges=4, numRoot=2, numGoals=1)
 
@@ -187,7 +190,8 @@ game = game_data.Game_data(env,4,256,[256,256],400)
 # # print(a,b)
 
 #Test creating new random strategies
-rand_str_generator(env,game)
 
+rand_att_str_generator(env,game)
+rand_def_str_generator(env,game)
 
 

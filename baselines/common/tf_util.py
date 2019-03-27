@@ -209,6 +209,7 @@ class _Function(object):
             self._feed_input(feed_dict, inpt, value)
         for inpt_name, value in kwargs.items():
             self._feed_input(feed_dict, self.input_names[inpt_name], value)
+
         results = get_session().run(self.outputs_update, feed_dict=feed_dict)[:-1]
         return results
 
