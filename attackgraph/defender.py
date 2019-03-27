@@ -129,5 +129,6 @@ class Defender(object):
     def set_mix_strategy(self,mix):
         self.mix_str = mix
 
+    #TODO: every time updating game, call this.
     def set_str_set(self,set):
         self.str_set = set

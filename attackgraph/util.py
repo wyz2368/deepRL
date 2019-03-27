@@ -2,8 +2,14 @@ import random
 import numpy as np
 
 def set_global_seed(seed):
+    print("Global seeds has been set! Strategy sampling will be fixed.")
     random.seed(seed)
     np.random.seed(seed)
+
+def recover_global_seed():
+    print("Global seeds has been recovered! ")
+    random.seed()
+    np.random.seed()
 
 
 def payoff_mixed_NE(game, epoch):

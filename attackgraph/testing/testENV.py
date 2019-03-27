@@ -2,6 +2,7 @@ from attackgraph import DagGenerator as dag
 import random
 import numpy as np
 import time
+import os
 from attackgraph import rand_strategies_payoff as rp
 from attackgraph.sample_strategy import rand_att_str_generator, rand_def_str_generator
 from attackgraph import game_data
@@ -9,6 +10,8 @@ from attackgraph.util import set_global_seed
 from baselines import deepq
 import tensorflow as tf
 from baselines.common import models
+from baselines.deepq import load_action
+from attackgraph.sample_strategy import sample_strategy_from_mixed
 
 env = dag.Environment(numNodes=5, numEdges=4, numRoot=2, numGoals=1)
 
@@ -47,7 +50,7 @@ env.save_graph_copy()
 
 # print(env.G.nodes.data()[4])
 # print(env.G.edges.data())
-set_global_seed(5)
+# set_global_seed(5)
 env.create_players()
 game = game_data.Game_data(env,4,256,[256,256],400)
 
@@ -191,7 +194,21 @@ game = game_data.Game_data(env,4,256,[256,256],400)
 
 #Test creating new random strategies
 
-rand_att_str_generator(env,game)
-rand_def_str_generator(env,game)
+# rand_att_str_generator(env,game)
+# rand_def_str_generator(env,game)
 
+# Test load action
+# path = os.getcwd() + "/attacker_strategies/att_str_epoch1.pkl"
+# training_flag = 1
+# act = load_action.load_action(path,game,training_flag)
+# print(type(act))
+
+# Test sample mixed strategy
+# str_set = ['1.pkl', '2.pkl', '3.pkl']
+# mix_str = np.array([0.3,0.3,0.4])
+# identity = 0
+# sample_strategy_from_mixed(env, str_set, mix_str, identity)
+
+
+# Test
 

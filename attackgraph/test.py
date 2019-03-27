@@ -1,4 +1,4 @@
-# import numpy as np
+import numpy as np
 # import math
 import os
 # # import networkx as nx
@@ -93,10 +93,21 @@ import os
 
 from baselines.deepq.deepq import learn
 
-print(os.getcwd())
-
-
-
+str_set = ['1.pkl', '2.pkl', '3.pkl']
+mix_str = np.array([0.3,0.3,0.4])
+identity = 0
+for i in range(10):
+    np.random.seed(5)
+    # picked_str = np.random.choice(str_set,p=mix_str)
+    # # print(picked_str)
+    np.random.seed()
+    picked_str = np.random.choice(str_set,p=mix_str)
+    picked_str1 = np.random.choice(str_set, p=mix_str)
+    picked_str2 = np.random.choice(str_set, p=mix_str)
+    print('None:', picked_str)
+    print('None1:', picked_str1)
+    print('None2:', picked_str2)
+    print('*****')
 
 
 
