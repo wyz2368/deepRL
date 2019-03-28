@@ -3,7 +3,8 @@ import numpy as np
 import random
 import copy
 import os
-from baselines.deepq.load_action import load_action
+import tensorflow as tf
+from baselines.deepq.load_action import load_action, load_action_class
 import time
 print(os.getcwd())
 
@@ -22,7 +23,7 @@ def parallel_sim(env, game, nn_att, nn_def, num_episodes):
         r = pool.map_async(single_sim, arg)
         a = r.get()
 
-    return np.sum(np.array(a),0)/num_episodes
+    return np.mean(np.array(a),0)
 
 
 def single_sim(param): #single for single episode.
@@ -34,40 +35,46 @@ def single_sim(param): #single for single episode.
 
     path = os.getcwd() + "/attacker_strategies/" + nn_att
     training_flag = 1
-    nn_att = load_action(path,game,training_flag)
+    nn_att, sess1, graph1 = load_action_class(path,game,training_flag)
     path = os.getcwd() + "/defender_strategies/" + nn_def
     training_flag = 0
-    nn_def = load_action(path,game,training_flag)
+    nn_def, sess2, graph2 = load_action_class(path,game,training_flag)
 
-    attacker.att_greedy_action_builder_single(G, 3, nn_att)
-    # defender.def_greedy_action_builder_single(G, 3, nn_def)
 
-    # for t in range(T):
-    #     timeleft = T - t
-    #     attacker.att_greedy_action_builder_single(G, timeleft, nn_att)
-    #     att_action_set = attacker.attact
-    #     defender.def_greedy_action_builder_single(G, timeleft, nn_def)
-    #     def_action_set = defender.defact
-    #     for attack in att_action_set:
-    #         if isinstance(attack, tuple):
-    #             # check OR node
-    #             aReward += G.edges[attack]['cost']
-    #             if random.uniform(0, 1) <= G.edges[attack]['actProb']:
-    #                 G.nodes[attack[-1]]['state'] = 1
-    #         else:
-    #             # check AND node
-    #             aReward += G.nodes[attack]['aCost']
-    #             if random.uniform(0, 1) <= G.nodes[attack]['actProb']:
-    #                 G.nodes[attack]['state'] = 1
-    #     # defender's action
-    #     for node in def_action_set:
-    #         G.nodes[node]['state'] = 0
-    #         dReward += G.nodes[node]['dCost']
-    #     _, targetset = get_Targets(G)
-    #     for node in targetset:
-    #         if G.nodes[node]['state'] == 1:
-    #             aReward += G.nodes[node]['aReward']
-    #             dReward += G.nodes[node]['dPenalty']
+
+    for t in range(T):
+        timeleft = T - t
+        with graph1.as_default():
+            with sess1.as_default():
+                attacker.att_greedy_action_builder_single(G, timeleft, nn_att)
+        with graph2.as_default():
+            with sess2.as_default():
+                defender.def_greedy_action_builder_single(G, timeleft, nn_def)
+        att_action_set = attacker.attact
+        def_action_set = defender.defact
+        print('att:', att_action_set)
+        print('def:',def_action_set)
+        for attack in att_action_set:
+            if isinstance(attack, tuple):
+                # check OR node
+                aReward += G.edges[attack]['cost']
+                if random.uniform(0, 1) <= G.edges[attack]['actProb']:
+                    G.nodes[attack[-1]]['state'] = 1
+            else:
+                # check AND node
+                aReward += G.nodes[attack]['aCost']
+                if random.uniform(0, 1) <= G.nodes[attack]['actProb']:
+                    G.nodes[attack]['state'] = 1
+        # defender's action
+        for node in def_action_set:
+            G.nodes[node]['state'] = 0
+            dReward += G.nodes[node]['dCost']
+        _, targetset = get_Targets(G)
+        for node in targetset:
+            if G.nodes[node]['state'] == 1:
+                aReward += G.nodes[node]['aReward']
+                dReward += G.nodes[node]['dPenalty']
+
     return aReward, dReward
 
 def get_Targets(G):
