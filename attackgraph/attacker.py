@@ -5,8 +5,9 @@ from attackgraph import sample_strategy as ss
 
 class Attacker(object):
 
-    def __init__(self, oredges, andnodes, actionspace):
-        self.observation = []
+    def __init__(self,G, oredges, andnodes, actionspace):
+        self.num_nodes = G.number_of_nodes()
+        self.observation = [0]*self.num_nodes
         self.canAttack = []
         self.attact = set()
         self.ORedges = oredges
@@ -17,7 +18,7 @@ class Attacker(object):
     def att_greedy_action_builder(self, G, timeleft):
         self.attact.clear()
         isDup = False
-        mask = np.array([self.get_att_canAttack(G)], dtype=np.float32)
+        mask = np.array([self.get_att_canAttack_mask(G)], dtype=np.float32)
         #TODO:sample a strategy
         nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=1)
         self.set_current_strategy(nn)
@@ -34,10 +35,13 @@ class Attacker(object):
     def att_greedy_action_builder_single(self, G, timeleft, nn_att):
         self.attact.clear()
         isDup = False
-        mask = np.array([self.get_att_canAttack(G)], dtype=np.float32)
+        mask = np.array([self.get_att_canAttack_mask(G)], dtype=np.float32)
         while not isDup:
             att_input = self.att_obs_constructor(G, timeleft)
             x = nn_att(att_input[None], mask, 1)[0] #corrensponding to baselines
+            # print(self.actionspace)
+            # print(type(x))
+            # print(x)
             action = self.actionspace[x]
             if action == 'pass':
                 break
@@ -131,7 +135,7 @@ class Attacker(object):
         self.observation = obs
 
     def reset_att(self):
-        self.observation = []
+        self.observation = [0]*self.num_nodes
         self.canAttack = []
         self.attact.clear()
 
@@ -167,6 +171,7 @@ class Attacker(object):
             else:
                 canAttack.append(-100)
 
+        canAttack.append(0) # mask pass with 0.
         return canAttack
 
     def set_current_strategy(self,strategy):

@@ -43,7 +43,8 @@ class Environment(object):
         #TODO: test if the graph has been initialized.
         _,oredges=self.get_ORedges()
         _,andnodes=self.get_ANDnodes()
-        self.attacker = attacker.Attacker(oredges=oredges,
+        self.attacker = attacker.Attacker(G=self.G,
+                                          oredges=oredges,
                                           andnodes=andnodes,
                                           actionspace=self.get_att_actionspace())
         self.defender = defender.Defender(self.G)

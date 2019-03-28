@@ -6,7 +6,7 @@ class Defender(object):
 
     def __init__(self, G):
         self.num_nodes = G.number_of_nodes()
-        self.observation = []
+        self.observation = [0]*self.num_nodes
         self.history = 3
         self.prev_obs = [0]*self.num_nodes*(self.history - 1)
 
@@ -20,7 +20,7 @@ class Defender(object):
     def def_greedy_action_builder(self, G, timeleft):
         self.defact.clear()
         isDup = False
-        mask = np.zeros(shape=(1, self.num_nodes), dtype=np.float32)
+        mask = np.zeros(shape=(1, self.num_nodes+1), dtype=np.float32)
         #TODO: sample a strategy
         nn = ss.sample_strategy_from_mixed(env=self.myenv,str_set=self.str_set,mix_str=self.mix_str,identity=0)
         self.set_current_strategy(nn)
@@ -40,14 +40,18 @@ class Defender(object):
     def def_greedy_action_builder_single(self, G, timeleft, nn_def):
         self.defact.clear()
         isDup = False
-        mask = np.zeros(shape=(1, self.num_nodes), dtype=np.float32)
+        mask = np.zeros(shape=(1, self.num_nodes+1), dtype=np.float32)
 
         while not isDup:
             def_input = self.def_obs_constructor(G, timeleft)
             x = nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
-            if not isinstance(x,int):
+            if not isinstance(x, np.int64):
                 raise ValueError("The chosen action is not an integer.")
+
             action_space = self.get_def_actionspace(G)
+            # print(action_space)
+            # print(type(x))
+            # print(x)
             action = action_space[x] # x starting from 0.
             if action == 'pass':
                 break
@@ -114,7 +118,7 @@ class Defender(object):
         self.history = history
 
     def reset_def(self):
-        self.observation = []
+        self.observation = [0]*self.num_nodes
         self.prev_obs = [0] * self.num_nodes * (self.history - 1)
         self.defact.clear()
         self.prev_defact = [set()] * self.history
