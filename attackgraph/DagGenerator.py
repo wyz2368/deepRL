@@ -1,10 +1,11 @@
 import networkx as nx
 import numpy as np
-import sys
+import os
 import random
 # import matplotlib.pyplot as plt
 from attackgraph import attacker
 from attackgraph import defender
+from attackgraph import file_op as fp
 
 class Environment(object):
     #TODO: all representations are logically sorted.！！！！
@@ -73,7 +74,7 @@ class Environment(object):
                          actProb=1.0) # probability of successfully activating, for OR node only
 
     # TODO: root node must be AND node.
-    def randomDAG(self, NmaxAReward=100, NmaxDPenalty=100, NmaxDCost=100, NmaxACost=100, EmaxACost=100, EminWeight=0, EmaxWeight=100):
+    def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=10, NmaxACost=10, EmaxACost=10):
         # Exception handling
         try:
             if self.numRoot + self.numGoals > self.numNodes:
@@ -740,4 +741,16 @@ class Environment(object):
 
     def set_current_time(self,time):
         self.current_time = time
+
+def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=100, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
+    env = Environment(num_attr_N = num_attr_N, num_attr_E = num_attr_E, T=T, graphid=graphid, numNodes=numNodes, numEdges=numEdges, numRoot=numRoot, numGoals=numGoals, history = history)
+    env.randomDAG()
+    path = os.getcwd() + "/env_data/" + env_name + ".pkl"
+    print(path)
+    if fp.isExist(path):
+        raise ValueError("Env with such name already exists.")
+    fp.save_pkl(env,path)
+    print(env_name + " has been saved.")
+    return env
+
 

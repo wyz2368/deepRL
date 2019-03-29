@@ -23,7 +23,7 @@ def parallel_sim(env, game, nn_att, nn_def, num_episodes):
         r = pool.map_async(single_sim, arg)
         a = r.get()
 
-    return np.mean(np.array(a),0)
+    return np.sum(np.array(a),0)/num_episodes
 
 
 def single_sim(param): #single for single episode.
@@ -52,8 +52,8 @@ def single_sim(param): #single for single episode.
                 defender.def_greedy_action_builder_single(G, timeleft, nn_def)
         att_action_set = attacker.attact
         def_action_set = defender.defact
-        print('att:', att_action_set)
-        print('def:',def_action_set)
+        # print('att:', att_action_set)
+        # print('def:',def_action_set)
         for attack in att_action_set:
             if isinstance(attack, tuple):
                 # check OR node

@@ -30,6 +30,9 @@ class Game_data(object):
         self.num_hidden = num_hidden
         self.hiddens = hiddens
 
+    def set_hado_param(self, param):
+        self.param = param # k, gamma, alpha = param
+
     def num_str(self):
         return len(self.att_str), len(self.def_str)
 
@@ -117,4 +120,14 @@ class Game_data(object):
             raise ValueError("Cannot extend defender row since dim does not match")
         self.payoffmatrix_def = np.append(self.payoffmatrix_def, row, 0)
 
+    def hado_str(self, identity, param):
+        k, gamma, alpha = param
+        num_str = len(self.nasheq.keys())
+        delta = self.nasheq[num_str-1][identity]
+        denom = 0
+        for i in np.arange(num_str-1):
+            delta += gamma**(num_str-1-i)*self.nasheq[i+1][identity] #TODO: make sure this is correct.
+            denom += gamma**(num_str-1-i)
 
+        denom += 1
+        return delta/denom
