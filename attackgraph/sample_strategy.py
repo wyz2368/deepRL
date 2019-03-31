@@ -19,7 +19,7 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
     if not len(str_set) == len(mix_str):
         raise ValueError("Length of mixed strategies does not match number of strategies.")
 
-    picked_str = np.random.choice(str_set,p=mix_str)
+    picked_str = np.random.choice(str_set, p=mix_str)
     if not fp.isInName('.pkl', name = picked_str):
         raise ValueError('The strategy picked is not a pickle file.')
 
@@ -36,7 +36,8 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
     env.set_training_flag(identity)
 
 
-    # #TODO: assign nn info from game
+    # #TODO: assign nn info from game. Hard coding netowork structure.
+    # TODO: Does this really work? Maybe yes in testENV.
     act = learn_multi_nets(
         env,
         network=models.mlp(num_hidden=256, num_layers=1),
@@ -105,16 +106,12 @@ def rand_att_str_generator(env, game):
     print("Saving attacker's model to pickle. Epoch name is equal to 1.")
     act_att.save(DIR_att + "att_str_epoch" + str(1) + ".pkl")
     game.att_str.append("att_str_epoch" + str(1) + ".pkl")
-    # tf.reset_default_graph()
 
 
 def rand_def_str_generator(env, game):
     # Generate random nn for attacker.
     num_layers = game.num_layers
     num_hidden = game.num_hidden
-
-    # sess = tf.get_default_session()
-    # tf.reset_default_graph()
 
     env.set_training_flag(0)
     act_def = learn_multi_nets(

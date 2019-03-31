@@ -24,13 +24,14 @@ class Defender(object):
         #TODO: sample a strategy
         nn = ss.sample_strategy_from_mixed(env=self.myenv,str_set=self.str_set,mix_str=self.mix_str,identity=0)
         self.set_current_strategy(nn)
+        action_space = self.get_def_actionspace(G)
+
         while not isDup:
             def_input = self.def_obs_constructor(G, timeleft)
             x = self.nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
-            if not isinstance(x,int):
-                raise ValueError("The chosen action is not an integer.")
-            action_space = self.get_def_actionspace(G)
-            action = action_space[x] #TODO: make sure whether x starting from 0 or 1.
+            if not isinstance(x, np.int64):
+                raise ValueError("The chosen action is not a numpy 64 integer.")
+            action = action_space[x] #TODO: make sure whether x starting from 0 not 1.
             if action == 'pass':
                 break
             isDup = (action in self.defact)
@@ -41,14 +42,13 @@ class Defender(object):
         self.defact.clear()
         isDup = False
         mask = np.zeros(shape=(1, self.num_nodes+1), dtype=np.float32)
+        action_space = self.get_def_actionspace(G)
 
         while not isDup:
             def_input = self.def_obs_constructor(G, timeleft)
             x = nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
             if not isinstance(x, np.int64):
                 raise ValueError("The chosen action is not an integer.")
-
-            action_space = self.get_def_actionspace(G)
             # print(action_space)
             # print(type(x))
             # print(x)

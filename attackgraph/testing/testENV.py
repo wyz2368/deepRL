@@ -14,6 +14,7 @@ from baselines.deepq import load_action
 from attackgraph.sample_strategy import sample_strategy_from_mixed
 from attackgraph.parallel_sim import parallel_sim
 from attackgraph import file_op as fp
+from attackgraph import training
 
 env = dag.Environment(numNodes=5, numEdges=4, numRoot=2, numGoals=1)
 
@@ -226,11 +227,11 @@ game = game_data.Game_data(env,4,256,[256,256],400)
 # env.defender.def_greedy_action_builder_single(env.G,timeleft=8,nn_def=act_def)
 # print(env.defender.defact)
 
-act_att = 'att_str_epoch1.pkl'
-act_def = 'def_str_epoch1.pkl'
-
-out = parallel_sim(env, game, nn_att=act_att, nn_def=act_def, num_episodes=2)
-print(out)
+# act_att = 'att_str_epoch1.pkl'
+# act_def = 'def_str_epoch1.pkl'
+#
+# out = parallel_sim(env, game, nn_att=act_att, nn_def=act_def, num_episodes=2)
+# print(out)
 
 # num_actions_def = env.act_dim_def()
 # num_actions_att = env.act_dim_att()
@@ -238,3 +239,6 @@ print(out)
 # print(num_actions_att)
 # obs = env.attacker.att_obs_constructor(env.G, 8)
 # print(len(obs))
+
+# Test Training
+

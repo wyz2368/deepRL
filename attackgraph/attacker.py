@@ -12,7 +12,7 @@ class Attacker(object):
         self.attact = set()
         self.ORedges = oredges
         self.ANDnodes = andnodes
-        self.actionspace = actionspace
+        self.actionspace = actionspace #TODO: When to update?
 
     # TODO: nn should input mask!!!!!!!
     def att_greedy_action_builder(self, G, timeleft):
