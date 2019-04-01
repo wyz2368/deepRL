@@ -45,7 +45,7 @@ class Game_data(object):
     def add_att_str(self, str_name):
         if not fp.isExist(self.dir_att + str_name):
             raise ValueError("This strategy does not exist.")
-        if '_att' not in str_name:
+        if 'att_' not in str_name:
             raise ValueError("This may not be an attacker's strategy due to no def sign")
         if not isinstance(str_name,str):
             raise ValueError("The name to be added is not a str." )
@@ -55,7 +55,7 @@ class Game_data(object):
     def add_def_str(self, str_name):
         if not fp.isExist(self.dir_def + str_name):
             raise ValueError("This strategy does not exist.")
-        if '_def' not in str_name:
+        if 'def_' not in str_name:
             raise ValueError("This may not be a defender's strategy due to no def sign")
         if not isinstance(str_name,str):
             raise ValueError("The name to be added is not a str." )

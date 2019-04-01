@@ -108,6 +108,7 @@ def rand_att_str_generator(env, game):
     game.att_str.append("att_str_epoch" + str(1) + ".pkl")
 
 
+
 def rand_def_str_generator(env, game):
     # Generate random nn for attacker.
     num_layers = game.num_layers
@@ -123,3 +124,4 @@ def rand_def_str_generator(env, game):
     print("Saving defender's model to pickle. Epoch in name is equal to 1.")
     act_def.save(DIR_def + "def_str_epoch" + str(1) + ".pkl")
     game.def_str.append("def_str_epoch" + str(1) + ".pkl")
+
