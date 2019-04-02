@@ -33,6 +33,21 @@ def single_sim(param): #single for single episode.
 
     G, game, attacker, nn_att, defender, nn_def, T = param
 
+    if isinstance(nn_att, np.ndarray) and isinstance(nn_def, str):
+        str_set = game.att_str
+        nn_att = np.random.choice(str_set, p=nn_att)
+
+    if isinstance(nn_att, str) and isinstance(nn_def, np.ndarray):
+        str_set = game.def_str
+        nn_def = np.random.choice(str_set, p=nn_def)
+
+    if isinstance(nn_att, np.ndarray) and isinstance(nn_def, np.ndarray):
+        str_set = game.att_str
+        nn_att = np.random.choice(str_set, p=nn_att)
+        str_set = game.def_str
+        nn_def = np.random.choice(str_set, p=nn_def)
+
+
     path = os.getcwd() + "/attacker_strategies/" + nn_att
     training_flag = 1
     nn_att, sess1, graph1 = load_action_class(path,game,training_flag)
@@ -97,4 +112,3 @@ def copy_env(env, num_episodes):
         def_list.append(copy.deepcopy(env.defender))
 
     return G_list, att_list, def_list
-

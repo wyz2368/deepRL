@@ -23,7 +23,8 @@ from baselines.deepq import load_action
 
 
 #TODO: check when to
-def run(HADO=False, load_env=None, env_name=None):
+def run(epsilon, HADO=False, load_env=None, env_name=None):
+
     # Create Environment
     if isinstance(load_env,str):
         path = os.getcwd() + load_env + '.pkl'
@@ -90,6 +91,7 @@ def run(HADO=False, load_env=None, env_name=None):
 
         # Judge beneficial deviation
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
+        # one plays nn and another plays ne strategy
 
 
         # simulate and extend the payoff matrix.

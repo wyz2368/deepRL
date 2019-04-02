@@ -22,8 +22,9 @@ class Defender(object):
         isDup = False
         mask = np.zeros(shape=(1, self.num_nodes+1), dtype=np.float32)
         #TODO: sample a strategy
-        nn = ss.sample_strategy_from_mixed(env=self.myenv,str_set=self.str_set,mix_str=self.mix_str,identity=0)
-        self.set_current_strategy(nn)
+
+        # nn = ss.sample_strategy_from_mixed(env=self.myenv,str_set=self.str_set,mix_str=self.mix_str,identity=0)
+        # self.set_current_strategy(nn)
         action_space = self.get_def_actionspace(G)
 
         while not isDup:
@@ -136,3 +137,7 @@ class Defender(object):
     #TODO: every time updating game, call this.
     def set_str_set(self,set):
         self.str_set = set
+
+    def sample_and_set_str(self):
+        nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=0)
+        self.set_current_strategy(nn)

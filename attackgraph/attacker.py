@@ -20,8 +20,9 @@ class Attacker(object):
         isDup = False
         mask = np.array([self.get_att_canAttack_mask(G)], dtype=np.float32)
         #TODO:sample a strategy
-        nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=1)
-        self.set_current_strategy(nn)
+
+        # nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=1)
+        # self.set_current_strategy(nn)
         while not isDup:
             att_input = self.att_obs_constructor(G, timeleft)
             x = self.nn_att(att_input[None], mask, 1)[0] #corrensponding to baselines
@@ -186,3 +187,6 @@ class Attacker(object):
     def set_str_set(self,set):
         self.str_set = set
 
+    def sample_and_set_str(self):
+        nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=0)
+        self.set_current_strategy(nn)
