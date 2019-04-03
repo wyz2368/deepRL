@@ -1,4 +1,6 @@
 import numpy as np
+from attackgraph import file_op as fp
+# from attackgraph.uniform_str_init import act_def, act_att
 # import math
 import os
 # # import networkx as nx
@@ -91,7 +93,7 @@ import os
 # print(position_row_list)
 
 
-from baselines.deepq.deepq import learn
+# from baselines.deepq.deepq import learn
 
 # str_set = ['1.pkl', '2.pkl', '3.pkl']
 # mix_str = np.array([0.3,0.3,0.4])
@@ -109,20 +111,16 @@ from baselines.deepq.deepq import learn
 #     print('None2:', picked_str2)
 #     print('*****')
 
-a = {}
-a[0] = 0
-a[1] = 1
-a[2] = 2
-a[3] = 3
+# a = [0,0,0,0,0,0,0,0,0,0]
+# b = np.array(a)
+# c = np.where(b == 0)[0]
+# print(c)
+# print(np.random.choice(c))
 
-print(len(a.keys()))
+a = fp.load_pkl(os.getcwd() + '/attacker_strategies/' + "att_str_epoch" + str(1) + ".pkl")
+# a = fp.load_pkl(os.getcwd() + '/defender_strategies/' + "def_str_epoch" + str(1) + ".pkl")
 
-
-
-
-
-
-
+print(a(1,np.array([0,0,0,0,0,0]), 1))
 
 
 

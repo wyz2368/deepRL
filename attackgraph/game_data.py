@@ -4,7 +4,7 @@ import copy
 import os
 
 class Game_data(object):
-    def __init__(self, env, num_layers, num_hidden, hiddens, num_episodes):
+    def __init__(self, env, num_layers, num_hidden, hiddens, num_episodes, threshold):
         #TODO: check if env should be initial env, this env should be with G_reserved.
         print("Reminder: env in game should be same as the initial one since G should be G_reserved.")
         self.env = copy.deepcopy(env)
@@ -19,6 +19,7 @@ class Game_data(object):
         # define the name of strategy as str_def_epoch1/str_att_epoch1
 
         self.num_episodes = num_episodes
+        self.threshold = threshold
 
         # parameters for neural network
         self.num_layers = num_layers

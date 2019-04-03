@@ -138,6 +138,7 @@ class Defender(object):
     def set_str_set(self,set):
         self.str_set = set
 
+    # TODO: call this once one episode is done.
     def sample_and_set_str(self):
         nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=0)
         self.set_current_strategy(nn)

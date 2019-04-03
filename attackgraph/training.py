@@ -40,7 +40,7 @@ def training_att(game, mix_str_def, epoch):
     )
     print("Saving attacker's model to pickle.")
     act_att.save(DIR_att + "att_str_epoch" + str(epoch) + ".pkl")
-    game.att_str.append("att_str_epoch" + str(epoch) + ".pkl")
+    # game.att_str.append("att_str_epoch" + str(epoch) + ".pkl")
 
 
 
@@ -73,6 +73,6 @@ def training_def(game, mix_str_att, epoch):
     )
     print("Saving defender's model to pickle.")
     act_def.save(DIR_def + "def_str_epoch" + str(epoch) + ".pkl")
-    game.def_str.append("def_str_epoch" + str(epoch) + ".pkl")
+    # game.def_str.append("def_str_epoch" + str(epoch) + ".pkl")
 
 

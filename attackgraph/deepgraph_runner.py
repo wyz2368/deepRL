@@ -22,8 +22,7 @@ from baselines.deepq import load_action
 
 
 
-#TODO: check when to
-def run(epsilon, HADO=False, load_env=None, env_name=None):
+def run(HADO=False, load_env=None, env_name=None):
 
     # Create Environment
     if isinstance(load_env,str):
@@ -41,23 +40,19 @@ def run(epsilon, HADO=False, load_env=None, env_name=None):
     env.attacker.myenv = env
 
     # initialize game data
-    game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=400)
+    game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=400, threshold=0.1)
     game.set_hado_param(param=(4, 0.7, 0.286))
 
-    # save a copy of game data
 
-
-    # initialize random strategy
-    # TODO: whether to use uniform strategy
+    # uniform strategy has been produced ahead of time
     epoch = env.epoch
     epoch += 1
-    ss.rand_att_str_generator(env, game)
-    ss.rand_def_str_generator(env, game)
-    game.add_att_str('att_str_epoch1.pkl')
-    game.add_def_str('def_str_epoch1.pkl')
 
     act_att = 'att_str_epoch1.pkl'
     act_def = 'def_str_epoch1.pkl'
+
+    game.add_att_str(act_att)
+    game.add_def_str(act_def)
 
     # simulate using random strategies and initialize payoff matrix
     aReward, dReward = parallel_sim.parallel_sim(env, game, act_att, act_def, game.num_episodes)
@@ -71,9 +66,6 @@ def run(epsilon, HADO=False, load_env=None, env_name=None):
     game_path = os.getcwd() + '/game_data/game.pkl'
     fp.save_pkl(game, game_path)
 
-    # set flags for both players to indicate if RL finds beneficial
-    def_BD_flag = True
-    att_BD_flag = True
 
     # DO-EGTA
     while True:
@@ -92,6 +84,26 @@ def run(epsilon, HADO=False, load_env=None, env_name=None):
         # Judge beneficial deviation
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
         # one plays nn and another plays ne strategy
+        #TODO: set flag to env
+        #TODO: length of str_set and mixed strategy does not match.
+        nn_att = "att_str_epoch" + str(epoch) + ".pkl"
+        nn_def = mix_str_def
+        a_BD, _ = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
+        nn_att = mix_str_att
+        nn_def = "def_str_epoch" + str(epoch) + ".pkl"
+        _, d_BD = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
+
+        game.def_str.append("def_str_epoch" + str(epoch) + ".pkl")
+        game.att_str.append("att_str_epoch" + str(epoch) + ".pkl")
+
+
+        #TODO: This may lead to early stop.
+        if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
+            print("*************************")
+            print("aPayoff=", aPayoff, " ", "dPayoff=", dPayoff)
+            print("a_BD=", a_BD, " ", "d_BD=", d_BD)
+            print("*************************")
+            break
 
 
         # simulate and extend the payoff matrix.

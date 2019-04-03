@@ -3,6 +3,7 @@ import numpy as np
 import random
 import copy
 import os
+from attackgraph.uniform_str_init import act_def, act_att
 import tensorflow as tf
 from baselines.deepq.load_action import load_action, load_action_class
 import time

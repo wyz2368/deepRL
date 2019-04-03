@@ -105,8 +105,8 @@ def rand_att_str_generator(env, game):
 
     print("Saving attacker's model to pickle. Epoch name is equal to 1.")
     act_att.save(DIR_att + "att_str_epoch" + str(1) + ".pkl")
-    game.att_str.append("att_str_epoch" + str(1) + ".pkl")
-
+    # game.att_str.append("att_str_epoch" + str(1) + ".pkl")
+    game.add_att_str("att_str_epoch" + str(1) + ".pkl")
 
 
 def rand_def_str_generator(env, game):
@@ -123,5 +123,40 @@ def rand_def_str_generator(env, game):
 
     print("Saving defender's model to pickle. Epoch in name is equal to 1.")
     act_def.save(DIR_def + "def_str_epoch" + str(1) + ".pkl")
-    game.def_str.append("def_str_epoch" + str(1) + ".pkl")
+    # game.def_str.append("def_str_epoch" + str(1) + ".pkl")
+    game.add_def_str("def_str_epoch" + str(1) + ".pkl")
+
+
+
+# def rand_att_str_generator_uniform(game):
+#     def act_att(ob, mask, training_flag, stochastic=True, update_eps=-1):
+#         if training_flag != 1:
+#             raise ValueError("training flag for uniform att str is not 1")
+#         legal_action = np.where(mask == 0)[0]
+#         return np.random.choice(legal_action)
+#
+#     # return act_att
+#     fp.save_pkl(act_att, DIR_att + "att_str_epoch" + str(1) + ".pkl")
+#     game.add_att_str("att_str_epoch" + str(1) + ".pkl")
+#
+#
+# def rand_def_str_generator_uniform(game):
+#     def act_def(ob, mask, training_flag, stochastic=True, update_eps=-1):
+#         if training_flag != 0:
+#             raise ValueError("training flag for uniform def str is not 0")
+#         legal_action = np.where(mask == 0)[0]
+#         return np.random.choice(legal_action)
+#
+#     # return act_def
+#     fp.save_pkl(act_def, DIR_def + "def_str_epoch" + str(1) + ".pkl")
+#     game.add_def_str("def_str_epoch" + str(1) + ".pkl")
+
+
+
+
+
+
+
+
+
 
