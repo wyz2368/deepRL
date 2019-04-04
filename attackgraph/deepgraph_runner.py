@@ -66,36 +66,42 @@ def run(HADO=False, load_env=None, env_name=None):
     game_path = os.getcwd() + '/game_data/game.pkl'
     fp.save_pkl(game, game_path)
 
-
+    print("=======================================================")
+    print("===============Begin Running DO-EGTA===================")
+    print("=======================================================")
     # DO-EGTA
     while True:
 
         # fix opponent strategy
         mix_str_def = game.nasheq[epoch][0]
         mix_str_att = game.nasheq[epoch][1]
+        aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
         # increase epoch
         epoch += 1
+        print("Current epoch is " + str(epoch))
 
         # train and save RL agents
+        print("Begin training attacker......")
         training.training_att(game, mix_str_def, epoch)
+        print("Attacker training done......")
+        print("Begin training defender......")
         training.training_def(game, mix_str_att, epoch)
+        print("Defender training done......")
 
         # Judge beneficial deviation
-        aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
         # one plays nn and another plays ne strategy
-        #TODO: set flag to env
-        #TODO: length of str_set and mixed strategy does not match.
+        print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
         nn_att = "att_str_epoch" + str(epoch) + ".pkl"
         nn_def = mix_str_def
         a_BD, _ = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
+        print("Simulation done.")
+
+        print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
         nn_att = mix_str_att
         nn_def = "def_str_epoch" + str(epoch) + ".pkl"
         _, d_BD = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
-
-        game.def_str.append("def_str_epoch" + str(epoch) + ".pkl")
-        game.att_str.append("att_str_epoch" + str(epoch) + ".pkl")
-
+        print("Simulation done.")
 
         #TODO: This may lead to early stop.
         if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
@@ -105,16 +111,23 @@ def run(HADO=False, load_env=None, env_name=None):
             print("*************************")
             break
 
+        game.add_att_str("att_str_epoch" + str(epoch) + ".pkl")
+        game.add_def_str("def_str_epoch" + str(epoch) + ".pkl")
 
         # simulate and extend the payoff matrix.
+        print("Begin extending payoff matrix.")
         sim_Series.sim_and_modifiy_Series_with_game(game)
+        print("Extension finished.")
 
         # find nash equilibrium using gambit analysis
         payoffmatrix_def = game.payoffmatrix_def
         payoffmatrix_att = game.payoffmatrix_att
+        print("Begin Gambit analysis.")
         nash_att, nash_def = ga.do_gambit_analysis(payoffmatrix_def, payoffmatrix_att)
         ga.add_new_NE(game, nash_att, nash_def, epoch)
         fp.save_pkl(game, game_path)
+        print("Round_" + str(epoch) + " has done and game was saved.")
+        print("=======================================================")
 
 
 

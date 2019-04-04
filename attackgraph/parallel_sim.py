@@ -3,6 +3,7 @@ import numpy as np
 import random
 import copy
 import os
+from attackgraph import file_op as fp
 from attackgraph.uniform_str_init import act_def, act_att
 import tensorflow as tf
 from baselines.deepq.load_action import load_action, load_action_class
@@ -28,9 +29,11 @@ def parallel_sim(env, game, nn_att, nn_def, num_episodes):
 
 
 def single_sim(param): #single for single episode.
-    # TODO: APIs have been changed.
+    # TODO: Dealing with uniform str
     aReward = 0
     dReward = 0
+    def_uniform_flag = False
+    att_uniform_flag = False
 
     G, game, attacker, nn_att, defender, nn_def, T = param
 
@@ -48,24 +51,43 @@ def single_sim(param): #single for single episode.
         str_set = game.def_str
         nn_def = np.random.choice(str_set, p=nn_def)
 
+    if "epoch1" in nn_att:
+        att_uniform_flag = True
+    if "epoch1" in nn_def:
+        def_uniform_flag = True
 
     path = os.getcwd() + "/attacker_strategies/" + nn_att
-    training_flag = 1
-    nn_att, sess1, graph1 = load_action_class(path,game,training_flag)
+    if att_uniform_flag:
+        nn_att = fp.load_pkl(path)
+    else:
+        training_flag = 1
+        nn_att, sess1, graph1 = load_action_class(path,game,training_flag)
+
     path = os.getcwd() + "/defender_strategies/" + nn_def
-    training_flag = 0
-    nn_def, sess2, graph2 = load_action_class(path,game,training_flag)
+    if def_uniform_flag:
+        nn_def = fp.load_pkl(path)
+    else:
+        training_flag = 0
+        nn_def, sess2, graph2 = load_action_class(path,game,training_flag)
 
 
 
     for t in range(T):
         timeleft = T - t
-        with graph1.as_default():
-            with sess1.as_default():
-                attacker.att_greedy_action_builder_single(G, timeleft, nn_att)
-        with graph2.as_default():
-            with sess2.as_default():
-                defender.def_greedy_action_builder_single(G, timeleft, nn_def)
+        if att_uniform_flag:
+            attacker.att_greedy_action_builder_single(G, timeleft, nn_att)
+        else:
+            with graph1.as_default():
+                with sess1.as_default():
+                    attacker.att_greedy_action_builder_single(G, timeleft, nn_att)
+
+        if def_uniform_flag:
+            defender.def_greedy_action_builder_single(G, timeleft, nn_def)
+        else:
+            with graph2.as_default():
+                with sess2.as_default():
+                    defender.def_greedy_action_builder_single(G, timeleft, nn_def)
+
         att_action_set = attacker.attact
         def_action_set = defender.defact
         # print('att:', att_action_set)

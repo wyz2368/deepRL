@@ -117,12 +117,13 @@ import os
 # print(c)
 # print(np.random.choice(c))
 
-a = fp.load_pkl(os.getcwd() + '/attacker_strategies/' + "att_str_epoch" + str(1) + ".pkl")
-# a = fp.load_pkl(os.getcwd() + '/defender_strategies/' + "def_str_epoch" + str(1) + ".pkl")
+# a = fp.load_pkl(os.getcwd() + '/attacker_strategies/' + "att_str_epoch" + str(1) + ".pkl")
+# # a = fp.load_pkl(os.getcwd() + '/defender_strategies/' + "def_str_epoch" + str(1) + ".pkl")
+#
+# print(a(1,np.array([0,0,0,0,0,0]), 1))
 
-print(a(1,np.array([0,0,0,0,0,0]), 1))
-
-
+a = 'def_str_epoch1'
+print("epoch1" in a)
 
 
 

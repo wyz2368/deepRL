@@ -62,7 +62,7 @@ def decode_gambit_file():
     return nash_att, nash_def
 
 def do_gambit_analysis(poDef, poAtt):
-    timeout = 3600
+    timeout = 600
     encode_gambit_file(poDef, poAtt) #TODO:change timeout adaptive
     while True:
         gambit_analysis(timeout)
