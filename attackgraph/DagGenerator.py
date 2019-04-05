@@ -10,7 +10,7 @@ from attackgraph import file_op as fp
 class Environment(object):
     #TODO: all representations are logically sorted.！！！！
     #TODO: use random label. Move random label to simulation.
-    def __init__(self, num_attr_N = 11, num_attr_E = 4, T=100, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
+    def __init__(self, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
         self.num_attr_N = num_attr_N
         self.num_attr_E = num_attr_E
         self.T = T
@@ -76,23 +76,21 @@ class Environment(object):
     # TODO: root node must be AND node.
     def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=10, NmaxACost=10, EmaxACost=10):
         # Exception handling
-        try:
-            if self.numRoot + self.numGoals > self.numNodes:
-                raise Exception("(Number of root nodes) + (Number of goal nodes) cannot exceed total number of nodes.")
-        except Exception as error:
-            print(repr(error))
-            return 1
-        try:
-            maxEdges = (self.numNodes-1)*(self.numNodes)/2
-            if self.numEdges > maxEdges:
-                raise Exception("For a graph with " + str(self.numNodes) + " nodes, there can be a maximum of " + str(int(maxEdges)) + " edges.")
-        except Exception as error:
-            print(repr(error))
-            return 1
+        # try:
+        #     if self.numRoot + self.numGoals > self.numNodes:
+        #         raise Exception("(Number of root nodes) + (Number of goal nodes) cannot exceed total number of nodes.")
+        # except Exception as error:
+        #     print(repr(error))
+        #     return 1
+
+        maxEdges = (self.numNodes-1)*(self.numNodes)/2
+        if self.numEdges > maxEdges:
+            raise Exception("For a graph with " + str(self.numNodes) + " nodes, there can be a maximum of " + str(int(maxEdges)) + " edges.")
+
 
         self.G = nx.gnp_random_graph(self.numNodes, 1, directed=True) # Create fully connected directed Erdos-Renyi graph.
         self.G = nx.DiGraph([(u,v) for (u,v) in self.G.edges() if u<v], horizon = self.T, id = self.graphid) # Drop all edges (u,v) where edge u<v to enforce acyclic graph property.
-        rootNodes = random.sample(range(1,self.numNodes-1),self.numRoot-1) # Given the parameter self.numRoot, pick self.numRoot-1 random root IDs.
+        rootNodes = random.sample(range(1,self.numNodes-1), self.numRoot-1) # Given the parameter self.numRoot, pick self.numRoot-1 random root IDs.
                                                                  # Node 0 will also always be root. Last node (ID:self.numNodes) cannot be root node.
         goalNodes = random.sample(list(set(range(1,self.numNodes))-set(rootNodes)),self.numGoals) # Randomly pick GoalNodes
 
@@ -122,13 +120,15 @@ class Environment(object):
                 else:
                     self.setType_N(nodeID, 0)
                 self.setActivationType_N(nodeID, np.random.randint(2))
-            self.setState_N(nodeID, np.random.randint(2))
+            self.setState_N(nodeID, 0)
             self.setAReward_N(nodeID, np.random.uniform(0, NmaxAReward))
             self.setDPenalty_N(nodeID, -np.random.uniform(0, NmaxDPenalty))
             self.setDCost_N(nodeID, -np.random.uniform(0, NmaxDCost))
             self.setACost_N(nodeID, -np.random.uniform(0, NmaxACost))
             self.setposActiveProb_N(nodeID, np.random.uniform(0, 1))
             self.setposInactiveProb_N(nodeID, np.random.uniform(0, 1))
+            self.setActProb_N(nodeID, np.random.uniform(0, 1))
+
         # Nodes must start with id = 1
         self.G = nx.relabel_nodes(self.G, dict(zip(self.G.nodes, list(np.asarray(list(self.G.nodes)) + 1))))
         # This messes with the ordering of the edges; fix is below:

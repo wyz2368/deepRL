@@ -12,4 +12,4 @@ import random
 
 env = dag.env_rand_gen_and_save("test_env")
 print(env.G.nodes.data())
-print(env.G.edges)
+print(env.G.edges.data())
