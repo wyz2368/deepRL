@@ -10,6 +10,6 @@ import random
 # print(env.G.nodes.data())
 # print(env.G.edges)
 
-env = dag.env_rand_gen_and_save("test_env")
-print(env.G.nodes.data())
-print(env.G.edges.data())
+# env = dag.env_rand_gen_and_save("test_env")
+# print(env.G.nodes)
+# print(env.G.edges)

@@ -12,9 +12,8 @@ class Attacker(object):
         self.attact = set()
         self.ORedges = oredges
         self.ANDnodes = andnodes
-        self.actionspace = actionspace #TODO: When to update?
+        self.actionspace = actionspace
 
-    # TODO: nn should input mask!!!!!!!
     def att_greedy_action_builder(self, G, timeleft):
         self.attact.clear()
         isDup = False
@@ -39,10 +38,8 @@ class Attacker(object):
         mask = np.array([self.get_att_canAttack_mask(G)], dtype=np.float32)
         while not isDup:
             att_input = self.att_obs_constructor(G, timeleft)
+            # print(att_input)
             x = nn_att(att_input[None], mask, 1)[0] #corrensponding to baselines
-            # print(self.actionspace)
-            # print(type(x))
-            # print(x)
             action = self.actionspace[x]
             if action == 'pass':
                 break

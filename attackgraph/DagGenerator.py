@@ -14,7 +14,6 @@ class Environment(object):
         self.num_attr_N = num_attr_N
         self.num_attr_E = num_attr_E
         self.T = T
-        self.current_time = 0
         self.epoch = 0
         self.graphid = graphid
         self.G = nx.DiGraph(horizon = T, id = graphid)
@@ -74,7 +73,7 @@ class Environment(object):
                          actProb=1.0) # probability of successfully activating, for OR node only
 
     # TODO: root node must be AND node.
-    def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=10, NmaxACost=10, EmaxACost=10):
+    def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=3, NmaxACost=3, EmaxACost=3):
         # Exception handling
         # try:
         #     if self.numRoot + self.numGoals > self.numNodes:
@@ -120,14 +119,15 @@ class Environment(object):
                 else:
                     self.setType_N(nodeID, 0)
                 self.setActivationType_N(nodeID, np.random.randint(2))
+
             self.setState_N(nodeID, 0)
             self.setAReward_N(nodeID, np.random.uniform(0, NmaxAReward))
             self.setDPenalty_N(nodeID, -np.random.uniform(0, NmaxDPenalty))
             self.setDCost_N(nodeID, -np.random.uniform(0, NmaxDCost))
             self.setACost_N(nodeID, -np.random.uniform(0, NmaxACost))
-            self.setposActiveProb_N(nodeID, np.random.uniform(0, 1))
-            self.setposInactiveProb_N(nodeID, np.random.uniform(0, 1))
-            self.setActProb_N(nodeID, np.random.uniform(0, 1))
+            self.setposActiveProb_N(nodeID, np.random.uniform(0.5, 1))
+            self.setposInactiveProb_N(nodeID, np.random.uniform(0, 0.5))
+            self.setActProb_N(nodeID, np.random.uniform(0.5, 1))
 
         # Nodes must start with id = 1
         self.G = nx.relabel_nodes(self.G, dict(zip(self.G.nodes, list(np.asarray(list(self.G.nodes)) + 1))))
@@ -140,10 +140,10 @@ class Environment(object):
 
         # Set random edge attributes
         for edgeID, edge in enumerate(self.G.edges):
-            self.setid_E(edge, edgeID)
+            self.setid_E(edge, edgeID) # Edge ID could be random
             self.setType_E(edge, np.random.randint(2))
             self.setACost_E(edge, -np.random.uniform(0, EmaxACost))
-            self.setActProb_E(edge, np.random.uniform(0, 1))
+            self.setActProb_E(edge, np.random.uniform(0.5, 1))
 
         # TODO: remove the first line. Check if G has been initialized.
     def specifiedDAG(self, attributesDict):
@@ -709,10 +709,10 @@ class Environment(object):
 
     def reset_everything(self):
         #TODO: Does not finish.
-        self.current_time = 0
         self.reset_graph()
         self.attacker.reset_att()
         self.defender.reset_def()
+        self.training_flag = -1
 
 
     #other APIs similar to OpenAI gym
@@ -739,16 +739,14 @@ class Environment(object):
     def set_random_label(self,label):
         self.random_label = label
 
-    def set_current_time(self,time):
-        self.current_time = time
 
-def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=100, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
+def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
     env = Environment(num_attr_N = num_attr_N, num_attr_E = num_attr_E, T=T, graphid=graphid, numNodes=numNodes, numEdges=numEdges, numRoot=numRoot, numGoals=numGoals, history = history)
     env.randomDAG()
     path = os.getcwd() + "/env_data/" + env_name + ".pkl"
-    print(path)
-    if fp.isExist(path):
-        raise ValueError("Env with such name already exists.")
+    print("env path is ", path)
+    # if fp.isExist(path):
+    #     raise ValueError("Env with such name already exists.")
     fp.save_pkl(env,path)
     print(env_name + " has been saved.")
     return env

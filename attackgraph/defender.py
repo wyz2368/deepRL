@@ -50,9 +50,6 @@ class Defender(object):
             x = nn_def(def_input[None], mask, 0)[0] #corrensponding to baselines
             if not isinstance(x, np.int64):
                 raise ValueError("The chosen action is not an integer.")
-            # print(action_space)
-            # print(type(x))
-            # print(x)
             action = action_space[x] # x starting from 0.
             if action == 'pass':
                 break

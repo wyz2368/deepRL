@@ -3,11 +3,12 @@ from attackgraph import file_op as fp
 # from attackgraph.uniform_str_init import act_def, act_att
 # import math
 import os
+
 # # import networkx as nx
 # # import random
 # # import itertools
-# # import time
-# # import training
+import time
+# import training
 # # import tensorflow as tf
 # import pickle as pk
 
@@ -95,14 +96,14 @@ import os
 
 # from baselines.deepq.deepq import learn
 
-# str_set = ['1.pkl', '2.pkl', '3.pkl']
-# mix_str = np.array([0.3,0.3,0.4])
-# identity = 0
-# for i in range(10):
-#     np.random.seed(5)
+str_set = ['1.pkl', '2.pkl', '3.pkl']
+mix_str = np.array([0.3,0.3,0.4])
+identity = 0
+# for i in range(1):
+#     # np.random.seed(5)
 #     # picked_str = np.random.choice(str_set,p=mix_str)
 #     # # print(picked_str)
-#     np.random.seed()
+#     # np.random.seed()
 #     picked_str = np.random.choice(str_set,p=mix_str)
 #     picked_str1 = np.random.choice(str_set, p=mix_str)
 #     picked_str2 = np.random.choice(str_set, p=mix_str)
@@ -110,6 +111,9 @@ import os
 #     print('None1:', picked_str1)
 #     print('None2:', picked_str2)
 #     print('*****')
+
+# mix_str = np.random.choice(str_set,p=mix_str)
+# print(isinstance(mix_str,str))
 
 # a = [0,0,0,0,0,0,0,0,0,0]
 # b = np.array(a)
@@ -122,15 +126,22 @@ import os
 #
 # print(a(1,np.array([0,0,0,0,0,0]), 1))
 
-a = 'def_str_epoch1'
-print("epoch1" in a)
+# path = os.getcwd() + '/gambit_data/test.pkl'
+#
+# a = 3
+# fp.save_pkl(a,path)
+# time.sleep(60)
+# b= fp.load_pkl(path)
+# print(b)
 
+# a = np.array([0.3,0.4,2,3])
+# b = [a]*5
+#
+# print(type(b[0]))
 
-
-
-
-
-
+a = np.array([[0,1,0,1]])
+b = np.where(a[0]==0)[0]
+print(b)
 
 
 

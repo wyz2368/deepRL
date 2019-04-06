@@ -5,20 +5,12 @@ import copy
 import os
 from attackgraph import file_op as fp
 from attackgraph.uniform_str_init import act_def, act_att
-import tensorflow as tf
-from baselines.deepq.load_action import load_action, load_action_class
-import time
-print(os.getcwd())
+from baselines.deepq.load_action import load_action_class
 
-#TODO: create different copy of env.
-#TODO: fix one set of strategies.
-#TODO: check [nn]*num_episodes
-#TODO: nn should change to mixed strategy
-#TODO: API has been changed.
+# print(os.getcwd())
+
 def parallel_sim(env, game, nn_att, nn_def, num_episodes):
-    # nn_att and nn_def are strings.
-    if not isinstance(nn_att,str) or not isinstance(nn_def,str):
-        raise ValueError("nn in parallel_sim is not a string.")
+
     G_list, att_list, def_list = copy_env(env, num_episodes)
     arg = list(zip(G_list,[game]*num_episodes, att_list,[nn_att]*num_episodes,def_list,[nn_def]*num_episodes,[env.T]*num_episodes))
     with mp.Pool() as pool:
@@ -35,6 +27,8 @@ def single_sim(param): #single for single episode.
     def_uniform_flag = False
     att_uniform_flag = False
 
+    #nn_att and nn_def here can be either np.ndarray or str. np.ndarray represents a mixed strategy.
+    # A str represents the name of a strategy.
     G, game, attacker, nn_att, defender, nn_def, T = param
 
     if isinstance(nn_att, np.ndarray) and isinstance(nn_def, str):
@@ -53,6 +47,7 @@ def single_sim(param): #single for single episode.
 
     if "epoch1" in nn_att:
         att_uniform_flag = True
+
     if "epoch1" in nn_def:
         def_uniform_flag = True
 
@@ -91,7 +86,7 @@ def single_sim(param): #single for single episode.
         att_action_set = attacker.attact
         def_action_set = defender.defact
         # print('att:', att_action_set)
-        # print('def:',def_action_set)
+        # print('def:', def_action_set)
         for attack in att_action_set:
             if isinstance(attack, tuple):
                 # check OR node
@@ -113,6 +108,8 @@ def single_sim(param): #single for single episode.
                 aReward += G.nodes[node]['aReward']
                 dReward += G.nodes[node]['dPenalty']
 
+    # print(aReward)
+    print(dReward)
     return aReward, dReward
 
 def get_Targets(G):
