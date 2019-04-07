@@ -2,7 +2,7 @@ import numpy as np
 from attackgraph import file_op as fp
 from baselines.common import models
 import os
-from baselines.deepq.deepq import learn_multi_nets
+from baselines.deepq.deepq import learn_multi_nets, Learner
 
 DIR = os.getcwd() + '/'
 DIR_def = os.getcwd() + '/defender_strategies/'
@@ -33,17 +33,20 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
     if not fp.isExist(path + picked_str):
         raise ValueError('The strategy picked does not exist!')
 
+    flag = env.training_flag
     env.set_training_flag(identity)
 
+    learner = Learner()
+    with learner.graph.as_default():
+        with learner.sess.as_default():
+            act = learn_multi_nets(
+                env,
+                network=models.mlp(num_hidden=256, num_layers=1), #TODO: hard coding.
+                total_timesteps=0,
+                load_path= path + picked_str
+            )
 
-    # #TODO: assign nn info from game. Hard coding netowork structure.
-    # TODO: Does this really work? Maybe yes in testENV.
-    act = learn_multi_nets(
-        env,
-        network=models.mlp(num_hidden=256, num_layers=1),
-        total_timesteps=0,
-        load_path= path + picked_str
-    )
+    env.set_training_flag(flag)
 
     return act
 

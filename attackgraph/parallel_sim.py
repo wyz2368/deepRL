@@ -109,7 +109,7 @@ def single_sim(param): #single for single episode.
                 dReward += G.nodes[node]['dPenalty']
 
     # print(aReward)
-    print(dReward)
+    # print(dReward)
     return aReward, dReward
 
 def get_Targets(G):

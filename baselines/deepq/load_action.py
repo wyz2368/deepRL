@@ -31,3 +31,4 @@ def load_action_class(path, game, training_flag):
         load_path=path
     )
     return act, learner.sess, learner.graph
+

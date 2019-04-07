@@ -15,6 +15,7 @@ from attackgraph.sample_strategy import sample_strategy_from_mixed
 from attackgraph.parallel_sim import parallel_sim
 from attackgraph import file_op as fp
 from attackgraph import training
+import copy
 
 env = dag.Environment(numNodes=5, numEdges=4, numRoot=2, numGoals=1)
 
@@ -55,7 +56,17 @@ env.save_graph_copy()
 # print(env.G.edges.data())
 # set_global_seed(5)
 env.create_players()
-game = game_data.Game_data(env,4,256,[256,256],400)
+game = game_data.Game_data(env,4,256,[256,256],400,0.1)
+
+def co(game):
+    env1 = copy.deepcopy(game.env)
+    env1.set_training_flag(6)
+    game.env.set_training_flag(7)
+    print(env1.training_flag)
+    print(game.env.training_flag)
+    print(env1.training_flag is game.env.training_flag)
+
+co(game)
 
 #test attacker
 # print(env.attacker.ORedges)

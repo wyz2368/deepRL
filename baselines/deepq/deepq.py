@@ -307,7 +307,7 @@ def learn(env,
                 mask_t = np.zeros(shape=(1, num_actions), dtype=np.float32)
             elif training_flag == 1:
                 # mask_t should be a function of obs
-                mask_t = mask_generator_att(env, obs)
+                mask_t = mask_generator_att(env, np.array(obs)[None]) # TODO: add one dim
             else:
                 raise ValueError("training flag error!")
 
@@ -315,7 +315,7 @@ def learn(env,
             #TODO: Modification done.
             env_action = action
             reset = False
-            new_obs, rew, done, _ = env.step(env_action)
+            new_obs, rew, done = env.step(env_action)
             # Store transition in the replay buffer.
             replay_buffer.add(obs, action, rew, new_obs, float(done))
             obs = new_obs
@@ -485,12 +485,14 @@ def learn_multi_nets(env,
         set_global_seeds(seed)
 
         training_flag = env.training_flag
+
         if training_flag == 0:
             num_actions = env.act_dim_def()
         elif training_flag == 1:
             num_actions = env.act_dim_att()
         else:
             raise ValueError("Training flag error!")
+
 
         q_func = build_q_func(network, **network_kwargs)
 
@@ -593,7 +595,7 @@ def learn_multi_nets(env,
                     mask_t = np.zeros(shape=(1, num_actions), dtype=np.float32)
                 elif training_flag == 1:
                     # mask_t should be a function of obs
-                    mask_t = mask_generator_att(env, obs)
+                    mask_t = mask_generator_att(env, np.array(obs)[None]) #TODO: add one dim
                 else:
                     raise ValueError("training flag error!")
 
@@ -601,7 +603,7 @@ def learn_multi_nets(env,
                 #TODO: Modification done.
                 env_action = action
                 reset = False
-                new_obs, rew, done, _ = env.step(env_action)
+                new_obs, rew, done = env.step(env_action)
                 # Store transition in the replay buffer.
                 replay_buffer.add(obs, action, rew, new_obs, float(done))
                 obs = new_obs
@@ -881,7 +883,7 @@ class Learner(object):
                             mask_t = np.zeros(shape=(1, num_actions), dtype=np.float32)
                         elif training_flag == 1:
                             # mask_t should be a function of obs
-                            mask_t = mask_generator_att(env, obs)
+                            mask_t = mask_generator_att(env, np.array(obs)[None]) #TODO: add one dim to obs
                         else:
                             raise ValueError("training flag error!")
 
@@ -889,7 +891,7 @@ class Learner(object):
                         # TODO: Modification done.
                         env_action = action
                         reset = False
-                        new_obs, rew, done, _ = env.step(env_action)
+                        new_obs, rew, done = env.step(env_action)
                         # Store transition in the replay buffer.
                         replay_buffer.add(obs, action, rew, new_obs, float(done))
                         obs = new_obs

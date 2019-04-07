@@ -6,6 +6,7 @@ import random
 from attackgraph import attacker
 from attackgraph import defender
 from attackgraph import file_op as fp
+import copy
 
 class Environment(object):
     #TODO: all representations are logically sorted.！！！！
@@ -14,6 +15,7 @@ class Environment(object):
         self.num_attr_N = num_attr_N
         self.num_attr_E = num_attr_E
         self.T = T
+        self.current_time = 0
         self.epoch = 0
         self.graphid = graphid
         self.G = nx.DiGraph(horizon = T, id = graphid)
@@ -27,8 +29,6 @@ class Environment(object):
         self.numGoals = numGoals
 
         # defender's and attacker's action space
-        self.actionspace_att = self.get_att_actionspace()
-        self.actionspace_def = self.get_def_actionspace()
 
         #random label: = -1 no one is playing random strategy
         # = 0: defender is playing random strategy
@@ -48,6 +48,10 @@ class Environment(object):
                                           andnodes=andnodes,
                                           actionspace=self.get_att_actionspace())
         self.defender = defender.Defender(self.G)
+
+    def create_action_space(self):
+        self.actionspace_att = self.get_att_actionspace()
+        self.actionspace_def = self.get_def_actionspace()
 
     def daggenerator_wo_attrs(self,nodeset,edgeset):
         # if not self.check_nodes_sorted(nodeset):
@@ -663,7 +667,9 @@ class Environment(object):
             else:
                 self._step_def(true_action)
         elif self.training_flag == 1: # attacker is training.
-            true_action = self.actionspace_att[action]
+            print(len(self.actionspace_att))
+            print(self.actionspace_att)
+            true_action = self.actionspace_att[action] #TODO: list index out of range
             if true_action == 'pass':
                 self.current_time += 1
                 if self.current_time < self.T:
@@ -679,10 +685,10 @@ class Environment(object):
     #reset the environment, G_reserved is a copy of the initial env
     def save_graph_copy(self):
         #TODO: test if G is initialized.
-        self.G_reserved = self.G.copy()
+        self.G_reserved = copy.deepcopy(self.G)
 
     def reset_graph(self):
-        self.G = self.G_reserved.copy()
+        self.G = copy.deepcopy(self.G_reserved)
 
     def reset_everything_with_return(self):
         #TODO: Does not finish.
@@ -709,6 +715,7 @@ class Environment(object):
 
     def reset_everything(self):
         #TODO: Does not finish.
+        self.current_time = 0
         self.reset_graph()
         self.attacker.reset_att()
         self.defender.reset_def()
@@ -739,6 +746,8 @@ class Environment(object):
     def set_random_label(self,label):
         self.random_label = label
 
+    def set_current_time(self,time):
+        self.current_time = time
 
 def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
     env = Environment(num_attr_N = num_attr_N, num_attr_E = num_attr_E, T=T, graphid=graphid, numNodes=numNodes, numEdges=numEdges, numRoot=numRoot, numGoals=numGoals, history = history)

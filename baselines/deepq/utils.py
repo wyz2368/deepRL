@@ -2,6 +2,7 @@ from baselines.common.input import observation_input
 from baselines.common.tf_util import adjust_shape
 import numpy as np
 import tensorflow as tf
+import copy
 
 # ================================================================
 # Placeholders
@@ -68,9 +69,10 @@ def mask_generator_att(env, obses):
     batch_size = np.shape(obses)[0]
     num_nodes = env.G.number_of_nodes()
     mask = []
+    G_cur = copy.deepcopy(env.G_reserved)
+
     for i in np.arange(batch_size):
         state = obses[i][:num_nodes]
-        G_cur = env.G_reserved.copy()
         for j in G_cur.nodes:
             G_cur.nodes[j]['state'] = state[j-1]
 
