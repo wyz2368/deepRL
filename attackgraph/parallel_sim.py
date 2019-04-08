@@ -13,6 +13,7 @@ def parallel_sim(env, game, nn_att, nn_def, num_episodes):
 
     G_list, att_list, def_list = copy_env(env, num_episodes)
     arg = list(zip(G_list,[game]*num_episodes, att_list,[nn_att]*num_episodes,def_list,[nn_def]*num_episodes,[env.T]*num_episodes))
+
     with mp.Pool() as pool:
         r = pool.map_async(single_sim, arg)
         a = r.get()
@@ -65,8 +66,6 @@ def single_sim(param): #single for single episode.
         training_flag = 0
         nn_def, sess2, graph2 = load_action_class(path,game,training_flag)
 
-
-
     for t in range(T):
         timeleft = T - t
         if att_uniform_flag:
@@ -109,7 +108,7 @@ def single_sim(param): #single for single episode.
                 dReward += G.nodes[node]['dPenalty']
 
     # print(aReward)
-    # print(dReward)
+    # print(aReward, dReward)
     return aReward, dReward
 
 def get_Targets(G):
@@ -127,7 +126,7 @@ def copy_env(env, num_episodes):
     def_list = []
     env.reset_everything()
     for _ in np.arange(num_episodes):
-        G_list.append(env.G_reserved.copy())
+        G_list.append(copy.deepcopy(env.G_reserved))
         att_list.append(copy.deepcopy(env.attacker))
         def_list.append(copy.deepcopy(env.defender))
 

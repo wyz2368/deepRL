@@ -91,6 +91,12 @@ def initialize():
     get_session().run(tf.variables_initializer(new_variables))
     ALREADY_INITIALIZED.update(new_variables)
 
+def initialize_with_sess(sess):
+    """Initialize all the uninitialized variables in the global scope."""
+    new_variables = set(tf.global_variables()) - ALREADY_INITIALIZED
+    sess.run(tf.variables_initializer(new_variables))
+    ALREADY_INITIALIZED.update(new_variables)
+
 # ================================================================
 # Model components
 # ================================================================

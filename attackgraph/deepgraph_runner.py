@@ -16,9 +16,11 @@ from attackgraph import util
 from attackgraph import game_data
 from attackgraph import sample_strategy as ss
 from attackgraph import gambit_analysis as ga
+from attackgraph.simulation import series_sim
 
 from baselines.deepq import deepq
-from baselines.deepq import load_action
+from baselines.deepq.load_action import load_action_class
+
 
 
 
@@ -60,7 +62,8 @@ def initialize(load_env=None, env_name=None):
     # simulate using random strategies and initialize payoff matrix
     t1 = time.time()
     # aReward, dReward = parallel_sim.parallel_sim(env, game, act_att, act_def, game.num_episodes)
-    aReward, dReward = -10, -10
+    aReward, dReward = series_sim(env, game, act_att, act_def, game.num_episodes)
+    # aReward, dReward = -10, -10
     print("Time for uniform sim:",time.time()-t1)
     game.init_payoffmatrix(dReward, aReward)
     ne = {}
@@ -72,13 +75,17 @@ def initialize(load_env=None, env_name=None):
     game_path = os.getcwd() + '/game_data/game.pkl'
     fp.save_pkl(game, game_path)
 
+
+
     return env, game
 
 def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl'):
     #TODO: check length of str_set mismatch
+
     print("=======================================================")
     print("===============Begin Running DO-EGTA===================")
     print("=======================================================")
+
     while True:
         # fix opponent strategy
         mix_str_def = game.nasheq[epoch][0]
@@ -90,32 +97,34 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         print("Current epoch is " + str(epoch))
 
         # train and save RL agents
-        # t1 = time.time()
+
         print("Begin training attacker......")
         training.training_att(game, mix_str_def, epoch)
         print("Attacker training done......")
-        # t2 = time.time()
-        # print('time_att:',t1-t2)
-        # t3 = time.time()
+
+
+        # path2 = os.getcwd() + '/attacker_strategies/att_str_epoch2.pkl'
+        # nn_att, sess1, graph1 = load_action_class(path2, game, 1)
+
         print("Begin training defender......")
         training.training_def(game, mix_str_att, epoch)
         print("Defender training done......")
-        # t4 = time.time()
-        # print('time_def:', t4-t3)
+
         #
         # Judge beneficial deviation
         # one plays nn and another plays ne strategy
         print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
         nn_att = "att_str_epoch" + str(epoch) + ".pkl"
         nn_def = mix_str_def
-        a_BD, _ = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
-        print("Simulation done.")
-        #
-        # print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
-        # nn_att = mix_str_att
-        # nn_def = "def_str_epoch" + str(epoch) + ".pkl"
-        # _, d_BD = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
-        # print("Simulation done.")
+        a_BD, _ = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+        print(a_BD)
+        print("Simulation done for a_BD.")
+
+        print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
+        nn_att = mix_str_att
+        nn_def = "def_str_epoch" + str(epoch) + ".pkl"
+        _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+        print("Simulation done for d_BD.")
         #
         # #TODO: This may lead to early stop.
         # if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
@@ -125,13 +134,13 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         #     print("*************************")
         #     break
         #
-        # game.add_att_str("att_str_epoch" + str(epoch) + ".pkl")
-        # game.add_def_str("def_str_epoch" + str(epoch) + ".pkl")
-        #
-        # # simulate and extend the payoff matrix.
-        # print("Begin extending payoff matrix.")
-        # sim_Series.sim_and_modifiy_Series_with_game(game)
-        # print("Extension finished.")
+        game.add_att_str("att_str_epoch" + str(epoch) + ".pkl")
+        game.add_def_str("def_str_epoch" + str(epoch) + ".pkl")
+
+        # simulate and extend the payoff matrix.
+        print("Begin extending payoff matrix.")
+        sim_Series.sim_and_modifiy_Series_with_game(game)
+        print("Extension finished.")
         #
         # # find nash equilibrium using gambit analysis
         # payoffmatrix_def = game.payoffmatrix_def

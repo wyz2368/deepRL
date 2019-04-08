@@ -3,6 +3,7 @@ import numpy as np
 from baselines.deepq.load_action import load_action
 from attackgraph import file_op as fp
 import os
+from attackgraph.simulation import series_sim
 
 
 # #TODO: make sure every
@@ -77,7 +78,7 @@ def sim_and_modifiy_Series():
         str_path_att = dir_att + att_str_list[idx_att]
         nn_def = load_action(str_path_def, game, 0)
         nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = parallel_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
@@ -87,7 +88,7 @@ def sim_and_modifiy_Series():
         str_path_att = dir_att + att_str_list[idx_att]
         nn_def = load_action(str_path_def, game, 0)
         nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = parallel_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -142,7 +143,7 @@ def sim_and_modifiy_Series_with_game(game):
         str_path_att = dir_att + att_str_list[idx_att]
         nn_def = load_action(str_path_def, game, 0)
         nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = parallel_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
@@ -152,7 +153,7 @@ def sim_and_modifiy_Series_with_game(game):
         str_path_att = dir_att + att_str_list[idx_att]
         nn_def = load_action(str_path_def, game, 0)
         nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = parallel_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -161,5 +162,5 @@ def sim_and_modifiy_Series_with_game(game):
     game.add_row_att(np.array(att_row))
     game.add_row_def(np.array(def_row))
 
-    fp.save_pkl(game, path = path)
+    # fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")

@@ -1,44 +1,104 @@
 import random
 import numpy as np
+from baselines.deepq.load_action import load_action_class
+import copy
+import os
+from attackgraph import file_op as fp
 
 
-def simulation(env, attacker, nn_att, defender, nn_def, num_episodes):
-    #TODO: APIs have been changed.
+def series_sim(env, game, nn_att, nn_def, num_episodes):
     aReward_list = np.array([])
     dReward_list = np.array([])
 
     for i in range(num_episodes): #can be run parallel
+
+        G = copy.deepcopy(env.G_reserved)
+        attacker = copy.deepcopy(env.attacker)
+        defender = copy.deepcopy(env.defender)
+        T = env.T
+
         aReward = 0
         dReward = 0
-        env.G.reset()
-        attacker.reset_att()
-        defender.reset_def()
-        for t in range(env.T):
-            timeleft = env.T - t
-            attacker.att_greedy_action_builder_single(env.G, timeleft, nn_att)
+        def_uniform_flag = False
+        att_uniform_flag = False
+
+        # nn_att and nn_def here can be either np.ndarray or str. np.ndarray represents a mixed strategy.
+        # A str represents the name of a strategy.
+
+        if isinstance(nn_att, np.ndarray) and isinstance(nn_def, str):
+            str_set = game.att_str
+            nn_att = np.random.choice(str_set, p=nn_att)
+
+        if isinstance(nn_att, str) and isinstance(nn_def, np.ndarray):
+            str_set = game.def_str
+            nn_def = np.random.choice(str_set, p=nn_def)
+
+        if isinstance(nn_att, np.ndarray) and isinstance(nn_def, np.ndarray):
+            str_set = game.att_str
+            nn_att = np.random.choice(str_set, p=nn_att)
+            str_set = game.def_str
+            nn_def = np.random.choice(str_set, p=nn_def)
+
+        if "epoch1" in nn_att:
+            att_uniform_flag = True
+
+        if "epoch1" in nn_def:
+            def_uniform_flag = True
+
+        path = os.getcwd() + "/attacker_strategies/" + nn_att
+        if att_uniform_flag:
+            nn_att_act = fp.load_pkl(path)
+        else:
+            training_flag = 1
+            nn_att_act, sess1, graph1 = load_action_class(path, game, training_flag)
+
+        path = os.getcwd() + "/defender_strategies/" + nn_def
+        if def_uniform_flag:
+            nn_def_act = fp.load_pkl(path)
+        else:
+            training_flag = 0
+            nn_def_act, sess2, graph2 = load_action_class(path, game, training_flag)
+
+        for t in range(T):
+            timeleft = T - t
+            if att_uniform_flag:
+                attacker.att_greedy_action_builder_single(G, timeleft, nn_att_act)
+            else:
+                with graph1.as_default():
+                    with sess1.as_default():
+                        attacker.att_greedy_action_builder_single(G, timeleft, nn_att_act)
+
+            if def_uniform_flag:
+                defender.def_greedy_action_builder_single(G, timeleft, nn_def_act)
+            else:
+                with graph2.as_default():
+                    with sess2.as_default():
+                        defender.def_greedy_action_builder_single(G, timeleft, nn_def_act)
+
             att_action_set = attacker.attact
-            defender.def_greedy_action_builder_single(env.G, timeleft, nn_def)
             def_action_set = defender.defact
+            # print('att:', att_action_set)
+            # print('def:', def_action_set)
             for attack in att_action_set:
                 if isinstance(attack, tuple):
                     # check OR node
-                    aReward += env.G.edges[attack]['cost']
-                    if random.uniform(0, 1) <= env.G.edges[attack]['actProb']:
-                        env.G.nodes[attack[-1]]['state'] = 1
+                    aReward += G.edges[attack]['cost']
+                    if random.uniform(0, 1) <= G.edges[attack]['actProb']:
+                        G.nodes[attack[-1]]['state'] = 1
                 else:
                     # check AND node
-                    aReward += env.G.nodes[attack]['aCost']
-                    if random.uniform(0, 1) <= env.G.nodes[attack]['actProb']:
-                        env.G.nodes[attack]['state'] = 1
+                    aReward += G.nodes[attack]['aCost']
+                    if random.uniform(0, 1) <= G.nodes[attack]['actProb']:
+                        G.nodes[attack]['state'] = 1
             # defender's action
             for node in def_action_set:
-                env.G.nodes[node]['state'] = 0
-                dReward += env.G.nodes[node]['dCost']
-            _, targetset = env.get_Targets()
+                G.nodes[node]['state'] = 0
+                dReward += G.nodes[node]['dCost']
+            _, targetset = get_Targets(G)
             for node in targetset:
-                if env.G.nodes[node]['state'] == 1:
-                    aReward += env.G.nodes[node]['aReward']
-                    dReward += env.G.nodes[node]['dPenalty']
+                if G.nodes[node]['state'] == 1:
+                    aReward += G.nodes[node]['aReward']
+                    dReward += G.nodes[node]['dPenalty']
 
         aReward_list = np.append(aReward_list,aReward)
         dReward_list = np.append(dReward_list,dReward)
@@ -46,3 +106,11 @@ def simulation(env, attacker, nn_att, defender, nn_def, num_episodes):
     return np.mean(aReward_list), np.mean(dReward_list)
 
 
+def get_Targets(G):
+    count = 0
+    targetset = set()
+    for node in G.nodes:
+        if G.nodes[node]['type'] == 1:
+            count += 1
+            targetset.add(node)
+    return count,targetset

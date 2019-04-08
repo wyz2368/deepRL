@@ -704,7 +704,6 @@ class Learner(object):
         self.graph = tf.Graph()
         self.sess = tf.Session(graph=self.graph)
 
-
     def learn_multi_nets(self,
                          env,
                          network,
