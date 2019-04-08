@@ -568,11 +568,11 @@ class Environment(object):
 
     # attact and defact are attack set and defence set#
     #TODO: construct opponent's action set, change return to numpy
-    def _step(self,done = False):
+    def _step(self, done = False):
         # immediate reward for both players
         aReward = 0
         dReward = 0
-        #TODO: set nn_def or nn_att first. Sample from mixed strategy.
+        #TODO: set nn_def or nn_att first. Sample from mixed strategy for each episode.
         #TODO: check the logic of saving act to prev_act
         if self.training_flag == 0: # If the defender is training, attacker builds greedy set. Vice Versa.
             self.attacker.att_greedy_action_builder(self.G, self.T - self.current_time)
@@ -661,23 +661,27 @@ class Environment(object):
             if true_action == 'pass':
                 self.current_time += 1
                 if self.current_time < self.T: #TODO:Check the logics
-                    self._step()
+                    new_obs, rew, done = self._step()
+                    return new_obs, rew, done
                 else:
-                    self._step(done=True) #TODO: check if reset is right. Reset all agents and return done.
+                    new_obs, rew, done = self._step(done=True) #TODO: check if reset is right. Reset all agents and return done.
+                    return new_obs, rew, done
             else:
-                self._step_def(true_action)
+                new_obs, rew, done = self._step_def(true_action)
+                return new_obs, rew, done
         elif self.training_flag == 1: # attacker is training.
-            print(len(self.actionspace_att))
-            print(self.actionspace_att)
             true_action = self.actionspace_att[action] #TODO: list index out of range
             if true_action == 'pass':
                 self.current_time += 1
                 if self.current_time < self.T:
-                    self._step()
+                    new_obs, rew, done = self._step()
+                    return new_obs, rew, done
                 else:
-                    self._step(done=True)
+                    new_obs, rew, done = self._step(done=True)
+                    return new_obs, rew, done
             else:
-                self._step_att(true_action)
+                new_obs, rew, done = self._step_att(true_action)
+                return new_obs, rew, done
         else:
             raise ValueError("In step function, training_flag is invalid.")
 

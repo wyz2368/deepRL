@@ -268,6 +268,14 @@ def learn(env,
     obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
     reset = True
 
+    if total_timesteps != 0:
+        if training_flag == 0:  # defender is training
+            env.attacker.sample_and_set_str()
+        elif training_flag == 1:  # attacker is training
+            env.defender.sample_and_set_str()
+        else:
+            raise ValueError("Training flag is wrong")
+
     with tempfile.TemporaryDirectory() as td:
         td = checkpoint_path or td
 
@@ -325,6 +333,14 @@ def learn(env,
                 obs = env.reset_everything_with_return()
                 episode_rewards.append(0.0)
                 reset = True
+                if total_timesteps != 0:
+                    if training_flag == 0:  # defender is training
+                        env.attacker.sample_and_set_str()
+                    elif training_flag == 1:  # attacker is training
+                        env.defender.sample_and_set_str()
+                    else:
+                        raise ValueError("Training flag is wrong")
+
 
             if t > learning_starts and t % train_freq == 0:
                 # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
@@ -556,6 +572,17 @@ def learn_multi_nets(env,
         obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
         reset = True
 
+        # TODO: Sample from mixed strategy for each episode.
+        if total_timesteps != 0:
+            if training_flag == 0: # defender is training
+                env.attacker.sample_and_set_str()
+            elif training_flag == 1: # attacker is training
+                env.defender.sample_and_set_str()
+            else:
+                raise ValueError("Training flag is wrong")
+
+        # TODO: Done
+
         with tempfile.TemporaryDirectory() as td:
             td = checkpoint_path or td
 
@@ -613,6 +640,13 @@ def learn_multi_nets(env,
                     obs = env.reset_everything_with_return()
                     episode_rewards.append(0.0)
                     reset = True
+                    if total_timesteps != 0:
+                        if training_flag == 0:  # defender is training
+                            env.attacker.sample_and_set_str()
+                        elif training_flag == 1:  # attacker is training
+                            env.defender.sample_and_set_str()
+                        else:
+                            raise ValueError("Training flag is wrong")
 
                 if t > learning_starts and t % train_freq == 0:
                     # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
@@ -844,6 +878,14 @@ class Learner(object):
                 obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
                 reset = True
 
+                if total_timesteps != 0:
+                    if training_flag == 0:  # defender is training
+                        env.attacker.sample_and_set_str()
+                    elif training_flag == 1:  # attacker is training
+                        env.defender.sample_and_set_str()
+                    else:
+                        raise ValueError("Training flag is wrong")
+
                 with tempfile.TemporaryDirectory() as td:
                     td = checkpoint_path or td
 
@@ -851,11 +893,11 @@ class Learner(object):
                     model_saved = False
 
                     if tf.train.latest_checkpoint(td) is not None:
-                        load_variables(model_file)
+                        load_variables(model_file, sess=self.sess)
                         logger.log('Loaded model from {}'.format(model_file))
                         model_saved = True
                     elif load_path is not None:
-                        load_variables(load_path)
+                        load_variables(load_path, sess=self.sess)
                         logger.log('Loaded model from {}'.format(load_path))
 
                     for t in range(total_timesteps):
@@ -901,6 +943,13 @@ class Learner(object):
                             obs = env.reset_everything_with_return()
                             episode_rewards.append(0.0)
                             reset = True
+                            if total_timesteps != 0:
+                                if training_flag == 0:  # defender is training
+                                    env.attacker.sample_and_set_str()
+                                elif training_flag == 1:  # attacker is training
+                                    env.defender.sample_and_set_str()
+                                else:
+                                    raise ValueError("Training flag is wrong")
 
                         if t > learning_starts and t % train_freq == 0:
                             # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
@@ -949,7 +998,7 @@ class Learner(object):
                     if model_saved:
                         if print_freq is not None:
                             logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
-                        load_variables(model_file)
+                        load_variables(model_file, sess=self.sess)
 
         return act
 

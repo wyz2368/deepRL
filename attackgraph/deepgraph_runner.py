@@ -59,7 +59,8 @@ def initialize(load_env=None, env_name=None):
 
     # simulate using random strategies and initialize payoff matrix
     t1 = time.time()
-    aReward, dReward = parallel_sim.parallel_sim(env, game, act_att, act_def, game.num_episodes)
+    # aReward, dReward = parallel_sim.parallel_sim(env, game, act_att, act_def, game.num_episodes)
+    aReward, dReward = -10, -10
     print("Time for uniform sim:",time.time()-t1)
     game.init_payoffmatrix(dReward, aReward)
     ne = {}

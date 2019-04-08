@@ -99,7 +99,7 @@ class Defender(object):
             self.prev_defact = self.prev_defact[-self.history:]
 
     def save_defact2prev(self):
-        print("Don't forget to update defact after save_defact2prev.")
+        # print("Don't forget to update defact after save_defact2prev.")
         self.prev_defact.append(self.defact)
         self.cut_prev_defact()
 

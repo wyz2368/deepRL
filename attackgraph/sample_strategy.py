@@ -3,6 +3,7 @@ from attackgraph import file_op as fp
 from baselines.common import models
 import os
 from baselines.deepq.deepq import learn_multi_nets, Learner
+from attackgraph import uniform_str_init
 
 DIR = os.getcwd() + '/'
 DIR_def = os.getcwd() + '/defender_strategies/'
@@ -32,6 +33,10 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
 
     if not fp.isExist(path + picked_str):
         raise ValueError('The strategy picked does not exist!')
+
+    if "epoch1" in picked_str:
+        act = fp.load_pkl(path + picked_str)
+        return act
 
     flag = env.training_flag
     env.set_training_flag(identity)
