@@ -31,6 +31,7 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
     else:
         raise ValueError("identity is neither 0 or 1!")
 
+    print(path + picked_str)
     if not fp.isExist(path + picked_str):
         raise ValueError('The strategy picked does not exist!')
 

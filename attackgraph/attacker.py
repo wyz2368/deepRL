@@ -186,5 +186,5 @@ class Attacker(object):
 
     # TODO: call this once one episode is done.
     def sample_and_set_str(self):
-        nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=0)
+        nn = ss.sample_strategy_from_mixed(env=self.myenv, str_set=self.str_set, mix_str=self.mix_str, identity=1)
         self.set_current_strategy(nn)

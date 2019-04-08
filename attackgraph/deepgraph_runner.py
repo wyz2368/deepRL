@@ -42,7 +42,7 @@ def initialize(load_env=None, env_name=None):
     env.create_action_space()
 
     # initialize game data
-    game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=100, threshold=0.1)
+    game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=10, threshold=0.1)
     game.set_hado_param(param=(4, 0.7, 0.286))
     game.env.defender.set_env_belong_to(game.env)
     game.env.attacker.set_env_belong_to(game.env)
@@ -90,20 +90,26 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         print("Current epoch is " + str(epoch))
 
         # train and save RL agents
+        # t1 = time.time()
         print("Begin training attacker......")
         training.training_att(game, mix_str_def, epoch)
         print("Attacker training done......")
-        # print("Begin training defender......")
-        # training.training_def(game, mix_str_att, epoch)
-        # print("Defender training done......")
+        # t2 = time.time()
+        # print('time_att:',t1-t2)
+        # t3 = time.time()
+        print("Begin training defender......")
+        training.training_def(game, mix_str_att, epoch)
+        print("Defender training done......")
+        # t4 = time.time()
+        # print('time_def:', t4-t3)
         #
-        # # Judge beneficial deviation
-        # # one plays nn and another plays ne strategy
-        # print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
-        # nn_att = "att_str_epoch" + str(epoch) + ".pkl"
-        # nn_def = mix_str_def
-        # a_BD, _ = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
-        # print("Simulation done.")
+        # Judge beneficial deviation
+        # one plays nn and another plays ne strategy
+        print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
+        nn_att = "att_str_epoch" + str(epoch) + ".pkl"
+        nn_def = mix_str_def
+        a_BD, _ = parallel_sim.parallel_sim(env, game, nn_att, nn_def, game.num_episodes)
+        print("Simulation done.")
         #
         # print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
         # nn_att = mix_str_att
