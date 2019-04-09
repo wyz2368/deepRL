@@ -1,6 +1,6 @@
 from attackgraph.parallel_sim import parallel_sim
 import numpy as np
-from baselines.deepq.load_action import load_action
+from baselines.deepq.load_action import load_action, load_action_class
 from attackgraph import file_op as fp
 import os
 from attackgraph.simulation import series_sim
@@ -55,8 +55,6 @@ def sim_and_modifiy_Series():
 
     def_str_list = game.def_str
     att_str_list = game.att_str
-    dir_def = game.dir_def
-    dir_att = game.dir_att
 
     position_col_list = []
     position_row_list = []
@@ -65,8 +63,6 @@ def sim_and_modifiy_Series():
     for j in range(new_dim):
         position_row_list.append((new_dim-1,j))
 
-    # num_tasks = 2 * new_dim - 1
-
     att_col = []
     att_row = []
     def_col = []
@@ -74,21 +70,13 @@ def sim_and_modifiy_Series():
     #TODO: check the path is correct
     for pos in position_col_list:
         idx_def, idx_att = pos
-        str_path_def = dir_def + def_str_list[idx_def]
-        str_path_att = dir_att + att_str_list[idx_att]
-        nn_def = load_action(str_path_def, game, 0)
-        nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
     for pos in position_row_list:
         idx_def, idx_att = pos
-        str_path_def = dir_def + def_str_list[idx_def]
-        str_path_att = dir_att + att_str_list[idx_att]
-        nn_def = load_action(str_path_def, game, 0)
-        nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -106,8 +94,6 @@ def sim_and_modifiy_Series_with_game(game):
     #TODO: make sure this is correct
 
     print('Begin simulation and modify payoff matrix.')
-    path = os.getcwd() + '/game_data/game.pkl'
-    # game = fp.load_pkl(path)
 
     env = game.env
     num_episodes = game.num_episodes
@@ -120,8 +106,6 @@ def sim_and_modifiy_Series_with_game(game):
 
     def_str_list = game.def_str
     att_str_list = game.att_str
-    dir_def = game.dir_def
-    dir_att = game.dir_att
 
     position_col_list = []
     position_row_list = []
@@ -139,21 +123,13 @@ def sim_and_modifiy_Series_with_game(game):
     #TODO: check the path is correct
     for pos in position_col_list:
         idx_def, idx_att = pos
-        str_path_def = dir_def + def_str_list[idx_def]
-        str_path_att = dir_att + att_str_list[idx_att]
-        nn_def = load_action(str_path_def, game, 0)
-        nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
     for pos in position_row_list:
         idx_def, idx_att = pos
-        str_path_def = dir_def + def_str_list[idx_def]
-        str_path_att = dir_att + att_str_list[idx_att]
-        nn_def = load_action(str_path_def, game, 0)
-        nn_att = load_action(str_path_att, game, 0)
-        aReward, dReward = series_sim(env, nn_att, nn_def, num_episodes)
+        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -164,3 +140,4 @@ def sim_and_modifiy_Series_with_game(game):
 
     # fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")
+    return game

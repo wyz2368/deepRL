@@ -138,9 +138,8 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         game.add_def_str("def_str_epoch" + str(epoch) + ".pkl")
 
         # simulate and extend the payoff matrix.
-        print("Begin extending payoff matrix.")
-        sim_Series.sim_and_modifiy_Series_with_game(game)
-        print("Extension finished.")
+        game = sim_Series.sim_and_modifiy_Series_with_game(game)
+
         #
         # # find nash equilibrium using gambit analysis
         # payoffmatrix_def = game.payoffmatrix_def

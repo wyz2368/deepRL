@@ -143,18 +143,12 @@ identity = 0
 # b = np.where(a[0]==0)[0]
 # print(b)
 
-import copy
+a = 3
+def addi(a):
+    a += 5
 
-a = [1, 2, 3, 4, ['a', 'b']]  # 原始对象
-
-b = a  # 赋值，传对象的引用
-c = a.copy()  # 对象拷贝，浅拷贝
-d = copy.deepcopy(a)  # 对象拷贝，深拷贝
-
-a.append(5)  # 修改对象a
-a[4].append('c')  # 修改对象a中的['a', 'b']数组对象
-
-print(c)
+addi(a)
+print(a)
 
 
 
