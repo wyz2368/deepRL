@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 import os
 import time
+import sys
 
 # Modules import
 from attackgraph import DagGenerator as dag
@@ -75,8 +76,7 @@ def initialize(load_env=None, env_name=None):
     game_path = os.getcwd() + '/game_data/game.pkl'
     fp.save_pkl(game, game_path)
 
-
-
+    # sys.stdout.flush()
     return env, game
 
 def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl'):
@@ -153,6 +153,10 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         print("=======================================================")
         # break
         count -= 1
+
+    #     sys.stdout.flush() #TODO: make sure this is correct.
+    #
+    # os._exit(os.EX_OK)
 
 
 if __name__ == '__main__':

@@ -268,7 +268,7 @@ def learn(env,
 
     episode_rewards = [0.0]
     saved_mean_reward = None
-    obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
+    # obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
     reset = True
 
     if total_timesteps != 0:
@@ -278,6 +278,8 @@ def learn(env,
             env.defender.sample_and_set_str()
         else:
             raise ValueError("Training flag is wrong")
+
+    obs = env.reset_everything_with_return()
 
     with tempfile.TemporaryDirectory() as td:
         td = checkpoint_path or td
@@ -574,7 +576,7 @@ def learn_multi_nets(env,
 
         episode_rewards = [0.0]
         saved_mean_reward = None
-        obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
+        # obs = env.reset_everything_with_return() #TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
         reset = True
 
         # TODO: Sample from mixed strategy for each episode.
@@ -587,6 +589,8 @@ def learn_multi_nets(env,
                 env.defender.sample_and_set_str()
             else:
                 raise ValueError("Training flag is wrong")
+
+        obs = env.reset_everything_with_return()
 
         # TODO: Done
 
@@ -886,7 +890,7 @@ class Learner(object):
 
                 episode_rewards = [0.0]
                 saved_mean_reward = None
-                obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
+                # obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
                 reset = True
 
 
@@ -898,15 +902,17 @@ class Learner(object):
                     if training_flag == 0:  # defender is training
                         env.attacker.sample_and_set_str()
                         print("Model loaded successfully.")
-                        if np.sum(env.attacker.mix_str) == 1:
+                        if len(np.where(env.attacker.mix_str>0.95)[0]) == 1:
                             one_hot_att == True
                     elif training_flag == 1:  # attacker is training
                         env.defender.sample_and_set_str()
                         print("Model loaded successfully.")
-                        if np.sum(env.defender.mix_str) == 1:
+                        if len(np.where(env.defender.mix_str>0.95)[0]) == 1:
                             one_hot_def == True
                     else:
                         raise ValueError("Training flag is wrong")
+
+                obs = env.reset_everything_with_return()
 
 
                 print('def2:', env.obs_dim_def())

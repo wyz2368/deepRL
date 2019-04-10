@@ -630,6 +630,7 @@ class Environment(object):
             canAttack, inAttackSet = self.attacker.get_att_canAttack_inAttackSet(self.G)
             self.attacker.update_canAttack(canAttack)
             # inAttackSet should be all zeros, we can check this.
+            # print('_step_obs:', len(self.attacker.observation), 'canAttack:', len(canAttack), 'inAttack:', len(inAttackSet))
             return np.array(self.attacker.observation + canAttack + inAttackSet + [self.T - self.current_time]), aReward, done
         else:
             raise ValueError("Training flag is set abnormally.")
@@ -638,9 +639,10 @@ class Environment(object):
     def _step_att(self, action):
         immediatereward = 0
         self.attacker.attact.add(action)
-        _, inAttackset = self.attacker.get_att_canAttack_inAttackSet(self.G)
+        canAttack, inAttackset = self.attacker.get_att_canAttack_inAttackSet(self.G)
         # Notice that canAttack is updated in the _step.
-        return np.array(self.attacker.observation + self.attacker.canAttack + inAttackset + [self.T - self.current_time]), \
+        # print('_step_att_obs:', len(self.attacker.observation), 'canAttack:', len(self.attacker.canAttack), 'inAttack:', len(inAttackset))
+        return np.array(self.attacker.observation + canAttack + inAttackset + [self.T - self.current_time]), \
                immediatereward, False
 
     def _step_def(self, action):
