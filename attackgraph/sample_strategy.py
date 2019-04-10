@@ -2,7 +2,7 @@ import numpy as np
 from attackgraph import file_op as fp
 from baselines.common import models
 import os
-from baselines.deepq.deepq import learn_multi_nets, Learner
+from baselines.deepq.deepq import learn_multi_nets, Learner, learn
 from attackgraph import uniform_str_init
 
 DIR = os.getcwd() + '/'
@@ -42,61 +42,63 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
     flag = env.training_flag
     env.set_training_flag(identity)
 
-    learner = Learner()
-    with learner.graph.as_default():
-        with learner.sess.as_default():
-            act = learn_multi_nets(
-                env,
-                network=models.mlp(num_hidden=256, num_layers=1), #TODO: hard coding.
-                total_timesteps=0,
-                load_path= path + picked_str
-            )
+    # learner = Learner()
+    # with learner.graph.as_default():
+        # with learner.sess.as_default():
+
+    act = learn(
+        env,
+        network=models.mlp(num_hidden=256, num_layers=1), #TODO: hard coding.
+        total_timesteps=0,
+        load_path= path + picked_str,
+        scope = picked_str + '/'
+    )
 
     env.set_training_flag(flag)
 
     return act
 
-def sample_both_strategies(env, att_str_set, att_mix_str, def_str_set, def_mix_str):
-
-    if not len(att_str_set) == len(att_mix_str):
-        raise ValueError("Length of mixed strategies does not match number of strategies for the attacker.")
-    if not len(def_str_set) == len(def_mix_str):
-        raise ValueError("Length of mixed strategies does not match number of strategies for the defender.")
-
-    att_picked_str = np.random.choice(att_str_set, p=att_mix_str)
-    def_picked_str = np.random.choice(def_str_set, p=def_mix_str)
-
-    if not fp.isInName('.pkl', name=def_picked_str):
-        raise ValueError('The strategy picked is not a pickle file for the defender.')
-    if not fp.isInName('.pkl', name=att_picked_str):
-        raise ValueError('The strategy picked is not a pickle file for the attacker.')
-
-    path_def = DIR + 'defender_strategies/'
-    path_att = DIR + 'attacker_strategies/'
-
-    if not fp.isExist(path_def + def_picked_str):
-        raise ValueError('The strategy picked does not exist for the defender!')
-    if not fp.isExist(path_att + att_picked_str):
-        raise ValueError('The strategy picked does not exist for the attacker!')
-
-    # TODO: assign nn info from game
-    env.set_training_flag(0)
-    act_att = learn_multi_nets(
-        env,
-        network=models.mlp(num_hidden=256, num_layers=1),
-        total_timesteps=0,
-        load_path=path_att + att_picked_str
-    )
-
-    env.set_training_flag(1)
-    act_def = learn_multi_nets(
-        env,
-        network=models.mlp(num_hidden=256, num_layers=1),
-        total_timesteps=0,
-        load_path= path_def + def_picked_str
-    )
-
-    return act_att, act_def
+# def sample_both_strategies(env, att_str_set, att_mix_str, def_str_set, def_mix_str):
+#
+#     if not len(att_str_set) == len(att_mix_str):
+#         raise ValueError("Length of mixed strategies does not match number of strategies for the attacker.")
+#     if not len(def_str_set) == len(def_mix_str):
+#         raise ValueError("Length of mixed strategies does not match number of strategies for the defender.")
+#
+#     att_picked_str = np.random.choice(att_str_set, p=att_mix_str)
+#     def_picked_str = np.random.choice(def_str_set, p=def_mix_str)
+#
+#     if not fp.isInName('.pkl', name=def_picked_str):
+#         raise ValueError('The strategy picked is not a pickle file for the defender.')
+#     if not fp.isInName('.pkl', name=att_picked_str):
+#         raise ValueError('The strategy picked is not a pickle file for the attacker.')
+#
+#     path_def = DIR + 'defender_strategies/'
+#     path_att = DIR + 'attacker_strategies/'
+#
+#     if not fp.isExist(path_def + def_picked_str):
+#         raise ValueError('The strategy picked does not exist for the defender!')
+#     if not fp.isExist(path_att + att_picked_str):
+#         raise ValueError('The strategy picked does not exist for the attacker!')
+#
+#     # TODO: assign nn info from game
+#     env.set_training_flag(0)
+#     act_att = learn_multi_nets(
+#         env,
+#         network=models.mlp(num_hidden=256, num_layers=1),
+#         total_timesteps=0,
+#         load_path=path_att + att_picked_str
+#     )
+#
+#     env.set_training_flag(1)
+#     act_def = learn_multi_nets(
+#         env,
+#         network=models.mlp(num_hidden=256, num_layers=1),
+#         total_timesteps=0,
+#         load_path= path_def + def_picked_str
+#     )
+#
+#     return act_att, act_def
 
 #TODO: check the input dim of nn and check if this could initialize nn.
 #TODO: check when to set training flag

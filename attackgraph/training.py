@@ -1,6 +1,6 @@
 from baselines import deepq
 from baselines.common import models
-from baselines.deepq.deepq import learn_multi_nets
+from baselines.deepq.deepq import learn_multi_nets, Learner
 import os
 import copy
 #TODO: improvement can be done by not including all RL strategies.
@@ -26,23 +26,26 @@ def training_att(game, mix_str_def, epoch):
     num_layers = game.num_layers
     num_hidden = game.num_hidden
 
-    #TODO: Do we need graph and session?
-    act_att = learn_multi_nets(
-        env,
-        network = models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
-        lr = 5e-5,
-        total_timesteps=1000,
-        exploration_fraction=0.5,
-        exploration_final_eps=0.03,
-        print_freq=250,
-        param_noise=False,
-        gamma=0.99,
-        prioritized_replay=True,
-        checkpoint_freq=30000
-    )
-    print("Saving attacker's model to pickle.")
-    act_att.save(DIR_att + "att_str_epoch" + str(epoch) + ".pkl")
-    # game.att_str.append("att_str_epoch" + str(epoch) + ".pkl")
+    learner = Learner()
+    with learner.graph.as_default():
+        with learner.sess.as_default():
+            act_att = learner.learn_multi_nets(
+                env,
+                network = models.mlp(num_hidden=num_hidden, num_layers=num_layers-3),
+                lr = 5e-5,
+                total_timesteps=1000,
+                exploration_fraction=0.5,
+                exploration_final_eps=0.03,
+                print_freq=250,
+                param_noise=False,
+                gamma=0.99,
+                prioritized_replay=True,
+                checkpoint_freq=30000,
+                scope = 'att_str_epoch' + str(epoch) + '.pkl' + '/'
+            )
+            print("Saving attacker's model to pickle.")
+            act_att.save(DIR_att + "att_str_epoch" + str(epoch) + ".pkl", 'att_str_epoch' + str(epoch) + '.pkl' + '/')
+    learner.sess.close()
 
 
 
@@ -60,21 +63,25 @@ def training_def(game, mix_str_att, epoch):
     num_layers = game.num_layers
     num_hidden = game.num_hidden
 
-    act_def = learn_multi_nets(
-        env,
-        network = models.mlp(num_hidden=num_hidden,num_layers=num_layers-3),
-        lr = 5e-5,
-        total_timesteps=1000,
-        exploration_fraction=0.5,
-        exploration_final_eps=0.03,
-        print_freq=250,
-        param_noise=False,
-        gamma=0.99,
-        prioritized_replay=True,
-        checkpoint_freq=30000
-    )
-    print("Saving defender's model to pickle.")
-    act_def.save(DIR_def + "def_str_epoch" + str(epoch) + ".pkl")
-    # game.def_str.append("def_str_epoch" + str(epoch) + ".pkl")
+    learner = Learner()
+    with learner.graph.as_default():
+        with learner.sess.as_default():
+            act_def = learner.learn_multi_nets(
+                env,
+                network = models.mlp(num_hidden=num_hidden,num_layers=num_layers-3),
+                lr = 5e-5,
+                total_timesteps=1000,
+                exploration_fraction=0.5,
+                exploration_final_eps=0.03,
+                print_freq=250,
+                param_noise=False,
+                gamma=0.99,
+                prioritized_replay=True,
+                checkpoint_freq=30000,
+                scope = "def_str_epoch" + str(epoch) + '.pkl' + '/'
+            )
+            print("Saving defender's model to pickle.")
+            act_def.save(DIR_def + "def_str_epoch" + str(epoch) + ".pkl", "def_str_epoch" + str(epoch) + '.pkl' + '/')
+    learner.sess.close()
 
 

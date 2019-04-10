@@ -133,10 +133,11 @@ def sim_and_modifiy_Series_with_game(game):
         att_row.append(aReward)
         def_row.append(dReward)
 
+
     game.add_col_att(np.reshape(np.array(att_col),newshape=(len(att_col),1)))
     game.add_col_def(np.reshape(np.array(def_col), newshape=(len(att_col), 1)))
-    game.add_row_att(np.array(att_row))
-    game.add_row_def(np.array(def_row))
+    game.add_row_att(np.array(att_row)[None])
+    game.add_row_def(np.array(def_row)[None])
 
     # fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")

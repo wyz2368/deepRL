@@ -74,8 +74,8 @@ class ActWrapper(object):
         with open(path, "wb") as f:
             cloudpickle.dump((model_data, self._act_params), f)
 
-    def save(self, path):
-        save_variables(path)
+    def save(self, path, scope):
+        save_variables(path, scope=scope)
 
 
 def load_act(path):
@@ -119,6 +119,7 @@ def learn(env,
           param_noise=False,
           callback=None,
           load_path=None,
+          scope='deepq',
           **network_kwargs
             ):
     """Train a deepq model.
@@ -191,10 +192,10 @@ def learn(env,
     # Create all the functions necessary to train the model
 
 
-    # sess = get_session()
+    sess = get_session()
     # tf.reset_default_graph()
-    sess = tf.Session()
-    sess.__enter__()
+    # sess = tf.Session()
+    # sess.__enter__()
 
     set_global_seeds(seed)
 
@@ -232,7 +233,9 @@ def learn(env,
         optimizer=tf.train.AdamOptimizer(learning_rate=lr),
         gamma=gamma,
         grad_norm_clipping=10,
-        param_noise=param_noise
+        param_noise=param_noise,
+        scope=scope
+
     )
 
     act_params = {
@@ -283,11 +286,11 @@ def learn(env,
         model_saved = False
 
         if tf.train.latest_checkpoint(td) is not None:
-            load_variables(model_file)
+            load_variables(model_file, scope=scope)
             logger.log('Loaded model from {}'.format(model_file))
             model_saved = True
         elif load_path is not None:
-            load_variables(load_path)
+            load_variables(load_path, scope=scope)
             logger.log('Loaded model from {}'.format(load_path))
 
 
@@ -383,7 +386,7 @@ def learn(env,
                     if print_freq is not None:
                         logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                    saved_mean_reward, mean_100ep_reward))
-                    save_variables(model_file)
+                    save_variables(model_file, scope=scope)
                     model_saved = True
                     saved_mean_reward = mean_100ep_reward
         if model_saved:
@@ -418,6 +421,7 @@ def learn_multi_nets(env,
           param_noise=False,
           callback=None,
           load_path=None,
+          scope='deepq',
           **network_kwargs
             ):
     """Train a deepq model.
@@ -536,7 +540,8 @@ def learn_multi_nets(env,
             optimizer=tf.train.AdamOptimizer(learning_rate=lr),
             gamma=gamma,
             grad_norm_clipping=10,
-            param_noise=param_noise
+            param_noise=param_noise,
+            scope=scope
         )
 
         act_params = {
@@ -577,6 +582,8 @@ def learn_multi_nets(env,
             if training_flag == 0: # defender is training
                 env.attacker.sample_and_set_str()
             elif training_flag == 1: # attacker is training
+                # print(env.defender.mix_str)
+                # print(env.defender.str_set)
                 env.defender.sample_and_set_str()
             else:
                 raise ValueError("Training flag is wrong")
@@ -689,7 +696,7 @@ def learn_multi_nets(env,
                         if print_freq is not None:
                             logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                        saved_mean_reward, mean_100ep_reward))
-                        save_variables(model_file)
+                        save_variables(model_file, scope=scope)
                         model_saved = True
                         saved_mean_reward = mean_100ep_reward
             if model_saved:
@@ -729,6 +736,7 @@ class Learner(object):
                          param_noise=False,
                          callback=None,
                          load_path=None,
+                         scope='deepq',
                          **network_kwargs
                          ):
         """Train a deepq model.
@@ -829,6 +837,9 @@ class Learner(object):
                 else:
                     raise ValueError("Training flag error!")
 
+                print('def:', env.obs_dim_def())
+                print('att:', env.obs_dim_att())
+
                 def make_obs_ph(name):
                     return U.BatchInput(observation_space_shape, name=name)
 
@@ -841,7 +852,8 @@ class Learner(object):
                     optimizer=tf.train.AdamOptimizer(learning_rate=lr),
                     gamma=gamma,
                     grad_norm_clipping=10,
-                    param_noise=param_noise
+                    param_noise=param_noise,
+                    scope=scope
                 )
 
                 act_params = {
@@ -877,13 +889,30 @@ class Learner(object):
                 obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
                 reset = True
 
+
+
+                one_hot_att = False
+                one_hot_def = False
+
                 if total_timesteps != 0:
                     if training_flag == 0:  # defender is training
                         env.attacker.sample_and_set_str()
+                        print("Model loaded successfully.")
+                        if np.sum(env.attacker.mix_str) == 1:
+                            one_hot_att == True
                     elif training_flag == 1:  # attacker is training
                         env.defender.sample_and_set_str()
+                        print("Model loaded successfully.")
+                        if np.sum(env.defender.mix_str) == 1:
+                            one_hot_def == True
                     else:
                         raise ValueError("Training flag is wrong")
+
+
+                print('def2:', env.obs_dim_def())
+                print('att:2', env.obs_dim_att())
+                print('shape_new:', np.shape(obs))
+
 
                 with tempfile.TemporaryDirectory() as td:
                     td = checkpoint_path or td
@@ -928,11 +957,14 @@ class Learner(object):
                         else:
                             raise ValueError("training flag error!")
 
+                        print('shape:', np.shape(obs), 't:', t)
                         action = act(np.array(obs)[None], mask_t, training_flag, update_eps=update_eps, **kwargs)[0]
                         # TODO: Modification done.
                         env_action = action
                         reset = False
                         new_obs, rew, done = env.step(env_action)
+                        print('shape_newobs:', np.shape(new_obs), 't:', t)
+                        print('done:', done)
                         # Store transition in the replay buffer.
                         replay_buffer.add(obs, action, rew, new_obs, float(done))
                         obs = new_obs
@@ -942,13 +974,14 @@ class Learner(object):
                             obs = env.reset_everything_with_return()
                             episode_rewards.append(0.0)
                             reset = True
-                            if total_timesteps != 0:
-                                if training_flag == 0:  # defender is training
-                                    env.attacker.sample_and_set_str()
-                                elif training_flag == 1:  # attacker is training
-                                    env.defender.sample_and_set_str()
-                                else:
-                                    raise ValueError("Training flag is wrong")
+                            if not one_hot_att and not one_hot_def:
+                                if total_timesteps != 0:
+                                    if training_flag == 0:  # defender is training
+                                        env.attacker.sample_and_set_str()
+                                    elif training_flag == 1:  # attacker is training
+                                        env.defender.sample_and_set_str()
+                                    else:
+                                        raise ValueError("Training flag is wrong")
 
                         if t > learning_starts and t % train_freq == 0:
                             # Minimize the error in Bellman's equation on a batch sampled from replay buffer.
@@ -991,7 +1024,7 @@ class Learner(object):
                                 if print_freq is not None:
                                     logger.log("Saving model due to mean reward increase: {} -> {}".format(
                                         saved_mean_reward, mean_100ep_reward))
-                                save_variables(model_file)
+                                save_variables(model_file, scope=scope)
                                 model_saved = True
                                 saved_mean_reward = mean_100ep_reward
                     if model_saved:

@@ -86,7 +86,8 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
     print("===============Begin Running DO-EGTA===================")
     print("=======================================================")
 
-    while True:
+    count = 2
+    while count != 0:
         # fix opponent strategy
         mix_str_def = game.nasheq[epoch][0]
         mix_str_att = game.nasheq[epoch][1]
@@ -141,16 +142,17 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         game = sim_Series.sim_and_modifiy_Series_with_game(game)
 
         #
-        # # find nash equilibrium using gambit analysis
-        # payoffmatrix_def = game.payoffmatrix_def
-        # payoffmatrix_att = game.payoffmatrix_att
-        # print("Begin Gambit analysis.")
-        # nash_att, nash_def = ga.do_gambit_analysis(payoffmatrix_def, payoffmatrix_att)
-        # ga.add_new_NE(game, nash_att, nash_def, epoch)
-        # fp.save_pkl(game, game_path)
-        # print("Round_" + str(epoch) + " has done and game was saved.")
-        # print("=======================================================")
-        break
+        # find nash equilibrium using gambit analysis
+        payoffmatrix_def = game.payoffmatrix_def
+        payoffmatrix_att = game.payoffmatrix_att
+        print("Begin Gambit analysis.")
+        nash_att, nash_def = ga.do_gambit_analysis(payoffmatrix_def, payoffmatrix_att)
+        ga.add_new_NE(game, nash_att, nash_def, epoch)
+        fp.save_pkl(game, game_path)
+        print("Round_" + str(epoch) + " has done and game was saved.")
+        print("=======================================================")
+        # break
+        count -= 1
 
 
 if __name__ == '__main__':

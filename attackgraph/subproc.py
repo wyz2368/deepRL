@@ -11,11 +11,11 @@ def call_and_wait_with_timeout(command_str, timeout):
         my_process.wait(timeout=timeout_seconds)
     except subprocess.TimeoutExpired:
         print("Process ran more seconds than: " + str(timeout_seconds))
+        os.killpg(os.getpgid(my_process.pid), signal.SIGTERM)
+        print("Subprocess has been killed.")
     sleep_sec = 5
     time.sleep(sleep_sec)
-    # my_process.kill()
-    os.killpg(os.getpgid(my_process.pid), signal.SIGTERM)
-    print("Subprocess has been killed.")
+    my_process.kill()
 
 def call_and_wait(command_str):
     print("Will run:\n" + command_str)

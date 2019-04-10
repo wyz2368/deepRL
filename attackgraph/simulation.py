@@ -50,14 +50,14 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
             nn_att_act = fp.load_pkl(path)
         else:
             training_flag = 1
-            nn_att_act, sess1, graph1 = load_action_class(path, game, training_flag)
+            nn_att_act, sess1, graph1 = load_action_class(path, nn_att, game, training_flag)
 
         path = os.getcwd() + "/defender_strategies/" + nn_def
         if def_uniform_flag:
             nn_def_act = fp.load_pkl(path)
         else:
             training_flag = 0
-            nn_def_act, sess2, graph2 = load_action_class(path, game, training_flag)
+            nn_def_act, sess2, graph2 = load_action_class(path, nn_def, game, training_flag)
 
         for t in range(T):
             timeleft = T - t
