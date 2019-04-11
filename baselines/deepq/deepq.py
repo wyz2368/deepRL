@@ -841,8 +841,6 @@ class Learner(object):
                 else:
                     raise ValueError("Training flag error!")
 
-                print('def:', env.obs_dim_def())
-                print('att:', env.obs_dim_att())
 
                 def make_obs_ph(name):
                     return U.BatchInput(observation_space_shape, name=name)
@@ -915,11 +913,6 @@ class Learner(object):
                 obs = env.reset_everything_with_return()
 
 
-                print('def2:', env.obs_dim_def())
-                print('att:2', env.obs_dim_att())
-                print('shape_new:', np.shape(obs))
-
-
                 with tempfile.TemporaryDirectory() as td:
                     td = checkpoint_path or td
 
@@ -963,14 +956,13 @@ class Learner(object):
                         else:
                             raise ValueError("training flag error!")
 
-                        print('shape:', np.shape(obs), 't:', t)
+
                         action = act(np.array(obs)[None], mask_t, training_flag, update_eps=update_eps, **kwargs)[0]
                         # TODO: Modification done.
                         env_action = action
                         reset = False
                         new_obs, rew, done = env.step(env_action)
-                        print('shape_newobs:', np.shape(new_obs), 't:', t)
-                        print('done:', done)
+
                         # Store transition in the replay buffer.
                         replay_buffer.add(obs, action, rew, new_obs, float(done))
                         obs = new_obs
