@@ -1,6 +1,6 @@
 from attackgraph import json_op as jp
 from baselines.common import models
-from baselines.deepq.deepq import learn_multi_nets, Learner, Learner_retrain
+from baselines.deepq.deepq import learn_multi_nets, Learner
 import os
 import copy
 #TODO: improvement can be done by not including all RL strategies.
@@ -107,7 +107,7 @@ def training_hado_att(game, mix_str_def, epoch):
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
-    learner = Learner_retrain(game)
+    learner = Learner(retrain=True)
     with learner.graph.as_default():
         with learner.sess.as_default():
             act_att = learner.learn_multi_nets(
@@ -147,7 +147,7 @@ def training_hado_def(game, mix_str_att, epoch):
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
-    learner = Learner_retrain(game)
+    learner = Learner(retrain=True)
     with learner.graph.as_default():
         with learner.sess.as_default():
             act_def = learner.learn_multi_nets(

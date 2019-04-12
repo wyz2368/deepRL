@@ -15,6 +15,9 @@ def nn_param():
     param['prioritized_replay'] = True
     param['checkpoint_freq'] = 30000
 
+    #hado
+    param['retrain_timesteps'] = 1000
+
     param_path = os.getcwd() + '/network_parameters/param.json'
     jp.save_json_data(param_path, param)
     print("Network parameters have been saved in a json file successfully.")
