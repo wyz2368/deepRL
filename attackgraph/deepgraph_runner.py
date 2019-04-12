@@ -48,6 +48,7 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     # initialize game data
     game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=10, threshold=0.1)
     game.set_hado_param(param=(4, 0.7, 0.286))
+    game.set_hado_time_step(700000)
     game.env.defender.set_env_belong_to(game.env)
     game.env.attacker.set_env_belong_to(game.env)
 

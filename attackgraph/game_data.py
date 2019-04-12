@@ -34,6 +34,9 @@ class Game_data(object):
     def set_hado_param(self, param):
         self.param = param # k, gamma, alpha = param
 
+    def set_hado_time_step(self, steps):
+        self.hado_time_step = steps
+
     def num_str(self):
         return len(self.att_str), len(self.def_str)
 
@@ -131,4 +134,4 @@ class Game_data(object):
             denom += gamma**(num_str-1-i)
 
         denom += 1
-        return delta/denom
+        return np.round(delta/denom, 2)

@@ -4,41 +4,9 @@ from baselines.deepq.load_action import load_action, load_action_class
 from attackgraph import file_op as fp
 import os
 from attackgraph.simulation import series_sim
+from attackgraph.sim_MPI import do_MPI_sim
 
-
-# #TODO: make sure every
-# def sim_and_modifiy_Series():
-#     print('Begin simulation and modify payoff matrix.')
-#     path = os.getcwd() + '/data/game.pkl'
-#     game = fp.load_pkl(path)
-#     data = sim_and_modifiy(game)
-#
-#     #TODO: modify payoff matrix
-#     old_dim, _ = game.dim_payoff_def()
-#     new_dim, _ = game.num_str()
-#
-#     new_col_def = []
-#     new_row_def = []
-#     new_col_att = []
-#     new_row_att = []
-#
-#     for i in range(old_dim):
-#         aReward_col, dReward_col = data[(i,new_dim-1)]
-#         aReward_row, dReward_row = data[(new_dim - 1,i)]
-#         new_col_def.append([dReward_col])
-#         new_row_def.append(dReward_row)
-#         new_col_att.append([aReward_col])
-#         new_row_att.append(aReward_row)
-#
-#     aReward, dReward = data[(new_dim - 1,new_dim - 1)]
-#     new_row_def.append(dReward)
-#     new_row_att.append(aReward)
-#     print("Done simulation and modify payoff matrix.")
-
-
-
-
-def sim_and_modifiy_Series():
+def sim_and_modifiy_Series(MPI_flag=False):
     #TODO: make sure this is correct
     print('Begin simulation and modify payoff matrix.')
     path = os.getcwd() + '/data/game.pkl'
@@ -70,13 +38,19 @@ def sim_and_modifiy_Series():
     #TODO: check the path is correct
     for pos in position_col_list:
         idx_def, idx_att = pos
-        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
+        if MPI_flag:
+            aReward, dReward = do_MPI_sim(att_str_list[idx_att], def_str_list[idx_def])
+        else:
+            aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
     for pos in position_row_list:
         idx_def, idx_att = pos
-        aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
+        if MPI_flag:
+            aReward, dReward = do_MPI_sim(att_str_list[idx_att], def_str_list[idx_def])
+        else:
+            aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -90,7 +64,7 @@ def sim_and_modifiy_Series():
 
 
 
-def sim_and_modifiy_Series_with_game(game):
+def sim_and_modifiy_Series_with_game(game, MPI_flag=False):
     #TODO: make sure this is correct
 
     print('Begin simulation and modify payoff matrix.')
