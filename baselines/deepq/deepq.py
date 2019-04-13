@@ -23,6 +23,7 @@ from baselines.deepq.utils import mask_generator_att
 
 
 
+
 class ActWrapper(object):
     def __init__(self, act, act_params):
         self._act = act
@@ -584,8 +585,6 @@ def learn_multi_nets(env,
             if training_flag == 0: # defender is training
                 env.attacker.sample_and_set_str()
             elif training_flag == 1: # attacker is training
-                # print(env.defender.mix_str)
-                # print(env.defender.str_set)
                 env.defender.sample_and_set_str()
             else:
                 raise ValueError("Training flag is wrong")
@@ -711,10 +710,11 @@ def learn_multi_nets(env,
     return act
 
 class Learner(object):
-    def __init__(self, retrain = False):
+    def __init__(self, retrain = False, freq=100000):
         self.graph = tf.Graph()
         self.sess = tf.Session(graph=self.graph)
         self.retrain = retrain
+        self.retrain_freq = freq
 
     def learn_multi_nets(self,
                          env,
@@ -837,8 +837,12 @@ class Learner(object):
                 # TODO: make everything smooth.
                 if training_flag == 0:
                     observation_space_shape = [env.obs_dim_def()]
+                    retrain_path = os.getcwd() + '/retrain_def/'
+                    retrain_name = 'def_str_retrain'
                 elif training_flag == 1:
                     observation_space_shape = [env.obs_dim_att()]
+                    retrain_path = os.getcwd() + '/retrain_att/'
+                    retrain_name = 'att_str_retrain'
                 else:
                     raise ValueError("Training flag error!")
 
@@ -1028,11 +1032,18 @@ class Learner(object):
                                 saved_mean_reward = mean_100ep_reward
 
 
+                        if self.retrain and t % self.retrain_freq == 0 and t>1:
+                            retrain_save_path = retrain_path + retrain_name + str(t//self.retrain_freq) + '.pkl'
+                            save_variables(retrain_save_path, scope=scope)
 
                     if model_saved:
                         if print_freq is not None:
                             logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
                         load_variables(model_file, sess=self.sess)
+
+                    if self.retrain:
+                        retrain_save_path = retrain_path + retrain_name + str(t // self.retrain_freq+1) + '.pkl'
+                        save_variables(retrain_save_path, scope=scope)
 
         return act
 

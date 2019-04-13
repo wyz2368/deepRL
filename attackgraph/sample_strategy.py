@@ -58,47 +58,6 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity):
 
     return act
 
-# def sample_both_strategies(env, att_str_set, att_mix_str, def_str_set, def_mix_str):
-#
-#     if not len(att_str_set) == len(att_mix_str):
-#         raise ValueError("Length of mixed strategies does not match number of strategies for the attacker.")
-#     if not len(def_str_set) == len(def_mix_str):
-#         raise ValueError("Length of mixed strategies does not match number of strategies for the defender.")
-#
-#     att_picked_str = np.random.choice(att_str_set, p=att_mix_str)
-#     def_picked_str = np.random.choice(def_str_set, p=def_mix_str)
-#
-#     if not fp.isInName('.pkl', name=def_picked_str):
-#         raise ValueError('The strategy picked is not a pickle file for the defender.')
-#     if not fp.isInName('.pkl', name=att_picked_str):
-#         raise ValueError('The strategy picked is not a pickle file for the attacker.')
-#
-#     path_def = DIR + 'defender_strategies/'
-#     path_att = DIR + 'attacker_strategies/'
-#
-#     if not fp.isExist(path_def + def_picked_str):
-#         raise ValueError('The strategy picked does not exist for the defender!')
-#     if not fp.isExist(path_att + att_picked_str):
-#         raise ValueError('The strategy picked does not exist for the attacker!')
-#
-#     # TODO: assign nn info from game
-#     env.set_training_flag(0)
-#     act_att = learn_multi_nets(
-#         env,
-#         network=models.mlp(num_hidden=256, num_layers=1),
-#         total_timesteps=0,
-#         load_path=path_att + att_picked_str
-#     )
-#
-#     env.set_training_flag(1)
-#     act_def = learn_multi_nets(
-#         env,
-#         network=models.mlp(num_hidden=256, num_layers=1),
-#         total_timesteps=0,
-#         load_path= path_def + def_picked_str
-#     )
-#
-#     return act_att, act_def
 
 #TODO: check the input dim of nn and check if this could initialize nn.
 #TODO: check when to set training flag
@@ -138,29 +97,6 @@ def rand_def_str_generator(env, game):
     game.add_def_str("def_str_epoch" + str(1) + ".pkl")
 
 
-
-# def rand_att_str_generator_uniform(game):
-#     def act_att(ob, mask, training_flag, stochastic=True, update_eps=-1):
-#         if training_flag != 1:
-#             raise ValueError("training flag for uniform att str is not 1")
-#         legal_action = np.where(mask == 0)[0]
-#         return np.random.choice(legal_action)
-#
-#     # return act_att
-#     fp.save_pkl(act_att, DIR_att + "att_str_epoch" + str(1) + ".pkl")
-#     game.add_att_str("att_str_epoch" + str(1) + ".pkl")
-#
-#
-# def rand_def_str_generator_uniform(game):
-#     def act_def(ob, mask, training_flag, stochastic=True, update_eps=-1):
-#         if training_flag != 0:
-#             raise ValueError("training flag for uniform def str is not 0")
-#         legal_action = np.where(mask == 0)[0]
-#         return np.random.choice(legal_action)
-#
-#     # return act_def
-#     fp.save_pkl(act_def, DIR_def + "def_str_epoch" + str(1) + ".pkl")
-#     game.add_def_str("def_str_epoch" + str(1) + ".pkl")
 
 
 

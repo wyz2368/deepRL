@@ -14,3 +14,30 @@ import os
 # print(game.def_str)
 # print(game.payoffmatrix_def)
 # print(game.payoffmatrix_att)
+
+
+# param = (4, 0.7, 0.286)
+# identity = 0
+# nasheq = {}
+# nasheq[1] = {}
+# nasheq[1][0] = np.array([0.2,0.4,0.3,0.1])
+# nasheq[2] = {}
+# nasheq[2][0] = np.array([0.2,0.2,0.3,0.3])
+# nasheq[3] = {}
+# nasheq[3][0] = np.array([0.3,0.5,0.1,0.1])
+# nasheq[4] = {}
+# nasheq[4][0] = np.array([0.1,0.7,0.1,0.1])
+#
+# k, gamma, alpha = param
+# num_str = len(nasheq.keys())
+# delta = nasheq[num_str-1][identity]
+# denom = 0
+# for i in np.arange(num_str-1):
+#     print('i:',i)
+#     delta += gamma**(num_str-1-i)*nasheq[i+1][identity] #TODO: make sure this is correct.
+#     denom += gamma**(num_str-1-i)
+#
+# denom += 1
+# print(type(delta/denom))
+# print(np.round(delta/denom,2))
+# print(num_str)

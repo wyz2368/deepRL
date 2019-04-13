@@ -84,7 +84,7 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     # sys.stdout.flush()
     return env, game
 
-def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
+def DO_EGTA(env, game, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
     #TODO: check length of str_set mismatch
 
     print("=======================================================")
@@ -109,15 +109,21 @@ def DO_EGTA(env, game, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl
         training.training_att(game, mix_str_def, epoch)
         print("Attacker training done......")
 
-
-        # path2 = os.getcwd() + '/attacker_strategies/att_str_epoch2.pkl'
-        # nn_att, sess1, graph1 = load_action_class(path2, game, 1)
+        if retrain:
+            print("Begin retraining attacker......")
+            training.training_hado_att(game, epoch)
+            print("Attacker retraining done......")
 
         print("Begin training defender......")
         training.training_def(game, mix_str_att, epoch)
         print("Defender training done......")
 
-        #
+        if retrain:
+            print("Begin retraining defender......")
+            training.training_hado_def(game, epoch)
+            print("Defender retraining done......")
+
+
         # Judge beneficial deviation
         # one plays nn and another plays ne strategy
         print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
