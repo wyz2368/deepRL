@@ -19,6 +19,7 @@ from attackgraph import sample_strategy as ss
 from attackgraph import gambit_analysis as ga
 from attackgraph.simulation import series_sim
 from attackgraph.sim_MPI import do_MPI_sim
+from attackgraph.sim_retrain import sim_retrain
 
 from baselines.deepq import deepq
 from baselines.deepq.load_action import load_action_class
@@ -84,12 +85,17 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     # sys.stdout.flush()
     return env, game
 
-def DO_EGTA(env, game, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
+def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
     #TODO: check length of str_set mismatch
 
-    print("=======================================================")
-    print("===============Begin Running DO-EGTA===================")
-    print("=======================================================")
+    if retrain:
+        print("=======================================================")
+        print("==============Begin Running HADO-EGTA==================")
+        print("=======================================================")
+    else:
+        print("=======================================================")
+        print("===============Begin Running DO-EGTA===================")
+        print("=======================================================")
 
     count = 2
     # while count != 0:
@@ -106,44 +112,49 @@ def DO_EGTA(env, game, retrain=False, epoch = 1, game_path = os.getcwd() + '/gam
         # train and save RL agents
 
         print("Begin training attacker......")
-        training.training_att(game, mix_str_def, epoch)
+        training.training_att(game, mix_str_def, epoch, retrain=retrain)
         print("Attacker training done......")
 
-        if retrain:
-            print("Begin retraining attacker......")
-            training.training_hado_att(game, epoch)
-            print("Attacker retraining done......")
-
         print("Begin training defender......")
-        training.training_def(game, mix_str_att, epoch)
+        training.training_def(game, mix_str_att, epoch, retrain=retrain)
         print("Defender training done......")
 
-        if retrain:
+        if retrain and epoch > start_hado:
+            print("Begin retraining attacker......")
+            training.training_hado_att(game)
+            print("Attacker retraining done......")
+
             print("Begin retraining defender......")
-            training.training_hado_def(game, epoch)
+            training.training_hado_def(game)
             print("Defender retraining done......")
 
+            # Simulation for retrained strategies and choose the best one as player's strategy.
+            print('Begin retrained sim......')
+            a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, MPI_flag, epoch)
+            print('Done retrained sim......')
 
-        # Judge beneficial deviation
-        # one plays nn and another plays ne strategy
-        print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
-        nn_att = "att_str_epoch" + str(epoch) + ".pkl"
-        nn_def = mix_str_def
-        if MPI_flag:
-            a_BD, _ = do_MPI_sim(nn_att, nn_def)
         else:
-            a_BD, _ = series_sim(env, game, nn_att, nn_def, game.num_episodes)
-        print("Simulation done for a_BD.")
 
-        print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
-        nn_att = mix_str_att
-        nn_def = "def_str_epoch" + str(epoch) + ".pkl"
-        if MPI_flag:
-            _, d_BD = do_MPI_sim(nn_att, nn_def)
-        else:
-            _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
-        print("Simulation done for d_BD.")
-        #
+            # Judge beneficial deviation
+            # one plays nn and another plays ne strategy
+            print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
+            nn_att = "att_str_epoch" + str(epoch) + ".pkl"
+            nn_def = mix_str_def
+            if MPI_flag:
+                a_BD, _ = do_MPI_sim(nn_att, nn_def)
+            else:
+                a_BD, _ = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+            print("Simulation done for a_BD.")
+
+            print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
+            nn_att = mix_str_att
+            nn_def = "def_str_epoch" + str(epoch) + ".pkl"
+            if MPI_flag:
+                _, d_BD = do_MPI_sim(nn_att, nn_def)
+            else:
+                _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+            print("Simulation done for d_BD.")
+
         # #TODO: This may lead to early stop.
         # if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
         #     print("*************************")
@@ -176,9 +187,10 @@ def DO_EGTA(env, game, retrain=False, epoch = 1, game_path = os.getcwd() + '/gam
     # os._exit(os.EX_OK)
 
 
+
 if __name__ == '__main__':
     env, game = initialize(env_name='test_env')
-    DO_EGTA(env, game)
+    EGTA(env, game)
 
 
 

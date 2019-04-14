@@ -21,6 +21,8 @@ from baselines.deepq.models import build_q_func
 
 from baselines.deepq.utils import mask_generator_att
 
+from attackgraph import file_op as fp
+
 
 
 
@@ -891,6 +893,7 @@ class Learner(object):
                 U.initialize()
                 update_target()
 
+                retrain_episode_rewards = []
                 episode_rewards = [0.0]
                 saved_mean_reward = None
                 # obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
@@ -1034,6 +1037,7 @@ class Learner(object):
 
                         if self.retrain and t % self.retrain_freq == 0 and t>1:
                             retrain_save_path = retrain_path + retrain_name + str(t//self.retrain_freq) + '.pkl'
+                            retrain_episode_rewards.append(mean_100ep_reward)
                             save_variables(retrain_save_path, scope=scope)
 
                     if model_saved:
@@ -1043,7 +1047,13 @@ class Learner(object):
 
                     if self.retrain:
                         retrain_save_path = retrain_path + retrain_name + str(t // self.retrain_freq+1) + '.pkl'
+                        retrain_episode_rewards.append(mean_100ep_reward)
                         save_variables(retrain_save_path, scope=scope)
+                        if training_flag == 0:
+                            rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_def.pkl'
+                        else:
+                            rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
+                        fp.save_pkl(retrain_episode_rewards, rew_path)
 
         return act
 

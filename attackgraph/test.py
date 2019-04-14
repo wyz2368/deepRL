@@ -143,12 +143,8 @@ identity = 0
 # b = np.where(a[0]==0)[0]
 # print(b)
 
-a = 3
-def addi(a):
-    a += 5
-
-addi(a)
-print(a)
+a = [2,3,4,1]
+print(np.max(np.array(a)))
 
 
 
