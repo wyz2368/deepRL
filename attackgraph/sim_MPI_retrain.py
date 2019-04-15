@@ -91,14 +91,14 @@ def series_sim(env, game, nn_att, nn_def, size):
         if "epoch1" in nn_def:
             def_uniform_flag = True
 
-        path = os.getcwd() + "/retrained_att/" + nn_att
+        path = os.getcwd() + "/retrain_att/" + nn_att
         if att_uniform_flag:
             nn_att_act = fp.load_pkl(path)
         else:
             training_flag = 1
             nn_att_act, sess1, graph1 = load_action_class(path, nn_att, game, training_flag)
 
-        path = os.getcwd() + "/retrained_def/" + nn_def
+        path = os.getcwd() + "/retrain_def/" + nn_def
         if def_uniform_flag:
             nn_def_act = fp.load_pkl(path)
         else:

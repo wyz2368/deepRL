@@ -118,12 +118,14 @@ class Game_data(object):
 
     def hado_str(self, identity, param):
         k, gamma, alpha = param
-        num_str = len(self.nasheq.keys())
-        delta = self.nasheq[num_str-1][identity]
+        num_ne = len(self.nasheq.keys())
+        delta = self.nasheq[num_ne][identity]
         denom = 0
-        for i in np.arange(num_str-1):
-            delta += gamma**(num_str-1-i)*self.nasheq[i+1][identity] #TODO: make sure this is correct.
-            denom += gamma**(num_str-1-i)
+        for i in np.arange(num_ne-1):
+            temp = self.nasheq[i+1][identity].copy()
+            temp.resize(delta.shape)
+            delta += gamma**(num_ne-1-i)*temp
+            denom += gamma**(num_ne-1-i)
 
         denom += 1
         return np.round(delta/denom, 2)

@@ -18,7 +18,7 @@ def sim_retrain(env, game, mix_str_att, mix_str_def, MPI_flag, epoch):
 def sim_retrain_att(env, game, mix_str_def, MPI_flag, epoch):
     rewards_att = fp.load_pkl(os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl') # reward is np.array([1,2,3,4])
     k, gamma, alpha = game.param
-    DIR = os.getcwd() + '/retrained_att/'
+    DIR = os.getcwd() + '/retrain_att/'
     str_list = [name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name)) and '.pkl' in name]
     num_str = len(str_list)
     util = []
@@ -33,7 +33,7 @@ def sim_retrain_att(env, game, mix_str_def, MPI_flag, epoch):
         util.append(alpha*a_BD+(1-alpha)*rewards_att[i])
 
     best_idx = np.argmax(np.array(util))
-    os.rename(os.getcwd() + '/retrained_att/' + 'att_str_retrain' + str(best_idx) + ".pkl", os.getcwd() + "/attacker_strategies/" + 'att_str_epoch' + str(epoch) + '.pkl')
+    os.rename(os.getcwd() + '/retrain_att/' + 'att_str_retrain' + str(best_idx) + ".pkl", os.getcwd() + "/attacker_strategies/" + 'att_str_epoch' + str(epoch) + '.pkl')
     return np.max(np.array(util))
 
 
@@ -41,7 +41,7 @@ def sim_retrain_att(env, game, mix_str_def, MPI_flag, epoch):
 def sim_retrain_def(env, game, mix_str_att, MPI_flag, epoch):
     rewards_def = fp.load_pkl(os.getcwd() + '/retrained_rew/' + 'rewards_def.pkl')
     k, gamma, alpha = game.param
-    DIR = os.getcwd() + '/retrained_def/'
+    DIR = os.getcwd() + '/retrain_def/'
     str_list = [name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name)) and '.pkl' in name]
     num_str = len(str_list)
     util = []
@@ -56,5 +56,5 @@ def sim_retrain_def(env, game, mix_str_att, MPI_flag, epoch):
         util.append(alpha * d_BD + (1 - alpha) * rewards_def[i])
 
     best_idx = np.argmax(np.array(util))
-    os.rename(os.getcwd() + '/retrained_def/' + 'def_str_retrain' + str(best_idx) + ".pkl", os.getcwd() + "/defender_strategies/" + 'def_str_epoch' + str(epoch) + '.pkl')
+    os.rename(os.getcwd() + '/retrain_def/' + 'def_str_retrain' + str(best_idx) + ".pkl", os.getcwd() + "/defender_strategies/" + 'def_str_epoch' + str(epoch) + '.pkl')
     return np.max(np.array(util))

@@ -144,8 +144,13 @@ identity = 0
 # print(b)
 
 a = np.array([2,3,4,1])
-a = np.append(a,5)
-print(a)
+b = np.array([1,2])
+c = b.copy()
+c.resize(a.shape)
+# print(b)
+print(b)
+print(c)
+print(a+c)
 
 
 

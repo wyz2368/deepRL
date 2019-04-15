@@ -907,12 +907,12 @@ class Learner(object):
                 if total_timesteps != 0:
                     if training_flag == 0:  # defender is training
                         env.attacker.sample_and_set_str()
-                        print("Model loaded successfully.")
+                        # print("Model loaded successfully.")
                         if len(np.where(env.attacker.mix_str>0.95)[0]) == 1:
                             one_hot_att == True
                     elif training_flag == 1:  # attacker is training
                         env.defender.sample_and_set_str()
-                        print("Model loaded successfully.")
+                        # print("Model loaded successfully.")
                         if len(np.where(env.defender.mix_str>0.95)[0]) == 1:
                             one_hot_def == True
                     else:
@@ -929,11 +929,11 @@ class Learner(object):
 
                     if tf.train.latest_checkpoint(td) is not None:
                         load_variables(model_file, sess=self.sess)
-                        logger.log('Loaded model from {}'.format(model_file))
+                        # logger.log('Loaded model from {}'.format(model_file))
                         model_saved = True
                     elif load_path is not None:
                         load_variables(load_path, sess=self.sess)
-                        logger.log('Loaded model from {}'.format(load_path))
+                        # logger.log('Loaded model from {}'.format(load_path))
 
                     for t in range(total_timesteps):
                         if callback is not None:

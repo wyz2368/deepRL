@@ -111,7 +111,7 @@ def training_hado_att(game):
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
-    learner = Learner(retrain=True)
+    learner = Learner(retrain=True, freq=param['retrain_freq'])
     with learner.graph.as_default():
         with learner.sess.as_default():
             act_att = learner.learn_multi_nets(
@@ -152,7 +152,7 @@ def training_hado_def(game):
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
-    learner = Learner(retrain=True)
+    learner = Learner(retrain=True, freq=param['retrain_freq'])
     with learner.graph.as_default():
         with learner.sess.as_default():
             act_def = learner.learn_multi_nets(

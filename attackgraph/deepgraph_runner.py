@@ -6,6 +6,7 @@ import time
 # Modules import
 from attackgraph import DagGenerator as dag
 from attackgraph import file_op as fp
+from attackgraph import json_op as jp
 from attackgraph import sim_Series
 from attackgraph import training
 from attackgraph import util
@@ -38,10 +39,14 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     env.create_players()
     env.create_action_space()
 
+    # load param
+    param_path = os.getcwd() + '/network_parameters/param.json'
+    param = jp.load_json_data(param_path)
+
     # initialize game data
-    game = game_data.Game_data(env, num_episodes=10, threshold=0.1)
-    game.set_hado_param(param=(4, 0.7, 0.286))
-    game.set_hado_time_step(700000)
+    game = game_data.Game_data(env, num_episodes=param['num_episodes'], threshold=param['threshold'])
+    game.set_hado_param(param=param['hado_param'])
+    game.set_hado_time_step(param['retrain_timesteps'])
     game.env.defender.set_env_belong_to(game.env)
     game.env.attacker.set_env_belong_to(game.env)
 
@@ -76,7 +81,7 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     # sys.stdout.flush()
     return env, game
 
-def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
+def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
     #TODO: check length of str_set mismatch
 
     if retrain:
@@ -90,9 +95,9 @@ def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.get
 
     retrain_start = False
 
-    count = 2
-    # while count != 0:
-    while True:
+    count = 7
+    while count != 0:
+    # while True:
         # fix opponent strategy
         mix_str_def = game.nasheq[epoch][0]
         mix_str_att = game.nasheq[epoch][1]
@@ -175,8 +180,8 @@ def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.get
         fp.save_pkl(game, game_path)
         print("Round_" + str(epoch) + " has done and game was saved.")
         print("=======================================================")
-        break
-        # count -= 1
+        # break
+        count -= 1
 
     #     sys.stdout.flush() #TODO: make sure this is correct.
     #
@@ -186,7 +191,7 @@ def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.get
 
 if __name__ == '__main__':
     env, game = initialize(env_name='test_env')
-    EGTA(env, game)
+    EGTA(env, game, retrain=True)
 
 
 
