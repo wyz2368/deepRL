@@ -24,7 +24,7 @@ def do_MPI_sim(nn_att, nn_def):
 
 #TODO: assign epoch
 def sim_and_modifiy_MPI():
-    #TODO: load game
+
     path = os.getcwd()
     game_path = os.getcwd() + '/game_data/game.pkl'
     game = fp.load_pkl(game_path)
@@ -40,7 +40,7 @@ def sim_and_modifiy_MPI():
     data = comm.gather(reward_tuple, root = 0)
     if rank == 0:
         data = np.array(data)
-        fp.save_pkl(np.sum(data,0)/size, path = path + '/sim_arg/result.pkl')
+        fp.save_pkl(np.round(np.sum(data,0)/size, 1), path = path + '/sim_arg/result.pkl')
 
 
 

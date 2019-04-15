@@ -732,7 +732,7 @@ class Learner(object):
                          print_freq=100,
                          checkpoint_freq=10000,
                          checkpoint_path=None,
-                         learning_starts=1000,
+                         learning_starts=1000, # TODO: the should be adjusted when retrained since str_0 should play agaist hado_str.
                          gamma=1.0,
                          target_network_update_freq=500,
                          prioritized_replay=False,
@@ -1033,6 +1033,9 @@ class Learner(object):
                                 save_variables(model_file, scope=scope)
                                 model_saved = True
                                 saved_mean_reward = mean_100ep_reward
+
+                        if self.retrain and num_episodes == 103:
+                            retrain_episode_rewards.append(mean_100ep_reward)
 
 
                         if self.retrain and t % self.retrain_freq == 0 and t>1:

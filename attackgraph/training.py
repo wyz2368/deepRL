@@ -3,16 +3,10 @@ from baselines.common import models
 from baselines.deepq.deepq import learn_multi_nets, Learner
 import os
 import copy
-#TODO: improvement can be done by not including all RL strategies.
 
 DIR_def = os.getcwd() + '/defender_strategies/'
 DIR_att = os.getcwd() + '/attacker_strategies/'
 
-#TODO: pick a strategy from a mixed strategy.
-#TODO: add strategy name to strategy name list.
-#TODO: extend payoff matrix.
-#TODO: network model should be rechecked.
-#TODO: make all params able to set outside. Not hard coding.
 def training_att(game, mix_str_def, epoch, retrain = False):
     if len(mix_str_def) != len(game.def_str):
         raise ValueError("The length of mix_str_def and def_str does not match while training")
@@ -20,11 +14,16 @@ def training_att(game, mix_str_def, epoch, retrain = False):
     env = copy.deepcopy(game.env)
     env.set_training_flag(1)
 
-    env.defender.set_mix_strategy(mix_str_def) #TODO: Can mix_str_def be expressed by game and epoch?
+    env.defender.set_mix_strategy(mix_str_def)
     env.defender.set_str_set(game.def_str)
 
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
+
+    if retrain:
+        scope = 'att_str_retrain' + str(0) + '.pkl' + '/'
+    else:
+        scope = 'att_str_epoch' + str(epoch) + '.pkl' + '/'
 
     learner = Learner()
     with learner.graph.as_default():
@@ -41,7 +40,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
                 gamma=param['gamma'],
                 prioritized_replay=param['prioritized_replay'],
                 checkpoint_freq=param['checkpoint_freq'],
-                scope = 'att_str_epoch' + str(epoch) + '.pkl' + '/'
+                scope = scope
             )
             print("Saving attacker's model to pickle.")
             if retrain:
@@ -55,7 +54,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
 
 def training_def(game, mix_str_att, epoch, retrain = False):
     if len(mix_str_att) != len(game.att_str):
-        raise ValueError("The length of mix_str_att and att_str does not match while training")
+        raise ValueError("The length of mix_str_att and att_str does not match while retraining")
 
     env = copy.deepcopy(game.env)
     env.set_training_flag(0)
@@ -65,6 +64,11 @@ def training_def(game, mix_str_att, epoch, retrain = False):
 
     param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
+
+    if retrain:
+        scope = 'def_str_retrain' + str(0) + '.pkl' + '/'
+    else:
+        scope = 'def_str_epoch' + str(epoch) + '.pkl' + '/'
 
     learner = Learner()
     with learner.graph.as_default():
@@ -81,7 +85,7 @@ def training_def(game, mix_str_att, epoch, retrain = False):
                 gamma=param['gamma'],
                 prioritized_replay=param['prioritized_replay'],
                 checkpoint_freq=param['checkpoint_freq'],
-                scope = "def_str_epoch" + str(epoch) + '.pkl' + '/'
+                scope = scope
             )
             print("Saving defender's model to pickle.")
             if retrain:
@@ -96,7 +100,7 @@ def training_hado_att(game):
     mix_str_def = game.hado_str(identity=0, param=param)
 
     if len(mix_str_def) != len(game.def_str):
-        raise ValueError("The length of mix_str_def and def_str does not match while training")
+        raise ValueError("The length of mix_str_def and def_str does not match while retraining")
 
     env = copy.deepcopy(game.env)
     env.set_training_flag(1)
@@ -104,7 +108,7 @@ def training_hado_att(game):
     env.defender.set_mix_strategy(mix_str_def)
     env.defender.set_str_set(game.def_str)
 
-    param_path = os.getcwd() + '/network_parameters/param_hado.json'
+    param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
     learner = Learner(retrain=True)
@@ -124,7 +128,6 @@ def training_hado_att(game):
                 checkpoint_freq=param['checkpoint_freq'],
                 scope = 'att_str_retrain' + str(0) + '.pkl' + '/',
                 load_path=os.getcwd() + '/retrain_att/' + 'att_str_retrain' + str(0) + '.pkl'
-
             )
             # print("Saving attacker's model to pickle.")
             # act_att.save(os.getcwd() + '/retrain_att/' + 'att_str_retrain' + str(epoch) + ".pkl", 'att_str_epoch' + str(epoch) + '.pkl' + '/')
@@ -146,7 +149,7 @@ def training_hado_def(game):
     env.attacker.set_mix_strategy(mix_str_att)
     env.attacker.set_str_set(game.att_str)
 
-    param_path = os.getcwd() + '/network_parameters/param_hado.json'
+    param_path = os.getcwd() + '/network_parameters/param.json'
     param = jp.load_json_data(param_path)
 
     learner = Learner(retrain=True)

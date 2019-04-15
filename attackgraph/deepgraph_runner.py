@@ -1,31 +1,23 @@
 # Packages import
-import tensorflow as tf
 import numpy as np
 import os
 import time
-import sys
 
 # Modules import
 from attackgraph import DagGenerator as dag
-from attackgraph import attacker,defender
 from attackgraph import file_op as fp
-from attackgraph import json_op as jp
-from attackgraph import sim_Series, parallel_sim
-from attackgraph import subproc
+from attackgraph import sim_Series
 from attackgraph import training
 from attackgraph import util
 from attackgraph import game_data
-from attackgraph import sample_strategy as ss
 from attackgraph import gambit_analysis as ga
 from attackgraph.simulation import series_sim
 from attackgraph.sim_MPI import do_MPI_sim
 from attackgraph.sim_retrain import sim_retrain
 
-from baselines.deepq import deepq
-from baselines.deepq.load_action import load_action_class
-
-
-
+# load_env: the name of env to be loaded.
+# env_name: the name of env to be generated.
+# MPI_flag: if running simulation in parallel or not.
 
 def initialize(load_env=None, env_name=None, MPI_flag = False):
 
@@ -47,15 +39,17 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     env.create_action_space()
 
     # initialize game data
-    game = game_data.Game_data(env, num_layers=4, num_hidden=256, hiddens=[256,256],num_episodes=10, threshold=0.1)
+    game = game_data.Game_data(env, num_episodes=10, threshold=0.1)
     game.set_hado_param(param=(4, 0.7, 0.286))
     game.set_hado_time_step(700000)
     game.env.defender.set_env_belong_to(game.env)
     game.env.attacker.set_env_belong_to(game.env)
 
+    env.defender.set_env_belong_to(env)
+    env.attacker.set_env_belong_to(env)
+
     # uniform strategy has been produced ahead of time
-    epoch = env.epoch
-    epoch += 1
+    epoch = 1
 
     act_att = 'att_str_epoch1.pkl'
     act_def = 'def_str_epoch1.pkl'
@@ -64,14 +58,11 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     game.add_def_str(act_def)
 
     # simulate using random strategies and initialize payoff matrix
-    t1 = time.time()
-    # aReward, dReward = parallel_sim.parallel_sim(env, game, act_att, act_def, game.num_episodes)
     if MPI_flag:
         aReward, dReward = do_MPI_sim(act_att, act_def)
     else:
         aReward, dReward = series_sim(env, game, act_att, act_def, game.num_episodes)
-    # aReward, dReward = -10, -10
-    print("Time for uniform sim:",time.time()-t1)
+
     game.init_payoffmatrix(dReward, aReward)
     ne = {}
     ne[0] = np.array([1], dtype=np.float32)
@@ -97,6 +88,8 @@ def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.get
         print("===============Begin Running DO-EGTA===================")
         print("=======================================================")
 
+    retrain_start = False
+
     count = 2
     # while count != 0:
     while True:
@@ -111,12 +104,15 @@ def EGTA(env, game, start_hado = 4, retrain=False, epoch = 1, game_path = os.get
 
         # train and save RL agents
 
+        if retrain and epoch > start_hado:
+            retrain_start = True
+
         print("Begin training attacker......")
-        training.training_att(game, mix_str_def, epoch, retrain=retrain)
+        training.training_att(game, mix_str_def, epoch, retrain=retrain_start)
         print("Attacker training done......")
 
         print("Begin training defender......")
-        training.training_def(game, mix_str_att, epoch, retrain=retrain)
+        training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
         print("Defender training done......")
 
         if retrain and epoch > start_hado:

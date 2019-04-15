@@ -16,7 +16,7 @@ def sim_retrain(env, game, mix_str_att, mix_str_def, MPI_flag, epoch):
 
 
 def sim_retrain_att(env, game, mix_str_def, MPI_flag, epoch):
-    rewards_att = fp.load_pkl(os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl')
+    rewards_att = fp.load_pkl(os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl') # reward is np.array([1,2,3,4])
     k, gamma, alpha = game.param
     DIR = os.getcwd() + '/retrained_att/'
     str_list = [name for name in os.listdir(DIR) if os.path.isfile(os.path.join(DIR, name)) and '.pkl' in name]
@@ -49,9 +49,9 @@ def sim_retrain_def(env, game, mix_str_att, MPI_flag, epoch):
         nn_att = mix_str_att
         nn_def = "def_str_epoch" + str(i) + ".pkl"
         if MPI_flag:
-            d_BD, _ = do_MPI_sim_retrain(nn_att, nn_def)
+            _, d_BD = do_MPI_sim_retrain(nn_att, nn_def)
         else:
-            d_BD, _ = series_sim_retrain(env, game, nn_att, nn_def, 100)
+            _, d_BD = series_sim_retrain(env, game, nn_att, nn_def, 100)
 
         util.append(alpha * d_BD + (1 - alpha) * rewards_def[i])
 

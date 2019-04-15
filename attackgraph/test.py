@@ -143,8 +143,9 @@ identity = 0
 # b = np.where(a[0]==0)[0]
 # print(b)
 
-a = [2,3,4,1]
-print(np.max(np.array(a)))
+a = np.array([2,3,4,1])
+a = np.append(a,5)
+print(a)
 
 
 

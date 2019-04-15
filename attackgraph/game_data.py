@@ -4,7 +4,7 @@ import copy
 import os
 
 class Game_data(object):
-    def __init__(self, env, num_layers, num_hidden, hiddens, num_episodes, threshold):
+    def __init__(self, env, num_episodes, threshold):
         #TODO: check if env should be initial env, this env should be with G_reserved.
         print("Reminder: env in game should be same as the initial one since G should be G_reserved.")
         self.env = copy.deepcopy(env)
@@ -22,14 +22,6 @@ class Game_data(object):
         self.threshold = threshold
 
         # parameters for neural network
-        self.num_layers = num_layers
-        self.num_hidden = num_hidden
-        self.hiddens = hiddens
-
-    def set_nn_params(self, num_layers, num_hidden, hiddens):
-        self.num_layers = num_layers
-        self.num_hidden = num_hidden
-        self.hiddens = hiddens
 
     def set_hado_param(self, param):
         self.param = param # k, gamma, alpha = param
