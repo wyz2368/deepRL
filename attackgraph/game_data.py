@@ -119,7 +119,7 @@ class Game_data(object):
     def hado_str(self, identity, param):
         k, gamma, alpha = param
         num_ne = len(self.nasheq.keys())
-        delta = self.nasheq[num_ne][identity]
+        delta = self.nasheq[num_ne][identity].copy()
         denom = 0
         for i in np.arange(num_ne-1):
             temp = self.nasheq[i+1][identity].copy()

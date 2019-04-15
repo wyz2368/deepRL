@@ -103,13 +103,16 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
         aReward_list = np.append(aReward_list,aReward)
         dReward_list = np.append(dReward_list,dReward)
 
-    return np.mean(aReward_list), np.mean(dReward_list)
+    return np.round(np.mean(aReward_list),2), np.round(np.mean(dReward_list),2)
 
 
 
 def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
     aReward_list = np.array([])
     dReward_list = np.array([])
+
+    print(nn_att)
+    print(nn_def)
 
     for i in range(num_episodes): #can be run parallel
 

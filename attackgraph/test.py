@@ -143,14 +143,33 @@ identity = 0
 # b = np.where(a[0]==0)[0]
 # print(b)
 
-a = np.array([2,3,4,1])
-b = np.array([1,2])
-c = b.copy()
-c.resize(a.shape)
+# a = np.array([2,3,4,1])
+# b = np.array([1,2])
+# c = b.copy()
+# c.resize(a.shape)
+# # print(b)
 # print(b)
-print(b)
-print(c)
-print(a+c)
+# print(c)
+# print(a+c)
+
+path = os.getcwd() + '/retrain_att/att_str_retrain0.pkl'
+new_path = os.getcwd() + '/retrain_def/att_str_retrain2.pkl'
+os.rename(new_path,path)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

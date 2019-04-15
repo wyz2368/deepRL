@@ -54,10 +54,10 @@ def sim_and_modifiy_Series(MPI_flag=False):
         att_row.append(aReward)
         def_row.append(dReward)
 
-    game.add_col_att(np.reshape(np.array(att_col),newshape=(len(att_col),1)))
-    game.add_col_def(np.reshape(np.array(def_col), newshape=(len(att_col), 1)))
-    game.add_row_att(np.array(att_row))
-    game.add_row_def(np.array(def_row))
+    game.add_col_att(np.reshape(np.round(np.array(att_col),2),newshape=(len(att_col),1)))
+    game.add_col_def(np.reshape(np.round(np.array(def_col),2), newshape=(len(att_col), 1)))
+    game.add_row_att(np.round(np.array(att_row),2)[None])
+    game.add_row_def(np.round(np.array(def_row),2)[None])
 
     fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")
@@ -107,11 +107,10 @@ def sim_and_modifiy_Series_with_game(game, MPI_flag=False):
         att_row.append(aReward)
         def_row.append(dReward)
 
-
-    game.add_col_att(np.reshape(np.array(att_col),newshape=(len(att_col),1)))
-    game.add_col_def(np.reshape(np.array(def_col), newshape=(len(att_col), 1)))
-    game.add_row_att(np.array(att_row)[None])
-    game.add_row_def(np.array(def_row)[None])
+    game.add_col_att(np.reshape(np.round(np.array(att_col), 2), newshape=(len(att_col), 1)))
+    game.add_col_def(np.reshape(np.round(np.array(def_col), 2), newshape=(len(att_col), 1)))
+    game.add_row_att(np.round(np.array(att_row), 2)[None])
+    game.add_row_def(np.round(np.array(def_row), 2)[None])
 
     # fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")

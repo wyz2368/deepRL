@@ -899,22 +899,23 @@ class Learner(object):
                 # obs = env.reset_everything_with_return()  # TODO: check type and shape of obs. should be [0.2, 0.4, 0.4] numpy
                 reset = True
 
-
-
                 one_hot_att = False
                 one_hot_def = False
+
+                if self.retrain and load_path is not None:
+                    load_variables(load_path, sess=self.sess)
 
                 if total_timesteps != 0:
                     if training_flag == 0:  # defender is training
                         env.attacker.sample_and_set_str()
                         # print("Model loaded successfully.")
                         if len(np.where(env.attacker.mix_str>0.95)[0]) == 1:
-                            one_hot_att == True
+                            one_hot_att = True
                     elif training_flag == 1:  # attacker is training
                         env.defender.sample_and_set_str()
                         # print("Model loaded successfully.")
                         if len(np.where(env.defender.mix_str>0.95)[0]) == 1:
-                            one_hot_def == True
+                            one_hot_def = True
                     else:
                         raise ValueError("Training flag is wrong")
 
@@ -927,13 +928,13 @@ class Learner(object):
                     model_file = os.path.join(td, "model")
                     model_saved = False
 
-                    if tf.train.latest_checkpoint(td) is not None:
+                    if tf.train.latest_checkpoint(td) is not None and not self.retrain:
                         load_variables(model_file, sess=self.sess)
                         # logger.log('Loaded model from {}'.format(model_file))
                         model_saved = True
-                    elif load_path is not None:
+                    elif load_path is not None and not self.retrain:
                         load_variables(load_path, sess=self.sess)
-                        # logger.log('Loaded model from {}'.format(load_path))
+                        logger.log('Loaded model from {}'.format(load_path))
 
                     for t in range(total_timesteps):
                         if callback is not None:
@@ -1039,6 +1040,7 @@ class Learner(object):
 
 
                         if self.retrain and t % self.retrain_freq == 0 and t>1:
+
                             retrain_save_path = retrain_path + retrain_name + str(t//self.retrain_freq) + '.pkl'
                             retrain_episode_rewards.append(mean_100ep_reward)
                             save_variables(retrain_save_path, scope=scope)
@@ -1049,6 +1051,7 @@ class Learner(object):
                         load_variables(model_file, sess=self.sess)
 
                     if self.retrain:
+
                         retrain_save_path = retrain_path + retrain_name + str(t // self.retrain_freq+1) + '.pkl'
                         retrain_episode_rewards.append(mean_100ep_reward)
                         save_variables(retrain_save_path, scope=scope)

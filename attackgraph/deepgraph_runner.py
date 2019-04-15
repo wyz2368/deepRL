@@ -192,6 +192,7 @@ def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.get
 if __name__ == '__main__':
     env, game = initialize(env_name='test_env')
     EGTA(env, game, retrain=True)
+    # EGTA(env, game, retrain=False)
 
 
 
