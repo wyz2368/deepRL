@@ -43,11 +43,12 @@ def sim_and_modifiy_MPI():
         fp.save_pkl(np.round(np.sum(data,0)/size, 1), path = path + '/sim_arg/result.pkl')
 
 
-
-
 def series_sim(env, game, nn_att, nn_def, size):
     aReward_list = np.array([])
     dReward_list = np.array([])
+
+    nn_att_saved = copy.copy(nn_att)
+    nn_def_saved = copy.copy(nn_def)
 
     if size > 20:
         num_epi = 10
@@ -67,6 +68,9 @@ def series_sim(env, game, nn_att, nn_def, size):
         dReward = 0
         def_uniform_flag = False
         att_uniform_flag = False
+
+        nn_att = copy.copy(nn_att_saved)
+        nn_def = copy.copy(nn_def_saved)
 
         # nn_att and nn_def here can be either np.ndarray or str. np.ndarray represents a mixed strategy.
         # A str represents the name of a strategy.

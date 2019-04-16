@@ -9,6 +9,8 @@ from attackgraph import file_op as fp
 def series_sim(env, game, nn_att, nn_def, num_episodes):
     aReward_list = np.array([])
     dReward_list = np.array([])
+    nn_att_saved = copy.copy(nn_att)
+    nn_def_saved = copy.copy(nn_def)
 
     for i in range(num_episodes): #can be run parallel
 
@@ -21,6 +23,9 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
         dReward = 0
         def_uniform_flag = False
         att_uniform_flag = False
+
+        nn_att = copy.copy(nn_att_saved)
+        nn_def = copy.copy(nn_def_saved)
 
         # nn_att and nn_def here can be either np.ndarray or str. np.ndarray represents a mixed strategy.
         # A str represents the name of a strategy.
@@ -111,8 +116,8 @@ def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
     aReward_list = np.array([])
     dReward_list = np.array([])
 
-    print(nn_att)
-    print(nn_def)
+    nn_att_saved = copy.copy(nn_att)
+    nn_def_saved = copy.copy(nn_def)
 
     for i in range(num_episodes): #can be run parallel
 
@@ -126,14 +131,22 @@ def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
         def_uniform_flag = False
         att_uniform_flag = False
 
+        att_mixed_flag = False
+        def_mixed_flag = False
+
+        nn_att = copy.copy(nn_att_saved)
+        nn_def = copy.copy(nn_def_saved)
+
         # nn_att and nn_def here can be either np.ndarray or str. np.ndarray represents a mixed strategy.
         # A str represents the name of a strategy.
 
         if isinstance(nn_att, np.ndarray) and isinstance(nn_def, str):
+            att_mixed_flag = True
             str_set = game.att_str
             nn_att = np.random.choice(str_set, p=nn_att)
 
         if isinstance(nn_att, str) and isinstance(nn_def, np.ndarray):
+            def_mixed_flag = True
             str_set = game.def_str
             nn_def = np.random.choice(str_set, p=nn_def)
 
@@ -143,20 +156,31 @@ def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
             str_set = game.def_str
             nn_def = np.random.choice(str_set, p=nn_def)
 
+        if not att_mixed_flag and not def_mixed_flag:
+            raise ValueError("One player should play mixed strategy in retraining simulation.")
+
         if "epoch1" in nn_att:
             att_uniform_flag = True
 
         if "epoch1" in nn_def:
             def_uniform_flag = True
 
-        path = os.getcwd() + "/retrain_att/" + nn_att
+        if att_mixed_flag:
+            path = os.getcwd() + "/attacker_strategies/" + nn_att
+        else:
+            path = os.getcwd() + "/retrain_att/" + nn_att
+
         if att_uniform_flag:
             nn_att_act = fp.load_pkl(path)
         else:
             training_flag = 1
             nn_att_act, sess1, graph1 = load_action_class(path, nn_att, game, training_flag)
 
-        path = os.getcwd() + "/retrain_def/" + nn_def
+        if def_mixed_flag:
+            path = os.getcwd() + "/defender_strategies/" + nn_def
+        else:
+            path = os.getcwd() + "/retrain_def/" + nn_def
+
         if def_uniform_flag:
             nn_def_act = fp.load_pkl(path)
         else:

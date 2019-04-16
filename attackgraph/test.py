@@ -152,9 +152,12 @@ identity = 0
 # print(c)
 # print(a+c)
 
-path = os.getcwd() + '/retrain_att/att_str_retrain0.pkl'
-new_path = os.getcwd() + '/retrain_def/att_str_retrain2.pkl'
-os.rename(new_path,path)
+a = 5
+def ap(a):
+    a += 4
+
+ap(a)
+print(a)
 
 
 

@@ -47,7 +47,7 @@ def sim_retrain_def(env, game, mix_str_att, MPI_flag, epoch):
     util = []
     for i in range(num_str):
         nn_att = mix_str_att
-        nn_def = "def_str_epoch" + str(i) + ".pkl"
+        nn_def = "def_str_retrain" + str(i) + ".pkl"
         if MPI_flag:
             _, d_BD = do_MPI_sim_retrain(nn_att, nn_def)
         else:
