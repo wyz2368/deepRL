@@ -902,6 +902,8 @@ class Learner(object):
                 one_hot_att = False
                 one_hot_def = False
 
+                add_first_rew = True
+
                 if self.retrain and load_path is not None:
                     load_variables(load_path, sess=self.sess)
 
@@ -1035,8 +1037,10 @@ class Learner(object):
                                 model_saved = True
                                 saved_mean_reward = mean_100ep_reward
 
-                        if self.retrain and num_episodes == 103:
-                            retrain_episode_rewards.append(mean_100ep_reward)
+                        if self.retrain and num_episodes == 3 and add_first_rew:
+                            print("Add the first reward averaged over 10 episodes.")
+                            retrain_episode_rewards.append(round(np.mean(episode_rewards[-3:-1]), 1))
+                            add_first_rew = False
 
 
                         if self.retrain and t % self.retrain_freq == 0 and t>1:

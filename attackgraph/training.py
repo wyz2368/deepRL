@@ -94,7 +94,7 @@ def training_def(game, mix_str_att, epoch, retrain = False):
                 act_def.save(DIR_def + "def_str_epoch" + str(epoch) + ".pkl", "def_str_epoch" + str(epoch) + '.pkl' + '/')
     learner.sess.close()
 
-
+# for all strategies learned by retraining, the scope index is 0.
 def training_hado_att(game):
     param = game.param
     mix_str_def = game.hado_str(identity=0, param=param)

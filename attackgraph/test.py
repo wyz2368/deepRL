@@ -3,6 +3,7 @@ from attackgraph import file_op as fp
 # from attackgraph.uniform_str_init import act_def, act_att
 # import math
 import os
+import copy
 
 # # import networkx as nx
 # # import random
@@ -152,14 +153,12 @@ identity = 0
 # print(c)
 # print(a+c)
 
-a = 5
-def ap(a):
-    a += 4
+# rewards_att = fp.load_pkl(os.getcwd() + '/retrain_att/' + 'att_str_retrain2.pkl')
+#
+# print(rewards_att)
 
-ap(a)
-print(a)
-
-
+a = 'asdfasdfa'
+print(a.replace('a','x'))
 
 
 
