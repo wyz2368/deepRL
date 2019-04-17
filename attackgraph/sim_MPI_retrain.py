@@ -14,7 +14,7 @@ def do_MPI_sim_retrain(nn_att, nn_def):
     fp.save_pkl(nn_att, path_att)
     fp.save_pkl(nn_def, path_def)
 
-    command_line = "mpirun python " + path + "/sim_MPI.py"
+    command_line = "mpirun python " + path + "/sim_MPI_retrain.py"
     call_and_wait(command_line)
 
     aReward, dReward = fp.load_pkl(path + '/sim_arg/result.pkl')
@@ -71,6 +71,9 @@ def series_sim(env, game, nn_att, nn_def, size):
         def_uniform_flag = False
         att_uniform_flag = False
 
+        att_mixed_flag = False
+        def_mixed_flag = False
+
         nn_att = copy.copy(nn_att_saved)
         nn_def = copy.copy(nn_def_saved)
 
@@ -78,10 +81,12 @@ def series_sim(env, game, nn_att, nn_def, size):
         # A str represents the name of a strategy.
 
         if isinstance(nn_att, np.ndarray) and isinstance(nn_def, str):
+            att_mixed_flag = True
             str_set = game.att_str
             nn_att = np.random.choice(str_set, p=nn_att)
 
         if isinstance(nn_att, str) and isinstance(nn_def, np.ndarray):
+            def_mixed_flag = True
             str_set = game.def_str
             nn_def = np.random.choice(str_set, p=nn_def)
 
@@ -91,25 +96,40 @@ def series_sim(env, game, nn_att, nn_def, size):
             str_set = game.def_str
             nn_def = np.random.choice(str_set, p=nn_def)
 
+        if not att_mixed_flag and not def_mixed_flag:
+            raise ValueError("One player should play mixed strategy in retraining simulation.")
+
         if "epoch1" in nn_att:
             att_uniform_flag = True
 
         if "epoch1" in nn_def:
             def_uniform_flag = True
 
-        path = os.getcwd() + "/retrain_att/" + nn_att
+        if att_mixed_flag:
+            path = os.getcwd() + "/attacker_strategies/" + nn_att
+            scope_att = nn_att
+        else:
+            path = os.getcwd() + "/retrain_att/" + nn_att
+            scope_att = 'att_str_retrain' + str(0) + '.pkl'
+
         if att_uniform_flag:
             nn_att_act = fp.load_pkl(path)
         else:
             training_flag = 1
-            nn_att_act, sess1, graph1 = load_action_class(path, nn_att, game, training_flag)
+            nn_att_act, sess1, graph1 = load_action_class(path, scope_att, game, training_flag)
 
-        path = os.getcwd() + "/retrain_def/" + nn_def
+        if def_mixed_flag:
+            path = os.getcwd() + "/defender_strategies/" + nn_def
+            scope_def = nn_def
+        else:
+            path = os.getcwd() + "/retrain_def/" + nn_def
+            scope_def = 'def_str_retrain' + str(0) + '.pkl'
+
         if def_uniform_flag:
             nn_def_act = fp.load_pkl(path)
         else:
             training_flag = 0
-            nn_def_act, sess2, graph2 = load_action_class(path, nn_def, game, training_flag)
+            nn_def_act, sess2, graph2 = load_action_class(path, scope_def, game, training_flag)
 
         for t in range(T):
             timeleft = T - t

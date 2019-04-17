@@ -22,7 +22,7 @@ def do_MPI_sim(nn_att, nn_def):
     return aReward, dReward
 
 
-#TODO: assign epoch
+#TODO: Is the game saving enough info.
 def sim_and_modifiy_MPI():
 
     path = os.getcwd()
