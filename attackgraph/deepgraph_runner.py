@@ -2,6 +2,7 @@
 import numpy as np
 import os
 import time
+import sys
 
 # Modules import
 from attackgraph import DagGenerator as dag
@@ -21,6 +22,9 @@ from attackgraph.sim_retrain import sim_retrain
 # MPI_flag: if running simulation in parallel or not.
 
 def initialize(load_env=None, env_name=None, MPI_flag = False):
+    print("=======================================================")
+    print("=======Begin Initialization and first epoch============")
+    print("=======================================================")
 
     # Create Environment
     if isinstance(load_env,str):
@@ -62,11 +66,15 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     game.add_att_str(act_att)
     game.add_def_str(act_def)
 
+    print('Begin simulation for uniform strategy.')
+    sys.stdout.flush()
     # simulate using random strategies and initialize payoff matrix
     if MPI_flag:
         aReward, dReward = do_MPI_sim(act_att, act_def)
     else:
         aReward, dReward = series_sim(env, game, act_att, act_def, game.num_episodes)
+    print('Done simulation for uniform strategy.')
+    sys.stdout.flush()
 
     game.init_payoffmatrix(dReward, aReward)
     ne = {}
@@ -78,7 +86,7 @@ def initialize(load_env=None, env_name=None, MPI_flag = False):
     game_path = os.getcwd() + '/game_data/game.pkl'
     fp.save_pkl(game, game_path)
 
-    # sys.stdout.flush()
+    sys.stdout.flush()
     return env, game
 
 def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
@@ -95,7 +103,7 @@ def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.get
 
     retrain_start = False
 
-    count = 7
+    count = 3
     while count != 0:
     # while True:
         # fix opponent strategy
@@ -168,7 +176,7 @@ def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.get
         game.add_def_str("def_str_epoch" + str(epoch) + ".pkl")
 
         # simulate and extend the payoff matrix.
-        game = sim_Series.sim_and_modifiy_Series_with_game(game)
+        game = sim_Series.sim_and_modifiy_Series_with_game(game, MPI_flag=MPI_flag)
 
         #
         # find nash equilibrium using gambit analysis
@@ -183,16 +191,16 @@ def EGTA(env, game, start_hado = 3, retrain=False, epoch = 1, game_path = os.get
         # break
         count -= 1
 
-    #     sys.stdout.flush() #TODO: make sure this is correct.
+        sys.stdout.flush() #TODO: make sure this is correct.
     #
     # os._exit(os.EX_OK)
 
 
 
 if __name__ == '__main__':
-    env, game = initialize(env_name='test_env')
-    EGTA(env, game, retrain=True)
-    # EGTA(env, game, retrain=False)
+    env, game = initialize(env_name='test_env', MPI_flag=False)
+    # EGTA(env, game, retrain=True)
+    EGTA(env, game, retrain=False, MPI_flag=False)
 
 
 

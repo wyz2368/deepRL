@@ -212,7 +212,7 @@ def build_act(make_obs_ph, q_func, num_actions, scope="deepq", reuse=tf.AUTO_REU
 
         random_actions_0 = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
 
-        q_vals = tf.random.uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
+        q_vals = tf.random_uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
         random_actions_1 = tf.argmax(q_vals, axis=1)
 
         random_actions = tf.cond(training_flag_ph, lambda: random_actions_1, lambda: random_actions_0)
@@ -350,7 +350,7 @@ def build_act_with_param_noise(make_obs_ph, q_func, num_actions, scope="deepq", 
 
         random_actions_0 = tf.random_uniform(tf.stack([batch_size]), minval=0, maxval=num_actions, dtype=tf.int64)
 
-        q_vals = tf.random.uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
+        q_vals = tf.random_uniform(shape=[batch_size, num_actions], dtype=tf.float32) + mask_ph
         random_actions_1 = tf.argmax(q_vals, axis=1)
 
         random_actions = tf.cond(training_flag_ph, lambda: random_actions_1, lambda: random_actions_0)

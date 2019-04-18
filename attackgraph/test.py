@@ -4,6 +4,8 @@ from attackgraph import file_op as fp
 # import math
 import os
 import copy
+from psutil import virtual_memory
+
 
 # # import networkx as nx
 # # import random
@@ -153,12 +155,8 @@ identity = 0
 # print(c)
 # print(a+c)
 
-# rewards_att = fp.load_pkl(os.getcwd() + '/retrain_att/' + 'att_str_retrain2.pkl')
-#
-# print(rewards_att)
-
-a = 'asdfasdfa'
-print(a.replace('a','x'))
+a = [1,2,3,4,5,5]
+print(np.mean(a))
 
 
 
