@@ -11,7 +11,7 @@ import copy
 class Environment(object):
     #TODO: all representations are logically sorted.！！！！
     #TODO: use random label. Move random label to simulation.
-    def __init__(self, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=20, numEdges=10, numRoot=3, numGoals=3, history = 3):
+    def __init__(self, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=30, numEdges=100, numRoot=3, numGoals=6, history = 3):
         self.num_attr_N = num_attr_N
         self.num_attr_E = num_attr_E
         self.T = T
@@ -754,7 +754,7 @@ class Environment(object):
     def set_current_time(self,time):
         self.current_time = time
 
-def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=30, numEdges=0, numRoot=3, numGoals=3, history = 3):
+def env_rand_gen_and_save(env_name, num_attr_N = 11, num_attr_E = 4, T=10, graphid=1, numNodes=30, numEdges=100, numRoot=4, numGoals=6, history = 3):
     env = Environment(num_attr_N = num_attr_N, num_attr_E = num_attr_E, T=T, graphid=graphid, numNodes=numNodes, numEdges=numEdges, numRoot=numRoot, numGoals=numGoals, history = history)
     env.randomDAG()
     path = os.getcwd() + "/env_data/" + env_name + ".pkl"

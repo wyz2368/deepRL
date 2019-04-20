@@ -413,7 +413,7 @@ def learn_multi_nets(env,
           train_freq=1,
           batch_size=32,
           print_freq=100,
-          checkpoint_freq=10000,
+          checkpoint_freq=None,
           checkpoint_path=None,
           learning_starts=1000,
           gamma=1.0,
@@ -695,19 +695,19 @@ def learn_multi_nets(env,
                 #     logger.record_tabular("% time spent exploring", int(100 * exploration.value(t)))
                 #     logger.dump_tabular()
 
-                if (checkpoint_freq is not None and t > learning_starts and
-                        num_episodes > 100 and t % checkpoint_freq == 0):
-                    if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
-                        # if print_freq is not None:
-                        #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
-                        #                saved_mean_reward, mean_100ep_reward))
-                        save_variables(model_file, scope=scope)
-                        model_saved = True
-                        saved_mean_reward = mean_100ep_reward
-            if model_saved:
-                # if print_freq is not None:
-                #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
-                load_variables(model_file)
+                # if (checkpoint_freq is not None and t > learning_starts and
+                #         num_episodes > 100 and t % checkpoint_freq == 0):
+                #     if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
+                #         # if print_freq is not None:
+                #         #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
+                #         #                saved_mean_reward, mean_100ep_reward))
+                #         save_variables(model_file, scope=scope)
+                #         model_saved = True
+                #         saved_mean_reward = mean_100ep_reward
+            # if model_saved:
+            #     # if print_freq is not None:
+            #     #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
+            #     load_variables(model_file)
 
     return act
 
@@ -931,9 +931,10 @@ class Learner(object):
                     model_saved = False
 
                     if tf.train.latest_checkpoint(td) is not None and not self.retrain:
-                        load_variables(model_file, sess=self.sess)
+                        # load_variables(model_file, sess=self.sess)
                         # logger.log('Loaded model from {}'.format(model_file))
-                        model_saved = True
+                        # model_saved = True
+                        a = 0
                     elif load_path is not None and not self.retrain:
                         load_variables(load_path, sess=self.sess)
                         # logger.log('Loaded model from {}'.format(load_path))
@@ -1027,15 +1028,15 @@ class Learner(object):
                         #     logger.record_tabular("% time spent exploring", int(100 * exploration.value(t)))
                         #     logger.dump_tabular()
 
-                        if (checkpoint_freq is not None and t > learning_starts and
-                                num_episodes > 100 and t % checkpoint_freq == 0):
-                            if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
-                                # if print_freq is not None:
-                                #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
-                                #         saved_mean_reward, mean_100ep_reward))
-                                save_variables(model_file, scope=scope)
-                                model_saved = True
-                                saved_mean_reward = mean_100ep_reward
+                        # if (checkpoint_freq is not None and t > learning_starts and
+                        #         num_episodes > 100 and t % checkpoint_freq == 0):
+                        #     if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
+                        #         # if print_freq is not None:
+                        #         #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
+                        #         #         saved_mean_reward, mean_100ep_reward))
+                        #         save_variables(model_file, scope=scope)
+                        #         model_saved = True
+                        #         saved_mean_reward = mean_100ep_reward
 
                         if self.retrain and num_episodes == 3 and add_first_rew:
                             print("Add the first reward averaged over 10 episodes.")
@@ -1049,10 +1050,10 @@ class Learner(object):
                             retrain_episode_rewards.append(mean_100ep_reward)
                             save_variables(retrain_save_path, scope=scope)
 
-                    if model_saved:
-                        # if print_freq is not None:
-                        #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
-                        load_variables(model_file, sess=self.sess)
+                    # if model_saved:
+                    #     # if print_freq is not None:
+                    #     #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
+                    #     load_variables(model_file, sess=self.sess)
 
                     if self.retrain:
 

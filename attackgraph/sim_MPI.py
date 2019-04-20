@@ -16,17 +16,21 @@ def do_MPI_sim(nn_att, nn_def):
 
     command_line = "mpirun python " + path + "/sim_MPI.py"
 
-    aReward_list = []
-    dReward_list = []
-    num_mpirun = 5
-    for i in range(num_mpirun):
-        call_and_wait(command_line)
-        aReward, dReward = fp.load_pkl(path + '/sim_arg/result.pkl')
-        aReward_list.append(aReward)
-        dReward_list.append(dReward)
+    # aReward_list = []
+    # dReward_list = []
+    # num_mpirun = 5
+    # for i in range(num_mpirun):
+    #     call_and_wait(command_line)
+    #     aReward, dReward = fp.load_pkl(path + '/sim_arg/result.pkl')
+    #     aReward_list.append(aReward)
+    #     dReward_list.append(dReward)
 
-    # return aReward, dReward
-    return np.sum(aReward_list)/num_mpirun, np.sum(dReward_list)/num_mpirun
+    call_and_wait(command_line)
+    # sim_and_modifiy_MPI()
+    aReward, dReward = fp.load_pkl(path + '/sim_arg/result.pkl')
+
+    return aReward, dReward
+    # return np.sum(aReward_list)/num_mpirun, np.sum(dReward_list)/num_mpirun
 
 
 #TODO: Is the game saving enough info.
@@ -39,11 +43,12 @@ def sim_and_modifiy_MPI():
     rank = comm.rank
     size = comm.size
 
+
     nn_att = fp.load_pkl(path + '/sim_arg/nn_att.pkl')
     nn_def = fp.load_pkl(path + '/sim_arg/nn_def.pkl')
 
-    # aReward, dReward = series_sim(game.env, game, nn_att, nn_def, size)
-    aReward, dReward = series_sim_single(game.env, game, nn_att, nn_def)
+    aReward, dReward = series_sim(game.env, game, nn_att, nn_def, size)
+    # aReward, dReward = series_sim_single(game.env, game, nn_att, nn_def)
     reward_tuple = (aReward, dReward)
     data = comm.gather(reward_tuple, root = 0)
     if rank == 0:
@@ -66,7 +71,6 @@ def series_sim(env, game, nn_att, nn_def, size):
         num_epi = 30
 
     for i in range(2):
-
         G = copy.deepcopy(env.G_reserved)
         attacker = copy.deepcopy(env.attacker)
         defender = copy.deepcopy(env.defender)

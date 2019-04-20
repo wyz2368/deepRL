@@ -11,6 +11,7 @@ from psutil import virtual_memory
 # # import random
 # # import itertools
 import time
+import datetime
 # import training
 # # import tensorflow as tf
 # import pickle as pk
@@ -155,10 +156,7 @@ identity = 0
 # print(c)
 # print(a+c)
 
-a = [1,2,3,4,5,5]
-print(np.mean(a))
-
-
+print(datetime.datetime.now())
 
 
 
