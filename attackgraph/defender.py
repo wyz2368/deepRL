@@ -119,6 +119,7 @@ class Defender(object):
         self.defact.clear()
         self.prev_defact = [set()] * self.history
 
+
     def set_current_strategy(self,strategy):
         self.nn_def = strategy
 

@@ -12,12 +12,19 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
     nn_att_saved = copy.copy(nn_att)
     nn_def_saved = copy.copy(nn_def)
 
+    T = env.T
+
     for i in range(num_episodes): #can be run parallel
 
-        G = copy.deepcopy(env.G_reserved)
-        attacker = copy.deepcopy(env.attacker)
-        defender = copy.deepcopy(env.defender)
-        T = env.T
+        # G = copy.deepcopy(env.G_reserved)
+        # attacker = copy.deepcopy(env.attacker)
+        # defender = copy.deepcopy(env.defender)
+
+        env.reset_everything()
+        G = env.G
+        attacker = env.attacker
+        defender = env.defender
+
 
         aReward = 0
         dReward = 0
@@ -119,12 +126,19 @@ def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
     nn_att_saved = copy.copy(nn_att)
     nn_def_saved = copy.copy(nn_def)
 
+    T = env.T
+
     for i in range(num_episodes): #can be run parallel
 
-        G = copy.deepcopy(env.G_reserved)
-        attacker = copy.deepcopy(env.attacker)
-        defender = copy.deepcopy(env.defender)
-        T = env.T
+        # G = copy.deepcopy(env.G_reserved)
+        # attacker = copy.deepcopy(env.attacker)
+        # defender = copy.deepcopy(env.defender)
+
+
+        env.reset_everything()
+        G = env.G
+        attacker = env.attacker
+        defender = env.defender
 
         aReward = 0
         dReward = 0

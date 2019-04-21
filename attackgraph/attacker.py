@@ -137,6 +137,7 @@ class Attacker(object):
         self.canAttack = []
         self.attact.clear()
 
+
     def update_canAttack(self,obs):
         self.canAttack = obs
 

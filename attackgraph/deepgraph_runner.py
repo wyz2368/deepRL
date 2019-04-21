@@ -3,6 +3,7 @@ import numpy as np
 import os
 import datetime
 import sys
+import psutil
 
 # Modules import
 from attackgraph import DagGenerator as dag
@@ -74,7 +75,7 @@ def initialize(load_env=None, env_name=None):
     # if MPI_flag:
     #     aReward, dReward = do_MPI_sim(act_att, act_def)
     # else:
-    aReward, dReward = series_sim(env, game, act_att, act_def, game.num_episodes)
+    aReward, dReward = series_sim(game.env, game, act_att, act_def, game.num_episodes)
     print('Done simulation for uniform strategy.')
     sys.stdout.flush()
 
@@ -89,7 +90,7 @@ def initialize(load_env=None, env_name=None):
     fp.save_pkl(game, game_path)
 
     sys.stdout.flush()
-    return env, game
+    return game
 
 # def EGTA(env, game, start_hado = 2, retrain=False, epoch = 1, game_path = os.getcwd() + '/game_data/game.pkl', MPI_flag = False):
 def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() + '/game_data/game.pkl'):
@@ -105,9 +106,12 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
 
     retrain_start = False
 
+    proc = psutil.Process(os.getpid())
+
     count = 8
     while count != 0:
     # while True:
+        mem0 = proc.memory_info().rss
         # fix opponent strategy
         mix_str_def = game.nasheq[epoch][0]
         mix_str_att = game.nasheq[epoch][1]
@@ -131,6 +135,8 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
         training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
         print("Defender training done......")
 
+        mem1 = proc.memory_info().rss
+
         if retrain and epoch > start_hado:
             print("Begin retraining attacker......")
             training.training_hado_att(game)
@@ -142,7 +148,7 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
 
             # Simulation for retrained strategies and choose the best one as player's strategy.
             print('Begin retrained sim......')
-            a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, MPI_flag, epoch)
+            a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
             print('Done retrained sim......')
 
         else:
@@ -166,6 +172,7 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
             # else:
             _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
             print("Simulation done for d_BD.")
+        mem2 = proc.memory_info().rss
 
         # #TODO: This may lead to early stop.
         # if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
@@ -181,7 +188,7 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
         # simulate and extend the payoff matrix.
         # game = sim_Series.sim_and_modifiy_Series_with_game(game, MPI_flag=MPI_flag)
         game = sim_Series.sim_and_modifiy_Series_with_game(game)
-
+        mem3 = proc.memory_info().rss
         #
         # find nash equilibrium using gambit analysis
         payoffmatrix_def = game.payoffmatrix_def
@@ -189,16 +196,19 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
         print("Begin Gambit analysis.")
         nash_att, nash_def = ga.do_gambit_analysis(payoffmatrix_def, payoffmatrix_att)
         ga.add_new_NE(game, nash_att, nash_def, epoch)
+        game.env.attacker.nn_att = None
+        game.env.defender.nn_def = None
         fp.save_pkl(game, game_path)
         print("Round_" + str(epoch) + " has done and game was saved.")
         print("=======================================================")
         # break
+        print("MEM:",(mem1 - mem0) / mem0, (mem2 - mem0) / mem0, (mem3 - mem0) / mem0)
         count -= 1
 
         sys.stdout.flush() #TODO: make sure this is correct.
 
     print("END: " + str(epoch))
-    # os._exit(os.EX_OK)
+    os._exit(os.EX_OK)
 
 def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.getcwd() + '/game_data/game.pkl'):
 
@@ -254,7 +264,7 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
 
             # Simulation for retrained strategies and choose the best one as player's strategy.
             print('Begin retrained sim......')
-            a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, MPI_flag, epoch)
+            a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
             print('Done retrained sim......')
 
         else:
@@ -300,6 +310,8 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
         print("Begin Gambit analysis.")
         nash_att, nash_def = ga.do_gambit_analysis(payoffmatrix_def, payoffmatrix_att)
         ga.add_new_NE(game, nash_att, nash_def, epoch)
+        game.env.attacker.nn_att = None
+        game.env.defender.nn_def = None
         fp.save_pkl(game, game_path)
         print("Round_" + str(epoch) + " has done and game was saved.")
         print("=======================================================")
@@ -308,14 +320,15 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
 
         sys.stdout.flush() #TODO: make sure this is correct.
 
-    print("END: " + str(epoch))
+    print("END EPOCH: " + str(epoch))
+    print(datetime.datetime.now())
     # os._exit(os.EX_OK)
 
 if __name__ == '__main__':
-    # env, game = initialize(env_name='test_env')
+    game = initialize(env_name='test_env')
     # EGTA(env, game, retrain=True)
-    # EGTA(env, game, retrain=False)
-    EGTA_restart(restart_epoch=4)
+    EGTA(game.env, game, retrain=False)
+    # EGTA_restart(restart_epoch=4)
 
 
 

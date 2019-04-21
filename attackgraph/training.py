@@ -2,7 +2,7 @@ from attackgraph import json_op as jp
 from baselines.common import models
 from baselines.deepq.deepq import learn_multi_nets, Learner
 import os
-import copy
+# import copy
 
 DIR_def = os.getcwd() + '/defender_strategies/'
 DIR_att = os.getcwd() + '/attacker_strategies/'
@@ -11,7 +11,11 @@ def training_att(game, mix_str_def, epoch, retrain = False):
     if len(mix_str_def) != len(game.def_str):
         raise ValueError("The length of mix_str_def and def_str does not match while training")
 
-    env = copy.deepcopy(game.env)
+    # env = copy.deepcopy(game.env)
+
+    env = game.env
+    env.reset_everything()
+
     env.set_training_flag(1)
 
     env.defender.set_mix_strategy(mix_str_def)
@@ -56,7 +60,10 @@ def training_def(game, mix_str_att, epoch, retrain = False):
     if len(mix_str_att) != len(game.att_str):
         raise ValueError("The length of mix_str_att and att_str does not match while retraining")
 
-    env = copy.deepcopy(game.env)
+    # env = copy.deepcopy(game.env)
+    env = game.env
+    env.reset_everything()
+
     env.set_training_flag(0)
 
     env.attacker.set_mix_strategy(mix_str_att)
@@ -102,7 +109,10 @@ def training_hado_att(game):
     if len(mix_str_def) != len(game.def_str):
         raise ValueError("The length of mix_str_def and def_str does not match while retraining")
 
-    env = copy.deepcopy(game.env)
+    # env = copy.deepcopy(game.env)
+    env = game.env
+    env.reset_everything()
+
     env.set_training_flag(1)
 
     env.defender.set_mix_strategy(mix_str_def)
@@ -134,8 +144,6 @@ def training_hado_att(game):
     learner.sess.close()
 
 
-
-
 def training_hado_def(game):
     param = game.param
     mix_str_att = game.hado_str(identity=1, param=param)
@@ -143,7 +151,10 @@ def training_hado_def(game):
     if len(mix_str_att) != len(game.att_str):
         raise ValueError("The length of mix_str_att and att_str does not match while training")
 
-    env = copy.deepcopy(game.env)
+    # env = copy.deepcopy(game.env)
+    env = game.env
+    env.reset_everything()
+
     env.set_training_flag(0)
 
     env.attacker.set_mix_strategy(mix_str_att)

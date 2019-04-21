@@ -156,9 +156,30 @@ identity = 0
 # print(c)
 # print(a+c)
 
-print(datetime.datetime.now())
 
 
+
+class Worm(object):
+    def __init__(self):
+        self.harm = 1
+
+
+
+class Dog(object):
+    def __init__(self):
+        self.age = 2
+        self.pest = Worm()
+
+a = Dog()
+
+def modi(a):
+    a.age = 3
+    a.pest.harm = 4
+
+
+modi(a)
+print(a.age)
+print(a.pest.harm)
 
 
 

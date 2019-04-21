@@ -2,8 +2,8 @@ import numpy as np
 from attackgraph import file_op as fp
 from baselines.common import models
 import os
-from baselines.deepq.deepq import learn_multi_nets, Learner, learn
-from attackgraph import uniform_str_init
+from baselines.deepq.deepq import learn_multi_nets, learn
+
 
 DIR = os.getcwd() + '/'
 DIR_def = os.getcwd() + '/defender_strategies/'
