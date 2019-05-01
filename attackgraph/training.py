@@ -12,6 +12,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
         raise ValueError("The length of mix_str_def and def_str does not match while training")
 
     # env = copy.deepcopy(game.env)
+    print("training_att mix_str_def is ", mix_str_def)
 
     env = game.env
     env.reset_everything()
@@ -32,7 +33,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
     learner = Learner()
     with learner.graph.as_default():
         with learner.sess.as_default():
-            act_att = learner.learn_multi_nets(
+            act_att, a_BD = learner.learn_multi_nets(
                 env,
                 network = models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr =param['lr'],
@@ -52,6 +53,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
             else:
                 act_att.save(DIR_att + "att_str_epoch" + str(epoch) + ".pkl", 'att_str_epoch' + str(epoch) + '.pkl' + '/')
     learner.sess.close()
+    return a_BD
 
 
 
@@ -59,6 +61,8 @@ def training_att(game, mix_str_def, epoch, retrain = False):
 def training_def(game, mix_str_att, epoch, retrain = False):
     if len(mix_str_att) != len(game.att_str):
         raise ValueError("The length of mix_str_att and att_str does not match while retraining")
+
+    print("training_def mix_str_att is ", mix_str_att)
 
     # env = copy.deepcopy(game.env)
     env = game.env
@@ -80,7 +84,7 @@ def training_def(game, mix_str_att, epoch, retrain = False):
     learner = Learner()
     with learner.graph.as_default():
         with learner.sess.as_default():
-            act_def = learner.learn_multi_nets(
+            act_def, d_BD = learner.learn_multi_nets(
                 env,
                 network=models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr=param['lr'],
@@ -100,6 +104,9 @@ def training_def(game, mix_str_att, epoch, retrain = False):
             else:
                 act_def.save(DIR_def + "def_str_epoch" + str(epoch) + ".pkl", "def_str_epoch" + str(epoch) + '.pkl' + '/')
     learner.sess.close()
+    return d_BD
+
+
 
 # for all strategies learned by retraining, the scope index is 0.
 def training_hado_att(game):
@@ -124,7 +131,7 @@ def training_hado_att(game):
     learner = Learner(retrain=True, freq=param['retrain_freq'])
     with learner.graph.as_default():
         with learner.sess.as_default():
-            act_att = learner.learn_multi_nets(
+            act_att, _ = learner.learn_multi_nets(
                 env,
                 network = models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr =param['lr'],
@@ -166,7 +173,7 @@ def training_hado_def(game):
     learner = Learner(retrain=True, freq=param['retrain_freq'])
     with learner.graph.as_default():
         with learner.sess.as_default():
-            act_def = learner.learn_multi_nets(
+            act_def, _ = learner.learn_multi_nets(
                 env,
                 network=models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr=param['lr'],

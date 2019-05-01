@@ -159,33 +159,39 @@ identity = 0
 
 
 
-class Worm(object):
-    def __init__(self):
-        self.harm = 1
+# class Worm(object):
+#     def __init__(self):
+#         self.harm = 1
+#
+#
+#
+# class Dog(object):
+#     def __init__(self):
+#         self.age = 2
+#         self.pest = Worm()
+#
+# a = Dog()
+#
+# def modi(a):
+#     a.age = 3
+#     a.pest.harm = 4
+#
+#
+# modi(a)
+# print(a.age)
+# print(a.pest.harm)
 
 
+# path = os.getcwd() + '/game_data/' + 'game_8r_subproc.pkl'
+# game = fp.load_pkl(path)
+# # print(game.nasheq)
+# # print(game.att_str)
+# # print(game.def_str)
+# print(game.payoffmatrix_def)
+# # print(game.payoffmatrix_att)
 
-class Dog(object):
-    def __init__(self):
-        self.age = 2
-        self.pest = Worm()
-
-a = Dog()
-
-def modi(a):
-    a.age = 3
-    a.pest.harm = 4
-
-
-modi(a)
-print(a.age)
-print(a.pest.harm)
-
-
-
-
-
-
+nn_att = np.array([0,0,0,0,0])
+print(np.where(nn_att>0.95))
 
 
 

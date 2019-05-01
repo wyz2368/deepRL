@@ -41,4 +41,8 @@ for i in np.arange(num_str-1):
 
 denom += 1
 
-print(np.round(delta/denom,2))
+# print(np.round(delta/denom,2))
+print(delta/np.sum(delta))
+print(np.sum(delta/np.sum(delta)))
+print(delta/denom)
+print(np.sum(delta/denom))

@@ -22,7 +22,7 @@ import copy
 
 
 
-load_path = os.getcwd() + '/retrain_att/att_str_retrain2.pkl'
+load_path = os.getcwd() + '/attacker_strategies/att_str_epoch2.pkl'
 
 loaded_params = joblib.load(os.path.expanduser(load_path))
 for i in loaded_params.keys():

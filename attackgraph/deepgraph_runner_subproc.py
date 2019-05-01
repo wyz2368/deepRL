@@ -4,6 +4,7 @@ import os
 import datetime
 import sys
 import psutil
+import warnings
 
 # Modules import
 from attackgraph import DagGenerator as dag
@@ -17,16 +18,16 @@ from attackgraph import gambit_analysis as ga
 from attackgraph.simulation import series_sim
 # from attackgraph.sim_MPI import do_MPI_sim
 from attackgraph.sim_retrain import sim_retrain
-# from attackgraph.egta_subproc import do_train_and_sim
-from attackgraph.subproc import call_and_wait
+from attackgraph.egta_subproc import do_train_and_sim
+# from attackgraph.subproc import call_and_wait
 
 
-def do_train_and_sim():
-    print('Begin do_train_and_sim')
-    path = os.getcwd()
-    command_line = 'python ' + path + '/egta_subproc.py'
-    call_and_wait(command_line)
-    print("Done do_train_and_sim")
+# def do_train_and_sim():
+#     print('Begin do_train_and_sim')
+#     path = os.getcwd()
+#     command_line = 'python ' + path + '/egta_subproc.py'
+#     call_and_wait(command_line)
+#     print("Done do_train_and_sim")
 
 
 # load_env: the name of env to be loaded.
@@ -130,7 +131,6 @@ def EGTA(start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() + '/game_da
         do_train_and_sim()
         game = fp.load_pkl(game_path)
         epoch = fp.load_pkl(arg_path+'epoch_arg.pkl')
-        #
         # find nash equilibrium using gambit analysis
         payoffmatrix_def = game.payoffmatrix_def
         payoffmatrix_att = game.payoffmatrix_att
@@ -199,9 +199,10 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
     # os._exit(os.EX_OK)
 
 if __name__ == '__main__':
+    warnings.filterwarnings("ignore")
     game = initialize(env_name='test_env')
     # EGTA(env, game, retrain=True)
-    EGTA(retrain=False)
+    EGTA(retrain=True)
     # EGTA_restart(restart_epoch=4)
 
 

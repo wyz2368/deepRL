@@ -1028,20 +1028,23 @@ class Learner(object):
                         #     logger.record_tabular("% time spent exploring", int(100 * exploration.value(t)))
                         #     logger.dump_tabular()
 
-                        # if (checkpoint_freq is not None and t > learning_starts and
-                        #         num_episodes > 100 and t % checkpoint_freq == 0):
-                        #     if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
-                        #         # if print_freq is not None:
-                        #         #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
-                        #         #         saved_mean_reward, mean_100ep_reward))
-                        #         save_variables(model_file, scope=scope)
-                        #         model_saved = True
-                        #         saved_mean_reward = mean_100ep_reward
+                        if (checkpoint_freq is not None and t > learning_starts and
+                                num_episodes > 100 and t % checkpoint_freq == 0) and not self.retrain:
+                            if saved_mean_reward is None or mean_100ep_reward > saved_mean_reward:
+                                # if print_freq is not None:
+                                #     logger.log("Saving model due to mean reward increase: {} -> {}".format(
+                                #         saved_mean_reward, mean_100ep_reward))
+                                save_variables(model_file, sess=self.sess, scope=scope)
+                                model_saved = True
+                                saved_mean_reward = mean_100ep_reward
 
-                        if self.retrain and num_episodes == 3 and add_first_rew:
+                        #TODO: This could fail silently especially when the number of steps is small and num_epi has not been reached.
+                        if self.retrain and num_episodes == 1 and add_first_rew:
                             print("Add the first reward averaged over 10 episodes.")
-                            retrain_episode_rewards.append(round(np.mean(episode_rewards[-3:-1]), 1))
+                            retrain_episode_rewards.append(round(np.mean(episode_rewards[-1]), 1))
                             add_first_rew = False
+
+
 
 
                         if self.retrain and t % self.retrain_freq == 0 and t>1:
@@ -1050,10 +1053,21 @@ class Learner(object):
                             retrain_episode_rewards.append(mean_100ep_reward)
                             save_variables(retrain_save_path, scope=scope)
 
-                    # if model_saved:
-                    #     # if print_freq is not None:
-                    #     #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
-                    #     load_variables(model_file, sess=self.sess)
+                    if model_saved and not self.retrain:
+                        # if print_freq is not None:
+                        #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
+                        load_variables(model_file, sess=self.sess, scope=scope)
+                        if saved_mean_reward is not None and saved_mean_reward > mean_100ep_reward:
+                            rew = saved_mean_reward
+                        else:
+                            rew = mean_100ep_reward
+
+
+                    if add_first_rew == True and self.retrain:
+                        print('***************************')
+                        print('Retrain reward length does not match!')
+                        print('***************************')
+                        raise ValueError('The rew for the first str has not been added!!!')
 
                     if self.retrain:
 
@@ -1066,5 +1080,8 @@ class Learner(object):
                             rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
                         fp.save_pkl(retrain_episode_rewards, rew_path)
 
-        return act
+        if total_timesteps == 0:
+            return act
+
+        return act, rew
 

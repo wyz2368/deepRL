@@ -374,6 +374,23 @@ def load_variables(load_path, variables=None, sess=None, scope = None):
 
     sess.run(restores)
 
+def load_variables_pickbest(load_path, variables=None, sess=None, scope = None):
+    sess = sess or get_session()
+    # variables = variables or tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=scope)
+    variables = variables or tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=scope)
+
+    loaded_params = joblib.load(os.path.expanduser(load_path))
+    restores = []
+    if isinstance(loaded_params, list):
+        assert len(loaded_params) == len(variables), 'number of variables loaded mismatches len(variables)'
+        for d, v in zip(loaded_params, variables):
+            restores.append(v.assign(d))
+    else:
+        for v in variables:
+            restores.append(v.assign(loaded_params[v.name]))
+
+    sess.run(restores)
+
 # ================================================================
 # Shape adjustment for feeding into tf placeholders
 # ================================================================

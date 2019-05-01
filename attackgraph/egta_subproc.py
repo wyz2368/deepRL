@@ -1,20 +1,20 @@
 from attackgraph.subproc import call_and_wait
 
 # Packages import
-import numpy as np
+# import numpy as np
 import os
 import datetime
-import sys
-import psutil
+# import sys
+# import psutil
 
 # Modules import
 
 from attackgraph import file_op as fp
-from attackgraph import json_op as jp
+# from attackgraph import json_op as jp
 from attackgraph import sim_Series
 from attackgraph import training
 from attackgraph import util
-from attackgraph.simulation import series_sim
+# from attackgraph.simulation import series_sim
 from attackgraph.sim_retrain import sim_retrain
 
 def do_train_and_sim():
@@ -52,11 +52,11 @@ def train_and_sim():
         retrain_start = True
 
     print("Begin training attacker......")
-    training.training_att(game, mix_str_def, epoch, retrain=retrain_start)
+    a_BD = training.training_att(game, mix_str_def, epoch, retrain=retrain_start)
     print("Attacker training done......")
 
     print("Begin training defender......")
-    training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
+    d_BD = training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
     print("Defender training done......")
 
     if retrain and epoch > start_hado:
@@ -73,27 +73,27 @@ def train_and_sim():
         a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
         print('Done retrained sim......')
 
-    else:
-
-        # Judge beneficial deviation
-        # one plays nn and another plays ne strategy
-        print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
-        nn_att = "att_str_epoch" + str(epoch) + ".pkl"
-        nn_def = mix_str_def
-        # if MPI_flag:
-        #     a_BD, _ = do_MPI_sim(nn_att, nn_def)
-        # else:
-        a_BD, _ = series_sim(env, game, nn_att, nn_def, game.num_episodes)
-        print("Simulation done for a_BD.")
-
-        print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
-        nn_att = mix_str_att
-        nn_def = "def_str_epoch" + str(epoch) + ".pkl"
-        # if MPI_flag:
-        #     _, d_BD = do_MPI_sim(nn_att, nn_def)
-        # else:
-        _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
-        print("Simulation done for d_BD.")
+    # else:
+    #
+    #     # Judge beneficial deviation
+    #     # one plays nn and another plays ne strategy
+    #     print("Simulating attacker payoff. New strategy vs. mixed opponent strategy.")
+    #     nn_att = "att_str_epoch" + str(epoch) + ".pkl"
+    #     nn_def = mix_str_def
+    #     # if MPI_flag:
+    #     #     a_BD, _ = do_MPI_sim(nn_att, nn_def)
+    #     # else:
+    #     a_BD, _ = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+    #     print("Simulation done for a_BD.")
+    #
+    #     print("Simulating defender's payoff. New strategy vs. mixed opponent strategy.")
+    #     nn_att = mix_str_att
+    #     nn_def = "def_str_epoch" + str(epoch) + ".pkl"
+    #     # if MPI_flag:
+    #     #     _, d_BD = do_MPI_sim(nn_att, nn_def)
+    #     # else:
+    #     _, d_BD = series_sim(env, game, nn_att, nn_def, game.num_episodes)
+    #     print("Simulation done for d_BD.")
 
     # #TODO: This may lead to early stop.
     # if a_BD - aPayoff < game.threshold and d_BD - dPayoff < game.threshold:
