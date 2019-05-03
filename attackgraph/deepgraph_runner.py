@@ -120,6 +120,9 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
         mix_str_att = game.nasheq[epoch][1]
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
+        game.att_payoff.append(aPayoff)
+        game.def_payoff.append(dPayoff)
+
         # increase epoch
         epoch += 1
         print("Current epoch is " + str(epoch))
@@ -153,6 +156,9 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
             print('Begin retrained sim......')
             a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
             print('Done retrained sim......')
+
+        game.att_BD_list.append(a_BD)
+        game.def_BD_list.append(d_BD)
 
         # else:
         #
@@ -238,6 +244,9 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
         mix_str_att = game.nasheq[epoch][1]
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
+        game.att_payoff.append(aPayoff)
+        game.def_payoff.append(dPayoff)
+
         # increase epoch
         epoch += 1
         print("Current epoch is " + str(epoch))
@@ -269,6 +278,9 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
             print('Begin retrained sim......')
             a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
             print('Done retrained sim......')
+
+        game.att_BD_list.append(a_BD)
+        game.def_BD_list.append(d_BD)
 
         # else:
         #

@@ -41,6 +41,9 @@ def train_and_sim():
     mix_str_att = game.nasheq[epoch][1]
     aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
+    game.att_payoff.append(aPayoff)
+    game.def_payoff.append(dPayoff)
+
     # increase epoch
     epoch += 1
     print("Current epoch is " + str(epoch))
@@ -58,6 +61,9 @@ def train_and_sim():
     print("Begin training defender......")
     d_BD = training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
     print("Defender training done......")
+
+    game.att_BD_list.append(a_BD)
+    game.def_BD_list.append(d_BD)
 
     if retrain and epoch > start_hado:
         print("Begin retraining attacker......")

@@ -76,7 +76,7 @@ class Environment(object):
                          actProb=1.0) # probability of successfully activating, for OR node only
 
     # TODO: root node must be AND node.
-    def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=3, NmaxACost=3, EmaxACost=3):
+    def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=1, NmaxACost=1, EmaxACost=1):
         # Exception handling
         # try:
         #     if self.numRoot + self.numGoals > self.numNodes:
@@ -124,13 +124,13 @@ class Environment(object):
                 self.setActivationType_N(nodeID, np.random.randint(2))
 
             self.setState_N(nodeID, 0)
-            self.setAReward_N(nodeID, np.random.uniform(0, NmaxAReward))
-            self.setDPenalty_N(nodeID, -np.random.uniform(0, NmaxDPenalty))
+            self.setAReward_N(nodeID, np.random.uniform(6, NmaxAReward))
+            self.setDPenalty_N(nodeID, -np.random.uniform(6, NmaxDPenalty))
             self.setDCost_N(nodeID, -np.random.uniform(0, NmaxDCost))
             self.setACost_N(nodeID, -np.random.uniform(0, NmaxACost))
-            self.setposActiveProb_N(nodeID, np.random.uniform(0.5, 1))
-            self.setposInactiveProb_N(nodeID, np.random.uniform(0, 0.5))
-            self.setActProb_N(nodeID, np.random.uniform(0.5, 1))
+            self.setposActiveProb_N(nodeID, np.random.uniform(0.7, 1))
+            self.setposInactiveProb_N(nodeID, np.random.uniform(0, 0.3))
+            self.setActProb_N(nodeID, np.random.uniform(0.7, 1))
 
         # Nodes must start with id = 1
         self.G = nx.relabel_nodes(self.G, dict(zip(self.G.nodes, list(np.asarray(list(self.G.nodes)) + 1))))
@@ -146,7 +146,7 @@ class Environment(object):
             self.setid_E(edge, edgeID) # Edge ID could be random
             self.setType_E(edge, np.random.randint(2))
             self.setACost_E(edge, -np.random.uniform(0, EmaxACost))
-            self.setActProb_E(edge, np.random.uniform(0.5, 1))
+            self.setActProb_E(edge, np.random.uniform(0.7, 1))
 
         # TODO: remove the first line. Check if G has been initialized.
     def specifiedDAG(self, attributesDict):

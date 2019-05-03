@@ -33,7 +33,7 @@ def nn_param1():
     param['num_hidden'] = 256
     param['num_layers'] = 1
     param['lr'] = 5e-5
-    param['total_timesteps'] = 2000 #TODO: total time steps should be larger than hado time step.
+    param['total_timesteps'] = 30000 #TODO: total time steps should be larger than hado time step.
     param['exploration_fraction'] = 0.5
     param['exploration_final_eps'] = 0.03
     param['print_freq'] = 250
@@ -43,9 +43,9 @@ def nn_param1():
     param['checkpoint_freq'] = None
 
     #hado
-    param['retrain_timesteps'] = 2000 # first rew depends on this number.
+    param['retrain_timesteps'] = 10000 # first rew depends on this number.
     param['hado_param'] = (4, 0.7, 0.286)
-    param['retrain_freq'] = 500
+    param['retrain_freq'] = 2500
 
     #simulation
     param['num_episodes'] = 10
