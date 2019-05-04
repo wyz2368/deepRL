@@ -112,7 +112,7 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
 
     proc = psutil.Process(os.getpid())
 
-    count = 18
+    count = 5
     while count != 0:
     # while True:
         mem0 = proc.memory_info().rss

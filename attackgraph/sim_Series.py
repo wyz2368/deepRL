@@ -90,6 +90,7 @@ def sim_and_modifiy_Series_with_game(game):
     for j in range(new_dim):
         position_row_list.append((new_dim-1,j))
 
+
     # num_tasks = 2 * new_dim - 1
 
     att_col = []

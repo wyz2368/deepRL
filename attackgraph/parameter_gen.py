@@ -6,14 +6,15 @@ def nn_param():
     param['num_hidden'] = 256
     param['num_layers'] = 1
     param['lr'] = 5e-5
-    param['total_timesteps'] = 700000 #TODO: total time steps should be larger than hado time step.
+    param['total_timesteps_att'] = 700000
+    param['total_timesteps_def'] = 1000000
     param['exploration_fraction'] = 0.5
     param['exploration_final_eps'] = 0.03
     param['print_freq'] = 250
     param['param_noise'] = False
     param['gamma'] = 0.99
     param['prioritized_replay'] = True
-    param['checkpoint_freq'] = None
+    param['checkpoint_freq'] = 30000
 
     #hado
     param['retrain_timesteps'] = 400000
@@ -33,7 +34,8 @@ def nn_param1():
     param['num_hidden'] = 256
     param['num_layers'] = 1
     param['lr'] = 5e-5
-    param['total_timesteps'] = 30000 #TODO: total time steps should be larger than hado time step.
+    param['total_timesteps_att'] = 2000
+    param['total_timesteps_def'] = 2000
     param['exploration_fraction'] = 0.5
     param['exploration_final_eps'] = 0.03
     param['print_freq'] = 250
@@ -43,9 +45,9 @@ def nn_param1():
     param['checkpoint_freq'] = None
 
     #hado
-    param['retrain_timesteps'] = 10000 # first rew depends on this number.
+    param['retrain_timesteps'] = 2000 # first rew depends on this number.
     param['hado_param'] = (4, 0.7, 0.286)
-    param['retrain_freq'] = 2500
+    param['retrain_freq'] = 500
 
     #simulation
     param['num_episodes'] = 10
@@ -56,4 +58,4 @@ def nn_param1():
     print("Network parameters have been saved in a json file successfully.")
 
 
-nn_param()
+nn_param1()

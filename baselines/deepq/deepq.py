@@ -1058,9 +1058,11 @@ class Learner(object):
                         #     logger.log("Restored model with mean reward: {}".format(saved_mean_reward))
                         load_variables(model_file, sess=self.sess, scope=scope)
                         if saved_mean_reward is not None and saved_mean_reward > mean_100ep_reward:
-                            rew = saved_mean_reward
+                            BD = saved_mean_reward
                         else:
-                            rew = mean_100ep_reward
+                            BD = mean_100ep_reward
+                    else:
+                        BD = None
 
 
                     if add_first_rew == True and self.retrain:
@@ -1080,8 +1082,10 @@ class Learner(object):
                             rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
                         fp.save_pkl(retrain_episode_rewards, rew_path)
 
+                    print(episode_rewards)
+
         if total_timesteps == 0:
             return act
 
-        return act, rew
+        return act, BD
 
