@@ -62,9 +62,6 @@ def train_and_sim():
     d_BD = training.training_def(game, mix_str_att, epoch, retrain=retrain_start)
     print("Defender training done......")
 
-    game.att_BD_list.append(a_BD)
-    game.def_BD_list.append(d_BD)
-
     if retrain and epoch > start_hado:
         print("Begin retraining attacker......")
         training.training_hado_att(game)
@@ -78,6 +75,9 @@ def train_and_sim():
         print('Begin retrained sim......')
         a_BD, d_BD = sim_retrain(env, game, mix_str_att, mix_str_def, epoch)
         print('Done retrained sim......')
+
+    game.att_BD_list.append(a_BD)
+    game.def_BD_list.append(d_BD)
 
     # else:
     #
@@ -118,6 +118,11 @@ def train_and_sim():
 
     game.env.attacker.nn_att = None
     game.env.defender.nn_def = None
+
+    print('a_BD_list', game.att_BD_list)
+    print('aPayoff', game.att_payoff)
+    print('d_BD_list', game.def_BD_list)
+    print('dPayoff', game.def_payoff)
 
     fp.save_pkl(game, game_path)
     fp.save_pkl(epoch, arg_path+'epoch_arg.pkl')

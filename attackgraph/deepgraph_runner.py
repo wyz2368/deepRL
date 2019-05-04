@@ -19,6 +19,7 @@ from attackgraph.simulation import series_sim
 # from attackgraph.sim_MPI import do_MPI_sim
 from attackgraph.sim_retrain import sim_retrain
 
+
 # load_env: the name of env to be loaded.
 # env_name: the name of env to be generated.
 # MPI_flag: if running simulation in parallel or not.
@@ -208,10 +209,16 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
         game.env.attacker.nn_att = None
         game.env.defender.nn_def = None
         fp.save_pkl(game, game_path)
+        print('a_BD_list', game.att_BD_list)
+        print('aPayoff', game.att_payoff)
+        print('d_BD_list', game.def_BD_list)
+        print('dPayoff', game.def_payoff)
+
         print("Round_" + str(epoch) + " has done and game was saved.")
         print("=======================================================")
         # break
         print("MEM:",(mem1 - mem0) / mem0, (mem2 - mem0) / mem0, (mem3 - mem0) / mem0)
+
         count -= 1
 
         sys.stdout.flush() #TODO: make sure this is correct.
