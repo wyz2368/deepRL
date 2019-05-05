@@ -51,7 +51,7 @@ def nn_param1():
 
     #simulation
     param['num_episodes'] = 10
-    param['threshold'] = 0.1
+    param['threshold'] = 0.11
 
     param_path = os.getcwd() + '/network_parameters/param.json'
     jp.save_json_data(param_path, param)

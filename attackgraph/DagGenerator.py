@@ -582,6 +582,9 @@ class Environment(object):
 
         attact = self.attacker.attact #TODO: check if action sets are correct!
         defact = self.defender.defact
+        if self.training_flag == 0:
+            print(defact)
+
         # attacker's action
         for attack in attact:
             if isinstance(attack, tuple):
@@ -659,7 +662,7 @@ class Environment(object):
     def step(self, action):
         if self.training_flag == 0: #defender is training.
             true_action = self.actionspace_def[action]
-            if true_action == 'pass':
+            if true_action == 'pass' or true_action in self.defender.defact:
                 self.current_time += 1
                 if self.current_time < self.T: #TODO:Check the logics
                     new_obs, rew, done = self._step()
@@ -672,7 +675,7 @@ class Environment(object):
                 return new_obs, rew, done
         elif self.training_flag == 1: # attacker is training.
             true_action = self.actionspace_att[action] #TODO: list index out of range
-            if true_action == 'pass':
+            if true_action == 'pass' or true_action in self.attacker.attact:
                 self.current_time += 1
                 if self.current_time < self.T:
                     new_obs, rew, done = self._step()
