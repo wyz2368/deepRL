@@ -2,10 +2,13 @@ import networkx as nx
 import numpy as np
 import os
 import random
-# import matplotlib.pyplot as plt
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 from attackgraph import attacker
 from attackgraph import defender
 from attackgraph import file_op as fp
+from attackgraph import json_op as jp
 import copy
 
 class Environment(object):
@@ -75,6 +78,55 @@ class Environment(object):
                          cost = 0, # Cost for attacker on OR node, GREATER THAN OR EQUAL TO 0
                          actProb=1.0) # probability of successfully activating, for OR node only
 
+    def load_graph(self):
+        nodeset = list(range(1, self.numNodes+1))
+        json_path = os.getcwd() + '/env_data/RandomGraph30N100E6T1.json'
+        data = jp.load_json_data(json_path)
+        nodes_list = data["nodes"]
+        edges_list = data["edges"]
+        edgeset = []
+        for edge in edges_list:
+            edgeset.append((edge['srcID'], edge["desID"]))
+        edgeset_sorted = self.sortEdge(edgeset)
+        self.daggenerator_wo_attrs(nodeset, edgeset_sorted)
+        for node in self.G.nodes:
+            if nodes_list[node-1]["nodeType"] == "NONTARGET":
+                self.setType_N(node,0)
+            else:
+                self.setType_N(node, 1)
+            if nodes_list[node-1]["actType"] == "AND":
+                self.setActivationType_N(node,1)
+            else:
+                self.setActivationType_N(node, 0)
+            self.setAReward_N(node,nodes_list[node-1]['aReward'])
+            self.setDPenalty_N(node,nodes_list[node-1]['dPenalty'])
+            self.setDCost_N(node,nodes_list[node-1]["dCost"])
+            self.setACost_N(node,nodes_list[node-1]["aActivationCost"])
+            self.setposActiveProb_N(node,nodes_list[node-1]["posActiveProb"])
+            self.setposInactiveProb_N(node,nodes_list[node-1]["posInactiveProb"])
+            self.setActProb_N(node,nodes_list[node-1]["aActivationProb"])
+
+        count = 0
+        for edge in edgeset:
+            self.setid_E(edge, edges_list[count]["id"])  # Edge ID could be random
+            if edges_list[count]["edgeType"] == "NORMAL":
+                self.setType_E(edge, 0)
+            else:
+                self.setType_E(edge, 1)
+            self.setACost_E(edge, edges_list[count]["aActivationCost"])
+            self.setActProb_E(edge, edges_list[count]["aActivationProb"])
+            count += 1
+
+        for node in self.G.nodes:
+            if len(list(self.G.predecessors(node))) == 0:
+                self.setRoot_N(node, 1)
+                self.setActivationType_N(node, 1)
+
+
+
+
+
+
     # TODO: root node must be AND node.
     def randomDAG(self, NmaxAReward=10, NmaxDPenalty=10, NmaxDCost=1, NmaxACost=1, EmaxACost=1):
         # Exception handling
@@ -95,6 +147,15 @@ class Environment(object):
         rootNodes = random.sample(range(1,self.numNodes-1), self.numRoot-1) # Given the parameter self.numRoot, pick self.numRoot-1 random root IDs.
                                                                  # Node 0 will also always be root. Last node (ID:self.numNodes) cannot be root node.
         goalNodes = random.sample(list(set(range(1,self.numNodes))-set(rootNodes)),self.numGoals) # Randomly pick GoalNodes
+
+        # goal_set = []
+        # for goal in list(set(range(1,self.numNodes))-set(rootNodes)):
+        #     if len(list(self.G.successors(goal))) == 0:
+        #         goal_set.append(goal)
+        # if len(goal_set) > self.numGoals:
+        #     goalNodes = random.sample(list(set(range(1, self.numNodes)) - set(rootNodes)), self.numGoals)
+        # else:
+        #     goalNodes = goal_set
 
         for rootNode in rootNodes: # Out of the picked rootNodes, drop all edges (u,v) where v = rootNode.
             for start in range(0, rootNode):
@@ -174,59 +235,59 @@ class Environment(object):
     # Visualizes DAG
     # Node did not visualize: aReward, dPenalty, dCost, aCost, posActiveProb, posInactiveProb, actProb, topoPosition
     # Edge did not visualize: eid, cost, weight, actProb
-    #TODO:Does not work
-    # def visualize(self):
-    #     nodePos = nx.layout.spring_layout(self.G)
-    #     # Local variable initialization
-    #     try:  # rootNodes and targetNodes cannot overlap
-    #         rootNodes = self.get_Roots()[1]
-    #         targetNodes = self.get_Targets()[1]
-    #         if bool(set(rootNodes) & set(targetNodes)):
-    #             raise Exception("Goal and Root nodes overlap. A Goal node cannot be a Root node, and vice versa.")
-    #     except Exception as error:
-    #         print(repr(error))
-    #         return 1
-    #     virtualEdges = [edge for edge in self.G.edges if self.getType_E(edge) == 1]
-    #
-    #     # Visualization format: Nodes
-    #     #    Active = Green, Inactive = Red
-    #     #    nonGoal AND Node = ^ Triangle
-    #     #    Goal AND Node = p Pentagon
-    #     #    nonGoal OR Node = o Circle
-    #     #    Goal OR Node = h Hexagon
-    #     #	 ROOT nodes = Bold Labels
-    #     #	 nonROOT nodes = Regular Labels
-    #     nodeSize = 300
-    #     for node in self.G.nodes:
-    #         if self.getState_N(node) == 1:
-    #             nodeColor = 'g'  # Active = Green
-    #         else:
-    #             nodeColor = 'r'  # Inactive = Red
-    #         if self.getActivationType_N(node) == 1:
-    #             if node in targetNodes:
-    #                 nodeShape = 'p'  # Goal AND Node = p Pentagon
-    #             else:
-    #                 nodeShape = '^'  # nonGoal AND Node = ^ Triangle
-    #         else:
-    #             if node in targetNodes:
-    #                 nodeShape = 'h'  # Goal OR Node = h Hexagon
-    #             else:
-    #                 nodeShape = 'o'  # nonGoal OR Node = o Circle
-    #         nx.draw_networkx_nodes(self.G, nodePos, node_shape=nodeShape, nodelist=[node], node_size=nodeSize,
-    #                                node_color=nodeColor, vmax=0.1)
-    #     nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in rootNodes},
-    #                             font_weight='bold')  # ROOT nodes = Bold Labels
-    #     nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in list(
-    #         set(self.G.nodes) - set(rootNodes))})  # nonROOT nodes = Regular Labels
-    #
-    #     # Visualization format: Edges
-    #     # 	Virtual edges = Blue
-    #     # 	Normal edges = Black
-    #     nx.draw_networkx_edges(self.G, nodePos, edgelist=virtualEdges, edge_color='blue')  # Virtual edges = Blue
-    #     nx.draw_networkx_edges(self.G, nodePos,
-    #                            edgelist=list(set(self.G.edges) - set(virtualEdges)))  # Normal edges = Black
-    #
-    #     plt.show()
+
+    def visualize(self):
+        nodePos = nx.layout.spring_layout(self.G)
+        # Local variable initialization
+        try:  # rootNodes and targetNodes cannot overlap
+            rootNodes = self.get_Roots()[1]
+            targetNodes = self.get_Targets()[1]
+            if bool(set(rootNodes) & set(targetNodes)):
+                raise Exception("Goal and Root nodes overlap. A Goal node cannot be a Root node, and vice versa.")
+        except Exception as error:
+            print(repr(error))
+            return 1
+        virtualEdges = [edge for edge in self.G.edges if self.getType_E(edge) == 1]
+
+        # Visualization format: Nodes
+        #    Active = Green, Inactive = Red
+        #    nonGoal AND Node = ^ Triangle
+        #    Goal AND Node = p Pentagon
+        #    nonGoal OR Node = o Circle
+        #    Goal OR Node = h Hexagon
+        #	 ROOT nodes = Bold Labels
+        #	 nonROOT nodes = Regular Labels
+        nodeSize = 300
+        for node in self.G.nodes:
+            if self.getState_N(node) == 1:
+                nodeColor = 'g'  # Active = Green
+            else:
+                nodeColor = 'r'  # Inactive = Red
+            if self.getActivationType_N(node) == 1:
+                if node in targetNodes:
+                    nodeShape = 'p'  # Goal AND Node = p Pentagon
+                else:
+                    nodeShape = '^'  # nonGoal AND Node = ^ Triangle
+            else:
+                if node in targetNodes:
+                    nodeShape = 'h'  # Goal OR Node = h Hexagon
+                else:
+                    nodeShape = 'o'  # nonGoal OR Node = o Circle
+            nx.draw_networkx_nodes(self.G, nodePos, node_shape=nodeShape, nodelist=[node], node_size=nodeSize,
+                                   node_color=nodeColor, vmax=0.1)
+        nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in rootNodes},
+                                font_weight='bold')  # ROOT nodes = Bold Labels
+        nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in list(
+            set(self.G.nodes) - set(rootNodes))})  # nonROOT nodes = Regular Labels
+
+        # Visualization format: Edges
+        # 	Virtual edges = Blue
+        # 	Normal edges = Black
+        nx.draw_networkx_edges(self.G, nodePos, edgelist=virtualEdges, edge_color='blue')  # Virtual edges = Blue
+        nx.draw_networkx_edges(self.G, nodePos,
+                               edgelist=list(set(self.G.edges) - set(virtualEdges)))  # Normal edges = Black
+
+        plt.show()
 
     def isProb(self,p):
         return p >= 0.0 and p <= 1.0
@@ -584,6 +645,12 @@ class Environment(object):
         defact = self.defender.defact
         if self.training_flag == 0:
             print(defact)
+        if self.training_flag == 1:
+            print(attact)
+
+        # print("attact:", attact)
+        # print("defact:", defact)
+        # current_state = []
 
         # attacker's action
         for attack in attact:
@@ -606,6 +673,10 @@ class Environment(object):
             if self.G.nodes[node]['state'] == 1:
                 aReward += self.G.nodes[node]['aReward']
                 dReward += self.G.nodes[node]['dPenalty']
+
+        # for node in self.G.nodes:
+        #     current_state.append(self.G.nodes[node]['state'])
+        # print('current_state:',current_state)
 
         # TODO: update attacker and defender after graph has been changed.
         # TODO: was_defended mismatches?

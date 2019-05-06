@@ -893,6 +893,7 @@ class Learner(object):
                 U.initialize()
                 update_target()
 
+                mean_rew_list = []
                 retrain_episode_rewards = []
                 episode_rewards = [0.0]
                 saved_mean_reward = None
@@ -974,7 +975,7 @@ class Learner(object):
                         env_action = action
                         reset = False
                         new_obs, rew, done = env.step(env_action)
-
+                        # print('time', t, 'env_action:', env_action)
                         # Store transition in the replay buffer.
                         replay_buffer.add(obs, action, rew, new_obs, float(done))
                         obs = new_obs
@@ -1020,7 +1021,8 @@ class Learner(object):
                             # Update target network periodically.
                             update_target()
 
-                        mean_100ep_reward = round(np.mean(episode_rewards[-101:-1]), 1)
+                        mean_100ep_reward = round(np.mean(episode_rewards[-251:-1]), 1)
+                        mean_rew_list.append(mean_100ep_reward)
                         num_episodes = len(episode_rewards)
                         # if done and print_freq is not None and len(episode_rewards) % print_freq == 0:
                         #     logger.record_tabular("steps", t)
@@ -1083,7 +1085,8 @@ class Learner(object):
                             rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
                         fp.save_pkl(retrain_episode_rewards, rew_path)
 
-                    print(episode_rewards)
+                    print('Num_epi:', len(episode_rewards))
+                    print("mean rew:", mean_rew_list)
 
         if total_timesteps == 0:
             return act

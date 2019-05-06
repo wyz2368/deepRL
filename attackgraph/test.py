@@ -190,8 +190,8 @@ identity = 0
 # print(game.payoffmatrix_def)
 # # print(game.payoffmatrix_att)
 
-nn_att = np.array([0,0,0,0,0])
-print(np.where(nn_att>0.95))
+x = list(range(1,7))
+print(x)
 
 
 

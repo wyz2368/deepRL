@@ -22,7 +22,7 @@ def nn_param():
     param['retrain_freq'] = 100000
 
     #simulation
-    param['num_episodes'] = 100
+    param['num_episodes'] = 250
     param['threshold'] = 0.1
 
     param_path = os.getcwd() + '/network_parameters/param.json'

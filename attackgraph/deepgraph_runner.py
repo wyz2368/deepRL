@@ -3,7 +3,7 @@ import numpy as np
 import os
 import datetime
 import sys
-# sys.path.append('/home/wangyzh/exp')
+sys.path.append('/home/wangyzh/exp')
 import psutil
 import warnings
 
@@ -49,6 +49,12 @@ def initialize(load_env=None, env_name=None):
     # create players and point to their env
     env.create_players()
     env.create_action_space()
+
+    #print root node
+    roots = env.get_Roots()
+    print("Root Nodes:", roots)
+    ed = env.get_ORedges()
+    print('Or edges:', ed)
 
     # load param
     param_path = os.getcwd() + '/network_parameters/param.json'
