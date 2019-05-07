@@ -1047,9 +1047,6 @@ class Learner(object):
                             retrain_episode_rewards.append(round(np.mean(episode_rewards[-1]), 1))
                             add_first_rew = False
 
-
-
-
                         if self.retrain and t % self.retrain_freq == 0 and t>1:
 
                             retrain_save_path = retrain_path + retrain_name + str(t//self.retrain_freq) + '.pkl'
@@ -1085,8 +1082,8 @@ class Learner(object):
                             rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
                         fp.save_pkl(retrain_episode_rewards, rew_path)
 
-                    print('Num_epi:', len(episode_rewards))
-                    print("mean rew:", mean_rew_list)
+                    print('Num_epi:', episode_rewards)
+                    # print("mean rew:", mean_rew_list)
 
         if total_timesteps == 0:
             return act

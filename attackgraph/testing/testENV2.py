@@ -27,7 +27,8 @@ from attackgraph import file_op as fp
 #     print(env_name + " has been saved.")
 #     return env
 #
-# env = env_rand_gen('run_env')
+# env = env_rand_gen('run_env_B')
+# print(env.get_Roots())
 
 # _, targets = env.get_Targets()
 # print(targets)

@@ -2,9 +2,9 @@ import networkx as nx
 import numpy as np
 import os
 import random
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
+# import matplotlib
+# matplotlib.use('TkAgg')
+# import matplotlib.pyplot as plt
 from attackgraph import attacker
 from attackgraph import defender
 from attackgraph import file_op as fp
@@ -236,58 +236,58 @@ class Environment(object):
     # Node did not visualize: aReward, dPenalty, dCost, aCost, posActiveProb, posInactiveProb, actProb, topoPosition
     # Edge did not visualize: eid, cost, weight, actProb
 
-    def visualize(self):
-        nodePos = nx.layout.spring_layout(self.G)
-        # Local variable initialization
-        try:  # rootNodes and targetNodes cannot overlap
-            rootNodes = self.get_Roots()[1]
-            targetNodes = self.get_Targets()[1]
-            if bool(set(rootNodes) & set(targetNodes)):
-                raise Exception("Goal and Root nodes overlap. A Goal node cannot be a Root node, and vice versa.")
-        except Exception as error:
-            print(repr(error))
-            return 1
-        virtualEdges = [edge for edge in self.G.edges if self.getType_E(edge) == 1]
-
-        # Visualization format: Nodes
-        #    Active = Green, Inactive = Red
-        #    nonGoal AND Node = ^ Triangle
-        #    Goal AND Node = p Pentagon
-        #    nonGoal OR Node = o Circle
-        #    Goal OR Node = h Hexagon
-        #	 ROOT nodes = Bold Labels
-        #	 nonROOT nodes = Regular Labels
-        nodeSize = 300
-        for node in self.G.nodes:
-            if self.getState_N(node) == 1:
-                nodeColor = 'g'  # Active = Green
-            else:
-                nodeColor = 'r'  # Inactive = Red
-            if self.getActivationType_N(node) == 1:
-                if node in targetNodes:
-                    nodeShape = 'p'  # Goal AND Node = p Pentagon
-                else:
-                    nodeShape = '^'  # nonGoal AND Node = ^ Triangle
-            else:
-                if node in targetNodes:
-                    nodeShape = 'h'  # Goal OR Node = h Hexagon
-                else:
-                    nodeShape = 'o'  # nonGoal OR Node = o Circle
-            nx.draw_networkx_nodes(self.G, nodePos, node_shape=nodeShape, nodelist=[node], node_size=nodeSize,
-                                   node_color=nodeColor, vmax=0.1)
-        nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in rootNodes},
-                                font_weight='bold')  # ROOT nodes = Bold Labels
-        nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in list(
-            set(self.G.nodes) - set(rootNodes))})  # nonROOT nodes = Regular Labels
-
-        # Visualization format: Edges
-        # 	Virtual edges = Blue
-        # 	Normal edges = Black
-        nx.draw_networkx_edges(self.G, nodePos, edgelist=virtualEdges, edge_color='blue')  # Virtual edges = Blue
-        nx.draw_networkx_edges(self.G, nodePos,
-                               edgelist=list(set(self.G.edges) - set(virtualEdges)))  # Normal edges = Black
-
-        plt.show()
+    # def visualize(self):
+    #     nodePos = nx.layout.spring_layout(self.G)
+    #     # Local variable initialization
+    #     try:  # rootNodes and targetNodes cannot overlap
+    #         rootNodes = self.get_Roots()[1]
+    #         targetNodes = self.get_Targets()[1]
+    #         if bool(set(rootNodes) & set(targetNodes)):
+    #             raise Exception("Goal and Root nodes overlap. A Goal node cannot be a Root node, and vice versa.")
+    #     except Exception as error:
+    #         print(repr(error))
+    #         return 1
+    #     virtualEdges = [edge for edge in self.G.edges if self.getType_E(edge) == 1]
+    #
+    #     # Visualization format: Nodes
+    #     #    Active = Green, Inactive = Red
+    #     #    nonGoal AND Node = ^ Triangle
+    #     #    Goal AND Node = p Pentagon
+    #     #    nonGoal OR Node = o Circle
+    #     #    Goal OR Node = h Hexagon
+    #     #	 ROOT nodes = Bold Labels
+    #     #	 nonROOT nodes = Regular Labels
+    #     nodeSize = 300
+    #     for node in self.G.nodes:
+    #         if self.getState_N(node) == 1:
+    #             nodeColor = 'g'  # Active = Green
+    #         else:
+    #             nodeColor = 'r'  # Inactive = Red
+    #         if self.getActivationType_N(node) == 1:
+    #             if node in targetNodes:
+    #                 nodeShape = 'p'  # Goal AND Node = p Pentagon
+    #             else:
+    #                 nodeShape = '^'  # nonGoal AND Node = ^ Triangle
+    #         else:
+    #             if node in targetNodes:
+    #                 nodeShape = 'h'  # Goal OR Node = h Hexagon
+    #             else:
+    #                 nodeShape = 'o'  # nonGoal OR Node = o Circle
+    #         nx.draw_networkx_nodes(self.G, nodePos, node_shape=nodeShape, nodelist=[node], node_size=nodeSize,
+    #                                node_color=nodeColor, vmax=0.1)
+    #     nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in rootNodes},
+    #                             font_weight='bold')  # ROOT nodes = Bold Labels
+    #     nx.draw_networkx_labels(self.G, nodePos, labels={k: k for k in list(
+    #         set(self.G.nodes) - set(rootNodes))})  # nonROOT nodes = Regular Labels
+    #
+    #     # Visualization format: Edges
+    #     # 	Virtual edges = Blue
+    #     # 	Normal edges = Black
+    #     nx.draw_networkx_edges(self.G, nodePos, edgelist=virtualEdges, edge_color='blue')  # Virtual edges = Blue
+    #     nx.draw_networkx_edges(self.G, nodePos,
+    #                            edgelist=list(set(self.G.edges) - set(virtualEdges)))  # Normal edges = Black
+    #
+    #     plt.show()
 
     def isProb(self,p):
         return p >= 0.0 and p <= 1.0
@@ -765,6 +765,9 @@ class Environment(object):
     def save_graph_copy(self):
         #TODO: test if G is initialized.
         self.G_reserved = copy.deepcopy(self.G)
+
+    def save_mask_copy(self):
+        self.G_mask = copy.deepcopy(self.G)
 
     def reset_graph(self):
         self.G = copy.deepcopy(self.G_reserved)

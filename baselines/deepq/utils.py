@@ -63,13 +63,12 @@ class ObservationInput(PlaceholderTfInput):
         return self.processed_inpt
 
 # Only work for the attacker.
-
-#TODO: make sure data type is float32
 def mask_generator_att(env, obses):
     batch_size = np.shape(obses)[0]
     num_nodes = env.G.number_of_nodes()
     mask = []
-    G_cur = copy.deepcopy(env.G_reserved)
+    # G_cur = copy.deepcopy(env.G_reserved)
+    G_cur = env.G_mask
 
     for i in np.arange(batch_size):
         state = obses[i][:num_nodes]

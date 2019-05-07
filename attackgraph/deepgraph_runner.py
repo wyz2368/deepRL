@@ -35,7 +35,7 @@ def initialize(load_env=None, env_name=None):
 
     # Create Environment
     if isinstance(load_env,str):
-        path = os.getcwd() + load_env + '.pkl'
+        path = os.getcwd() + '/env_data/' + load_env + '.pkl'
         if not fp.isExist(path):
             raise ValueError("The env being loaded does not exist.")
         env = fp.load_pkl(path)
@@ -45,6 +45,7 @@ def initialize(load_env=None, env_name=None):
 
     # save graph copy
     env.save_graph_copy()
+    env.save_mask_copy() #TODO: change transfer
 
     # create players and point to their env
     env.create_players()
@@ -67,6 +68,7 @@ def initialize(load_env=None, env_name=None):
     game.env.defender.set_env_belong_to(game.env)
     game.env.attacker.set_env_belong_to(game.env)
 
+    # make no sense
     env.defender.set_env_belong_to(env)
     env.attacker.set_env_belong_to(env)
 
@@ -81,14 +83,12 @@ def initialize(load_env=None, env_name=None):
     game.add_def_str(act_def)
 
     print('Begin simulation for uniform strategy.')
-    sys.stdout.flush()
     # simulate using random strategies and initialize payoff matrix
     # if MPI_flag:
     #     aReward, dReward = do_MPI_sim(act_att, act_def)
     # else:
     aReward, dReward = series_sim(game.env, game, act_att, act_def, game.num_episodes)
     print('Done simulation for uniform strategy.')
-    sys.stdout.flush()
 
     game.init_payoffmatrix(dReward, aReward)
     ne = {}
@@ -357,7 +357,7 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
-    game = initialize(env_name='test_env')
+    game = initialize(load_env='run_env', env_name=None)
     # EGTA(env, game, retrain=True)
     EGTA(game.env, game, retrain=False)
     # EGTA_restart(restart_epoch=4)
