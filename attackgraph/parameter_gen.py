@@ -58,4 +58,4 @@ def nn_param1():
     print("Network parameters have been saved in a json file successfully.")
 
 
-nn_param()
+nn_param1()

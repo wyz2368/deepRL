@@ -24,8 +24,6 @@ from baselines.deepq.utils import mask_generator_att
 from attackgraph import file_op as fp
 
 
-
-
 class ActWrapper(object):
     def __init__(self, act, act_params):
         self._act = act
@@ -724,7 +722,7 @@ class Learner(object):
                          seed=None,
                          lr=5e-4,
                          total_timesteps=100000,
-                         buffer_size=50000,
+                         buffer_size=30000,
                          exploration_fraction=0.1,
                          exploration_final_eps=0.02,
                          train_freq=1,
@@ -744,6 +742,7 @@ class Learner(object):
                          callback=None,
                          load_path=None,
                          scope='deepq',
+                         epoch=-1,
                          **network_kwargs
                          ):
         """Train a deepq model.
@@ -982,7 +981,7 @@ class Learner(object):
 
                         episode_rewards[-1] += rew
                         if done:
-                            print('time',t)
+                            # print('time',t)
                             obs = env.reset_everything_with_return()
                             episode_rewards.append(0.0)
                             reset = True
@@ -1082,8 +1081,19 @@ class Learner(object):
                             rew_path = os.getcwd() + '/retrained_rew/' + 'rewards_att.pkl'
                         fp.save_pkl(retrain_episode_rewards, rew_path)
 
-                    print('Num_epi:', episode_rewards)
+                    # print('Num_epi:', episode_rewards)
                     # print("mean rew:", mean_rew_list)
+
+                    if total_timesteps != 0:
+                        if training_flag == 0:
+                            path = os.getcwd() + '/learning_curve/def_data' + str(epoch) + '.pkl'
+                            fp.save_pkl(mean_rew_list,path)
+                        elif training_flag == 1:
+                            path = os.getcwd() + '/learning_curve/att_data' + str(epoch) + '.pkl'
+                            fp.save_pkl(mean_rew_list, path)
+                        else:
+                            raise ValueError("Error training flag.")
+
 
         if total_timesteps == 0:
             return act

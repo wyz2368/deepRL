@@ -45,7 +45,8 @@ def training_att(game, mix_str_def, epoch, retrain = False):
                 gamma=param['gamma'],
                 prioritized_replay=param['prioritized_replay'],
                 checkpoint_freq=param['checkpoint_freq'],
-                scope = scope
+                scope = scope,
+                epoch=epoch
             )
             print("Saving attacker's model to pickle.")
             if retrain:
@@ -96,7 +97,8 @@ def training_def(game, mix_str_att, epoch, retrain = False):
                 gamma=param['gamma'],
                 prioritized_replay=param['prioritized_replay'],
                 checkpoint_freq=param['checkpoint_freq'],
-                scope = scope
+                scope = scope,
+                epoch=epoch
             )
             print("Saving defender's model to pickle.")
             if retrain:

@@ -643,14 +643,14 @@ class Environment(object):
 
         attact = self.attacker.attact #TODO: check if action sets are correct!
         defact = self.defender.defact
-        if self.training_flag == 0:
-            print(defact)
-        if self.training_flag == 1:
-            print(attact)
+        # if self.training_flag == 0:
+        #     print(defact)
+        # if self.training_flag == 1:
+        #     print(attact)
 
-        # print("attact:", attact)
-        # print("defact:", defact)
-        # current_state = []
+        print("attact:", attact)
+        print("defact:", defact)
+        current_state = []
 
         # attacker's action
         for attack in attact:
@@ -674,9 +674,12 @@ class Environment(object):
                 aReward += self.G.nodes[node]['aReward']
                 dReward += self.G.nodes[node]['dPenalty']
 
-        # for node in self.G.nodes:
-        #     current_state.append(self.G.nodes[node]['state'])
-        # print('current_state:',current_state)
+        # print("aReward:", aReward)
+        # print('dReward:', dReward)
+        #
+        for node in self.G.nodes:
+            current_state.append(self.G.nodes[node]['state'])
+        print('current_state:',current_state)
 
         # TODO: update attacker and defender after graph has been changed.
         # TODO: was_defended mismatches?
@@ -689,6 +692,8 @@ class Environment(object):
             self.defender.defact.clear()
             inDefenseSet = self.defender.get_def_inDefenseSet(self.G) #should be all zeros.
             wasdef = self.defender.get_def_wasDefended(self.G)
+            print('prev_obs:', self.defender.prev_obs)
+            print('def obs:', self.defender.observation)
             return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), dReward, done
 
@@ -704,6 +709,11 @@ class Environment(object):
             self.attacker.update_canAttack(canAttack)
             # inAttackSet should be all zeros, we can check this.
             # print('_step_obs:', len(self.attacker.observation), 'canAttack:', len(canAttack), 'inAttack:', len(inAttackSet))
+            print('att obs:', self.attacker.observation)
+            print('att canAttack:', canAttack)
+            print('att inAtt:', inAttackSet)
+            if done:
+                print("DONE")
             return np.array(self.attacker.observation + canAttack + inAttackSet + [self.T - self.current_time]), aReward, done
         else:
             raise ValueError("Training flag is set abnormally.")
@@ -715,6 +725,9 @@ class Environment(object):
         canAttack, inAttackset = self.attacker.get_att_canAttack_inAttackSet(self.G)
         # Notice that canAttack is updated in the _step.
         # print('_step_att_obs:', len(self.attacker.observation), 'canAttack:', len(self.attacker.canAttack), 'inAttack:', len(inAttackset))
+        print("_att obs:", self.attacker.observation)
+        print('_att canAttack:', canAttack)
+        print('_att inAtt:', inAttackset)
         return np.array(self.attacker.observation + canAttack + inAttackset + [self.T - self.current_time]), \
                immediatereward, False
 
@@ -723,6 +736,8 @@ class Environment(object):
         self.defender.defact.add(action)
         inDefenseSet = self.defender.get_def_inDefenseSet(self.G)
         wasdef = self.defender.get_def_wasDefended(self.G) # May be improved since it's the same within internal clock.
+        print('_prev_obs:', self.defender.prev_obs)
+        print('_def obs:', self.defender.observation)
         return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), immediatereward, False
 

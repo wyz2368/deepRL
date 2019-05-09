@@ -190,8 +190,8 @@ identity = 0
 # print(game.payoffmatrix_def)
 # # print(game.payoffmatrix_att)
 
-x = list(range(1,7))
-print(x)
+a = (1,2)
+print(a[-1])
 
 
 

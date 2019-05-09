@@ -357,7 +357,7 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
 
 if __name__ == '__main__':
     warnings.filterwarnings("ignore")
-    game = initialize(load_env='run_env', env_name=None)
+    game = initialize(load_env='run_env_B', env_name=None)
     # EGTA(env, game, retrain=True)
     EGTA(game.env, game, retrain=False)
     # EGTA_restart(restart_epoch=4)

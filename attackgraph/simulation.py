@@ -25,6 +25,7 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
         if len(np.where(nn_def>0.95)[0]) != 1:
             single_str_def = False
 
+    _, targetset = get_Targets(env.G)
 
     for i in range(num_episodes): #can be run parallel
 
@@ -162,7 +163,7 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
             for node in def_action_set:
                 G.nodes[node]['state'] = 0
                 dReward += G.nodes[node]['dCost']
-            _, targetset = get_Targets(G)
+
             for node in targetset:
                 if G.nodes[node]['state'] == 1:
                     aReward += G.nodes[node]['aReward']
