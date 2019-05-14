@@ -131,6 +131,7 @@ def training_hado_att(game):
     param = jp.load_json_data(param_path)
 
     learner = Learner(retrain=True, freq=param['retrain_freq'])
+    # TODO: add epoch???
     with learner.graph.as_default():
         with learner.sess.as_default():
             act_att, _ = learner.learn_multi_nets(

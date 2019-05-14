@@ -13,7 +13,7 @@ def nn_param():
     param['print_freq'] = 250
     param['param_noise'] = False
     param['gamma'] = 0.99
-    param['prioritized_replay'] = True
+    param['prioritized_replay'] = False
     param['checkpoint_freq'] = 30000
 
     #hado
