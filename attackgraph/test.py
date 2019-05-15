@@ -190,11 +190,12 @@ identity = 0
 # print(game.payoffmatrix_def)
 # # print(game.payoffmatrix_att)
 
-a = (1,2)
-print(a[-1])
+rand = np.random.rand(5)
+mix_str_def = rand/np.sum(rand)
+mix_str_att = rand/np.sum(rand)
 
 
-
+print(mix_str_def)
 
 
 

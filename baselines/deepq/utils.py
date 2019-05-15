@@ -2,7 +2,15 @@ from baselines.common.input import observation_input
 from baselines.common.tf_util import adjust_shape
 import numpy as np
 import tensorflow as tf
-import copy
+
+import os
+
+
+# from baselines.deepq.deepq import learn_multi_nets
+# from baselines.deepq.deepq import learn
+# from .deepq import learn
+
+
 
 # ================================================================
 # Placeholders
@@ -80,6 +88,8 @@ def mask_generator_att(env, obses):
         mask.append(_mask)
 
     return np.array(mask, dtype=np.float32)
+
+
 
 
 

@@ -1,6 +1,7 @@
 import random
 import numpy as np
 
+
 def set_global_seed(seed):
     print("Global seeds has been set! Strategy sampling will be fixed.")
     random.seed(seed)
@@ -45,6 +46,7 @@ def payoff_mixed_NE(game, epoch):
     aPayoff = np.round(np.sum(nash_def * sub_payoffmatrix_att * nash_att), decimals=2)
 
     return aPayoff, dPayoff
+
 
 
 

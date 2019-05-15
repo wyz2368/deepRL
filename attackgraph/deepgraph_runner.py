@@ -3,7 +3,7 @@ import numpy as np
 import os
 import datetime
 import sys
-sys.path.append('/home/wangyzh/exp')
+# sys.path.append('/home/wangyzh/exp')
 import psutil
 import warnings
 
@@ -124,8 +124,13 @@ def EGTA(env, game, start_hado=2, retrain=False, epoch=1, game_path=os.getcwd() 
     # while True:
         mem0 = proc.memory_info().rss
         # fix opponent strategy
-        mix_str_def = game.nasheq[epoch][0]
-        mix_str_att = game.nasheq[epoch][1]
+        # mix_str_def = game.nasheq[epoch][0]
+        # mix_str_att = game.nasheq[epoch][1]
+
+        #Test mixed strategy
+        rand = np.random.rand(len(game.nasheq[epoch][0]))
+        mix_str_def = rand/np.sum(rand)
+        mix_str_att = rand/np.sum(rand)
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
         game.att_payoff.append(aPayoff)
