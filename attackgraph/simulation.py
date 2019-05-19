@@ -126,9 +126,13 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
 
 
 
-
+        # print('===================================')
+        # print('==========start episode============')
+        # print('===================================')
+        # print(aReward, dReward)
 
         for t in range(T):
+            # print('====================')
             timeleft = T - t
             if att_uniform_flag:
                 attacker.att_greedy_action_builder_single(G, timeleft, nn_att_act)
@@ -146,8 +150,8 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
 
             att_action_set = attacker.attact
             def_action_set = defender.defact
-            # print('att:', att_action_set)
-            # print('def:', def_action_set)
+            # print(t, 'att:', att_action_set)
+            # print(t, 'def:', def_action_set)
             for attack in att_action_set:
                 if isinstance(attack, tuple):
                     # check OR node
@@ -164,13 +168,22 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
                 G.nodes[node]['state'] = 0
                 dReward += G.nodes[node]['dCost']
 
+            # print('Before Traget aRew:', aReward, 'dRew:', dReward)
+            # print('target set:', targetset)
+            # current_state = []
+            # for node in G.nodes:
+            #     current_state.append(G.nodes[node]['state'])
+            # print('current_state:', current_state)
             for node in targetset:
                 if G.nodes[node]['state'] == 1:
                     aReward += G.nodes[node]['aReward']
                     dReward += G.nodes[node]['dPenalty']
+            # print('aRew:', aReward, 'dRew:', dReward)
 
         aReward_list = np.append(aReward_list,aReward)
         dReward_list = np.append(dReward_list,dReward)
+        # print('alist:', aReward_list)
+        # print('dlist:', dReward_list)
 
     return np.round(np.mean(aReward_list),2), np.round(np.mean(dReward_list),2)
 
