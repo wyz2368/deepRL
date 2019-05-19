@@ -2,48 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="eb1973ed-ab63-4caf-852a-7275618e4e2b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/baselines.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/attackgraph.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/attacker_strategies/att_str_epoch1.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/attacker_strategies/att_str_epoch2.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/attacker_strategies/att_str_epoch3.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/defender_strategies/def_str_epoch1.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/defender_strategies/def_str_epoch2.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/defender_strategies/def_str_epoch3.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/env_data/run_env.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/env_data/run_env_B.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/env_data/test_env.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/game_data/game.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/game_data/game_8r_subproc.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/game_data/game_exp.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/inner_egta_arg/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/inner_egta_arg/epoch_arg.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/inner_egta_arg/hado_arg.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/retrained_rew/rewards_att.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/retrained_rew/rewards_def.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/sim_arg/nn_att.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/sim_arg/nn_def.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/sim_arg/result.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/trained_str/att_str_epoch101.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/attackgraph/trained_str/def_str_epoch100.pkl" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/deepq.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/baselines/deepq/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/defender_strategies/def_str_epoch1.pkl" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/attackgraph/learning_curve/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/attackgraph/retrain_att/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/attackgraph/retrain_def/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -52,7 +14,35 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/attackgraph/learning_curve/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="11" selection-start-column="11" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/attackgraph/retrain_att/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="11" selection-start-column="11" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/attackgraph/retrain_def/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="11" selection-start-column="11" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -114,9 +104,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/deepgraph_runner.py" />
-        <option value="$PROJECT_DIR$/attackgraph/__init__.py" />
-        <option value="$PROJECT_DIR$/attackgraph/testing/test_saved_stuff.py" />
         <option value="$PROJECT_DIR$/attackgraph/testing/testsaved.py" />
         <option value="$PROJECT_DIR$/attackgraph/uniform_str_init.py" />
         <option value="$PROJECT_DIR$/attackgraph/testing/testENV.py" />
@@ -165,6 +152,9 @@
         <option value="$PROJECT_DIR$/attackgraph/.gitignore" />
         <option value="$PROJECT_DIR$/attackgraph/env_data/.gitignore" />
         <option value="$PROJECT_DIR$/attackgraph/defender_strategies/.gitignore" />
+        <option value="$PROJECT_DIR$/attackgraph/learning_curve/.gitignore" />
+        <option value="$PROJECT_DIR$/attackgraph/retrain_att/.gitignore" />
+        <option value="$PROJECT_DIR$/attackgraph/retrain_def/.gitignore" />
       </list>
     </option>
   </component>
@@ -190,6 +180,12 @@
               <item name="baselines" type="462c0819:PsiDirectoryNode" />
               <item name="attackgraph" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="baselines" type="b2602c69:ProjectViewProjectNode" />
+              <item name="baselines" type="462c0819:PsiDirectoryNode" />
+              <item name="attackgraph" type="462c0819:PsiDirectoryNode" />
+              <item name="learning_curve" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -204,11 +200,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/attackgraph/retrain_def" />
+      <recent name="$PROJECT_DIR$/attackgraph/retrain_att" />
+      <recent name="$PROJECT_DIR$/attackgraph/learning_curve" />
       <recent name="$PROJECT_DIR$/attackgraph/env_data" />
       <recent name="$PROJECT_DIR$/attackgraph" />
-      <recent name="$PROJECT_DIR$/attackgraph/trained_str" />
-      <recent name="$PROJECT_DIR$/attackgraph/sim_str" />
-      <recent name="$PROJECT_DIR$/attackgraph/payoff_matrix" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/attackgraph/learning_curve/Masking GASB" />
@@ -492,13 +488,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1548985410186</updated>
-    </task>
-    <task id="LOCAL-00010" summary="&quot;learn multi nets&quot;">
-      <created>1553653643125</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1553653643125</updated>
     </task>
     <task id="LOCAL-00011" summary="&quot;test sample strategies&quot;">
       <created>1553720544548</created>
@@ -836,7 +825,14 @@
       <option name="project" value="LOCAL" />
       <updated>1558293499628</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="'add training vs single str'">
+      <created>1558294193493</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1558294193493</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -873,6 +869,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1080" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.13744076" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -1252,9 +1249,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/attackgraph/learning_curve/.gitignore">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/attackgraph/retrained_rew/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1284,12 +1278,6 @@
     <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/attackgraph/retrain_def/.gitignore">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/attackgraph/retrain_att/.gitignore">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/attackgraph/sim_arg/.gitignore">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1297,6 +1285,27 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="17">
           <caret line="1" column="19" lean-forward="true" selection-start-line="1" selection-start-column="19" selection-end-line="1" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/attackgraph/learning_curve/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/attackgraph/retrain_att/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/attackgraph/retrain_def/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
         </state>
       </provider>
     </entry>
