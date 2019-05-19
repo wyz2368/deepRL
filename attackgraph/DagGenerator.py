@@ -648,9 +648,9 @@ class Environment(object):
         # if self.training_flag == 1:
         #     print(attact)
 
-        # print("attact:", attact)
-        # print("defact:", defact)
-        # current_state = []
+        print("attact:", attact)
+        print("defact:", defact)
+        current_state = []
 
         # attacker's action
         for attack in attact:
@@ -674,12 +674,12 @@ class Environment(object):
                 aReward += self.G.nodes[node]['aReward']
                 dReward += self.G.nodes[node]['dPenalty']
 
-        # print("aReward:", aReward)
-        # print('dReward:', dReward)
+        print("aReward:", aReward)
+        print('dReward:', dReward)
         #
-        # for node in self.G.nodes:
-        #     current_state.append(self.G.nodes[node]['state'])
-        # print('current_state:',current_state)
+        for node in self.G.nodes:
+            current_state.append(self.G.nodes[node]['state'])
+        print('current_state:',current_state)
 
         # TODO: update attacker and defender after graph has been changed.
         # TODO: was_defended mismatches?
@@ -692,8 +692,10 @@ class Environment(object):
             self.defender.defact.clear()
             inDefenseSet = self.defender.get_def_inDefenseSet(self.G) #should be all zeros.
             wasdef = self.defender.get_def_wasDefended(self.G)
-            # print('prev_obs:', self.defender.prev_obs)
-            # print('def obs:', self.defender.observation)
+            print('prev_obs:', self.defender.prev_obs)
+            print('def obs:', self.defender.observation)
+            print('wasdef:', wasdef)
+            print('inDefenseSet', inDefenseSet)
             return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), dReward, done
 
@@ -738,6 +740,8 @@ class Environment(object):
         wasdef = self.defender.get_def_wasDefended(self.G) # May be improved since it's the same within internal clock.
         # print('_prev_obs:', self.defender.prev_obs)
         # print('_def obs:', self.defender.observation)
+        print('_wasdef:', wasdef)
+        print('_inDefenseSet', inDefenseSet)
         return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), immediatereward, False
 

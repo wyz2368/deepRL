@@ -1040,6 +1040,7 @@ class Learner(object):
                         episode_rewards[-1] += rew
                         if done:
                             # print('time',t)
+                            print('DONE!!!')
                             obs = env.reset_everything_with_return()
                             episode_rewards.append(0.0)
                             reset = True

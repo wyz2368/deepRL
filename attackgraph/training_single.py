@@ -14,6 +14,7 @@ DIR_def = os.getcwd() + '/trained_str/'
 DIR_att = os.getcwd() + '/trained_str/'
 
 def training_att_single(game, str_def):
+    print('Begin attacker training against ' + str_def)
     env = game.env
     env.reset_everything()
 
@@ -50,14 +51,16 @@ def training_att_single(game, str_def):
             print("Saving attacker's model to pickle.")
             act_att.save(DIR_att + "att_str_epoch" + str(101) + ".pkl", 'att_str_epoch' + str(101) + '.pkl' + '/')
     learner.sess.close()
+    print('Done attacker training against ' + str_def)
     return a_BD
 
 
 def training_def_single(game, str_att):
+    print('Begin defender training against ' + str_att)
     env = game.env
     env.reset_everything()
 
-    env.set_training_flag(1)
+    env.set_training_flag(0)
 
     mix_str_att = [str_att]
     env.attacker.set_mix_strategy(np.array([1]))
@@ -89,6 +92,7 @@ def training_def_single(game, str_att):
             print("Saving defender's model to pickle.")
             act_def.save(DIR_def + "def_str_epoch" + str(100) + ".pkl", 'def_str_epoch' + str(100) + '.pkl' + '/')
     learner.sess.close()
+    print('Done defender training against ' + str_att)
     return d_BD
 
 def do_training(str, training_id):
@@ -97,6 +101,9 @@ def do_training(str, training_id):
     warnings.filterwarnings("ignore")
     game = initialize(load_env='run_env_B', env_name=None)
 
+    print("=======================================================")
+    print("=======Begin training against single strategy =========")
+    print("=======================================================")
     if training_id == 1:
         a_BD = training_att_single(game, str)
         print('a_BD:', a_BD)
@@ -105,5 +112,5 @@ def do_training(str, training_id):
         print('d_BD:', d_BD)
 
 if __name__ == '__main__':
-    do_training('def_str_epoch2.pkl', 1)
-    # do_training('att_str_epoch2.pkl', 0)
+    # do_training('def_str_epoch2.pkl', 1)
+    do_training('att_str_epoch2.pkl', 0)
