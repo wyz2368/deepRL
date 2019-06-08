@@ -21,8 +21,12 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity, str_dict=None):
     if not len(str_set) == len(mix_str):
         raise ValueError("Length of mixed strategies does not match number of strategies.")
 
+
+    # if np.sum(mix_str) != 1:
+    #     mix_str = mix_str/np.sum(mix_str)
+
     picked_str = np.random.choice(str_set, p=mix_str)
-    print('current str:', picked_str)
+    # print('current str:', picked_str)
     #TODO: modification for fast sampling.
     if str_dict != None:
         return str_dict[picked_str]

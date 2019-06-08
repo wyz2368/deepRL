@@ -130,7 +130,6 @@ def load_all_policies(env, str_set, opp_identity):
                         scope = picked_str + '/'
                     )
 
-
     env.set_training_flag(flag)
     return str_dict
 
@@ -965,7 +964,6 @@ class Learner(object):
                             env.attacker.sample_and_set_str()
                             one_hot_att = True
                         else: # if mixed strategy
-                            print("Enter att mix")
                             str_dict = load_all_policies(env, env.attacker.str_set, opp_identity=1)
                             env.attacker.sample_and_set_str(str_dict=str_dict)
                     elif training_flag == 1:  # attacker is training
@@ -973,7 +971,6 @@ class Learner(object):
                             env.defender.sample_and_set_str()
                             one_hot_def = True
                         else: # if mixed strategy
-                            print("Enter def mix")
                             str_dict = load_all_policies(env, env.defender.str_set, opp_identity=0)
                             env.defender.sample_and_set_str(str_dict=str_dict)
                     else:
@@ -1037,20 +1034,20 @@ class Learner(object):
                         replay_buffer.add(obs, action, rew, new_obs, float(done))
                         obs = new_obs
 
+
                         episode_rewards[-1] += rew
                         if done:
                             # print('time',t)
-                            print('DONE!!!')
+                            # print('DONE!!!')
+                            # print('+++++++++++++++++++++++++++++++++++')
                             obs = env.reset_everything_with_return()
                             episode_rewards.append(0.0)
                             reset = True
                             if not one_hot_att and not one_hot_def:
                                 if total_timesteps != 0:
                                     if training_flag == 0:  # defender is training
-                                        print("Enter att mix1")
                                         env.attacker.sample_and_set_str(str_dict)
                                     elif training_flag == 1:  # attacker is training
-                                        print("Enter def mix1")
                                         env.defender.sample_and_set_str(str_dict)
                                     else:
                                         raise ValueError("Training flag is wrong")

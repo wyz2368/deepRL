@@ -634,10 +634,11 @@ class Environment(object):
         dReward = 0
         #TODO: set nn_def or nn_att first. Sample from mixed strategy for each episode.
         #TODO: check the logic of saving act to prev_act
+        # print("______:", self.T - self.current_time)
         if self.training_flag == 0: # If the defender is training, attacker builds greedy set. Vice Versa.
-            self.attacker.att_greedy_action_builder(self.G, self.T - self.current_time)
+            self.attacker.att_greedy_action_builder(self.G, self.T - self.current_time + 1)
         elif self.training_flag == 1:
-            self.defender.def_greedy_action_builder(self.G, self.T - self.current_time)
+            self.defender.def_greedy_action_builder(self.G, self.T - self.current_time + 1)
         else:
             raise ValueError("training flag error.")
 
@@ -648,8 +649,8 @@ class Environment(object):
         # if self.training_flag == 1:
         #     print(attact)
 
-        print("attact:", attact)
-        print("defact:", defact)
+        # print("attact:", attact)
+        # print("defact:", defact)
         current_state = []
 
         # attacker's action
@@ -674,12 +675,12 @@ class Environment(object):
                 aReward += self.G.nodes[node]['aReward']
                 dReward += self.G.nodes[node]['dPenalty']
 
-        print("aReward:", aReward)
-        print('dReward:', dReward)
-        #
+        # print("aReward:", aReward)
+        # print('dReward:', dReward)
+
         for node in self.G.nodes:
             current_state.append(self.G.nodes[node]['state'])
-        print('current_state:',current_state)
+        # print('current_state:',current_state)
 
         # TODO: update attacker and defender after graph has been changed.
         # TODO: was_defended mismatches?
@@ -692,10 +693,10 @@ class Environment(object):
             self.defender.defact.clear()
             inDefenseSet = self.defender.get_def_inDefenseSet(self.G) #should be all zeros.
             wasdef = self.defender.get_def_wasDefended(self.G)
-            print('prev_obs:', self.defender.prev_obs)
-            print('def obs:', self.defender.observation)
-            print('wasdef:', wasdef)
-            print('inDefenseSet', inDefenseSet)
+            # print('prev_obs:', self.defender.prev_obs)
+            # print('def obs:', self.defender.observation)
+            # print('wasdef:', wasdef)
+            # print('inDefenseSet', inDefenseSet)
             return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), dReward, done
 
@@ -740,8 +741,8 @@ class Environment(object):
         wasdef = self.defender.get_def_wasDefended(self.G) # May be improved since it's the same within internal clock.
         # print('_prev_obs:', self.defender.prev_obs)
         # print('_def obs:', self.defender.observation)
-        print('_wasdef:', wasdef)
-        print('_inDefenseSet', inDefenseSet)
+        # print('_wasdef:', wasdef)
+        # print('_inDefenseSet', inDefenseSet)
         return np.array(self.defender.prev_obs + self.defender.observation + \
                wasdef + inDefenseSet + [self.T - self.current_time]), immediatereward, False
 
@@ -767,6 +768,7 @@ class Environment(object):
             true_action = self.actionspace_att[action] #TODO: list index out of range
             if true_action == 'pass' or true_action in self.attacker.attact:
                 self.current_time += 1
+                # print('Current time:', self.current_time)
                 if self.current_time < self.T:
                     new_obs, rew, done = self._step()
                     return new_obs, rew, done

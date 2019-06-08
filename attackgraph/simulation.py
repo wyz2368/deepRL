@@ -7,6 +7,7 @@ from attackgraph import file_op as fp
 
 
 def series_sim(env, game, nn_att, nn_def, num_episodes):
+    # print('In simulation:', nn_att, nn_def)
     aReward_list = np.array([])
     dReward_list = np.array([])
     nn_att_saved = copy.copy(nn_att)
@@ -42,6 +43,7 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
         aReward = 0
         dReward = 0
 
+        #TODO: for mixed strategy, loading strategies every epi is slow.
         if i == 0 or not single_str_att:
             att_uniform_flag = False
             nn_att = copy.copy(nn_att_saved)
@@ -75,9 +77,6 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
             else:
                 training_flag = 0
                 nn_def_act, sess2, graph2 = load_action_class(path, nn_def, game, training_flag)
-
-
-
 
         # def_uniform_flag = False
         # att_uniform_flag = False
@@ -132,7 +131,7 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
         # print(aReward, dReward)
 
         for t in range(T):
-            # print('====================')
+            print('====================')
             timeleft = T - t
             if att_uniform_flag:
                 attacker.att_greedy_action_builder_single(G, timeleft, nn_att_act)
@@ -150,8 +149,13 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
 
             att_action_set = attacker.attact
             def_action_set = defender.defact
-            # print(t, 'att:', att_action_set)
-            # print(t, 'def:', def_action_set)
+            print("att obs:", attacker.observation)
+            print('def obs:', defender.observation)
+            print(t, 'att:', att_action_set)
+            print(t, 'def:', def_action_set)
+
+
+
             for attack in att_action_set:
                 if isinstance(attack, tuple):
                     # check OR node
@@ -168,27 +172,36 @@ def series_sim(env, game, nn_att, nn_def, num_episodes):
                 G.nodes[node]['state'] = 0
                 dReward += G.nodes[node]['dCost']
 
-            # print('Before Traget aRew:', aReward, 'dRew:', dReward)
-            # print('target set:', targetset)
-            # current_state = []
-            # for node in G.nodes:
-            #     current_state.append(G.nodes[node]['state'])
-            # print('current_state:', current_state)
+            print('Before Traget aRew:', aReward, 'dRew:', dReward)
+            print('target set:', targetset)
+            current_state = []
+            for node in G.nodes:
+                current_state.append(G.nodes[node]['state'])
+            print('current_state:', current_state)
             for node in targetset:
                 if G.nodes[node]['state'] == 1:
                     aReward += G.nodes[node]['aReward']
                     dReward += G.nodes[node]['dPenalty']
-            # print('aRew:', aReward, 'dRew:', dReward)
+            print('aRew:', aReward, 'dRew:', dReward)
+
+            #update players' observations
+            #update defender's observation
+            defender.update_obs(defender.get_def_hadAlert(G))
+            defender.save_defact2prev()
+            defender.defact.clear()
+            #update attacker's observation
+            attacker.update_obs(attacker.get_att_isActive(G))
+            attacker.attact.clear()
 
         aReward_list = np.append(aReward_list,aReward)
         dReward_list = np.append(dReward_list,dReward)
-        # print('alist:', aReward_list)
-        # print('dlist:', dReward_list)
+        print('alist:', aReward_list)
+        print('dlist:', dReward_list)
 
     return np.round(np.mean(aReward_list),2), np.round(np.mean(dReward_list),2)
 
 
-
+# TODO: update def and att obs
 def series_sim_retrain(env, game, nn_att, nn_def, num_episodes):
     aReward_list = np.array([])
     dReward_list = np.array([])

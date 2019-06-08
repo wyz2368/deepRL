@@ -35,7 +35,7 @@ def encode_gambit_file(poDef, poAtt):
 def gambit_analysis(timeout):
     if not fp.isExist(gambit_DIR):
         raise ValueError(".nfg file does not exist!")
-    command_str = "gambit-lcp -q " + os.getcwd() + "/gambit_data/payoffmatrix.nfg -d 4 > " + os.getcwd() + "/gambit_data/nash.txt"
+    command_str = "gambit-lcp -q " + os.getcwd() + "/gambit_data/payoffmatrix.nfg -d 8 > " + os.getcwd() + "/gambit_data/nash.txt"
     subproc.call_and_wait_with_timeout(command_str, timeout)
 
 
@@ -55,7 +55,7 @@ def decode_gambit_file():
         new_nash.append(convert(nash[i]))
 
     new_nash = np.array(new_nash)
-    new_nash = np.round(new_nash,decimals=2)
+    new_nash = np.round(new_nash, decimals=8)
     nash_def = new_nash[:int(len(new_nash)/2)]
     nash_att = new_nash[int(len(new_nash)/2):]
 

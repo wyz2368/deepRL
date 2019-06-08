@@ -99,20 +99,25 @@ def sim_and_modifiy_Series_with_game(game):
     def_row = []
     #TODO: check the path is correct
     for pos in position_col_list:
+        # print('col:', pos)
         idx_def, idx_att = pos
         # if MPI_flag:
         #     aReward, dReward = do_MPI_sim(att_str_list[idx_att], def_str_list[idx_def])
         # else:
+        # print(att_str_list[idx_att], def_str_list[idx_def])
         aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
         att_col.append(aReward)
         def_col.append(dReward)
 
     for pos in position_row_list:
+        # print('row:', pos)
         idx_def, idx_att = pos
         # if MPI_flag:
         #     aReward, dReward = do_MPI_sim(att_str_list[idx_att], def_str_list[idx_def])
         # else:
+        # print(att_str_list[idx_att], def_str_list[idx_def])
         aReward, dReward = series_sim(env, game, att_str_list[idx_att], def_str_list[idx_def], num_episodes)
+        # print(aReward, dReward)
         att_row.append(aReward)
         def_row.append(dReward)
 
@@ -120,6 +125,9 @@ def sim_and_modifiy_Series_with_game(game):
     game.add_col_def(np.reshape(np.round(np.array(def_col), 2), newshape=(len(att_col), 1)))
     game.add_row_att(np.round(np.array(att_row), 2)[None])
     game.add_row_def(np.round(np.array(def_row), 2)[None])
+
+    # print(game.payoffmatrix_att)
+    # print(game.payoffmatrix_def)
 
     # fp.save_pkl(game, path = path)
     print("Done simulation and modify payoff matrix.")

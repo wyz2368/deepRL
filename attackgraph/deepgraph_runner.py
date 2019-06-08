@@ -259,8 +259,12 @@ def EGTA_restart(restart_epoch, start_hado = 2, retrain=False, game_path = os.ge
     while count != 0:
     # while True:
         # fix opponent strategy
-        mix_str_def = game.nasheq[epoch][0]
-        mix_str_att = game.nasheq[epoch][1]
+        # mix_str_def = game.nasheq[epoch][0]
+        # mix_str_att = game.nasheq[epoch][1]
+        mix_str_def = np.zeros(len(game.nasheq[epoch][0]))
+        mix_str_def[0] = 1
+        mix_str_att = np.zeros(len(game.nasheq[epoch][1]))
+        mix_str_att[0] = 1
         aPayoff, dPayoff = util.payoff_mixed_NE(game, epoch)
 
         game.att_payoff.append(aPayoff)

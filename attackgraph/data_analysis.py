@@ -30,6 +30,7 @@ def expected_payoff(a_BD, att_payoff, d_BD, def_payoff):
 def learning_curve(data):
     path = os.getcwd() + '/learning_curve/' + data + '.pkl'
     curve = fp.load_pkl(path)
+    # print(curve[:300])
     plt.plot(curve, color=np.random.rand(3,))
     plt.xlabel("Time Steps")
     plt.ylabel("Average Reward over 250 episodes")

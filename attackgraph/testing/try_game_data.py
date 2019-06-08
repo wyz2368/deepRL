@@ -7,11 +7,9 @@ import numpy as np
 from attackgraph import file_op as fp
 import os
 
-path = os.getcwd() + '/game_data/game_exp.pkl'
+path = os.getcwd() + '/game_data/game_exp1old.pkl'
 game = fp.load_pkl(path)
-print(game.nasheq)
-print(game.att_str)
-print(game.def_str)
+
 print(game.payoffmatrix_def)
 print(game.payoffmatrix_att)
 
