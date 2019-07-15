@@ -1,6 +1,7 @@
 from attackgraph import json_op as jp
 from baselines.common import models
 from baselines.deepq.deepq import learn_multi_nets, Learner
+from baselines.common.tf_util import ALREADY_INITIALIZED
 import os
 # import copy
 
@@ -13,6 +14,8 @@ def training_att(game, mix_str_def, epoch, retrain = False):
 
     # env = copy.deepcopy(game.env)
     print("training_att mix_str_def is ", mix_str_def)
+
+    ALREADY_INITIALIZED.clear()
 
     env = game.env
     env.reset_everything()
@@ -38,7 +41,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
                 network = models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr =param['lr'],
                 total_timesteps=param['total_timesteps_att'],
-                exploration_fraction=param['exploration_fraction'],
+                exploration_fraction=param['exploration_fraction_att'],
                 exploration_final_eps=param['exploration_final_eps'],
                 print_freq=param['print_freq'],
                 param_noise=param['param_noise'],
@@ -46,7 +49,7 @@ def training_att(game, mix_str_def, epoch, retrain = False):
                 prioritized_replay=param['prioritized_replay'],
                 checkpoint_freq=param['checkpoint_freq'],
                 scope = scope,
-                epoch=epoch
+                epoch = epoch
             )
             print("Saving attacker's model to pickle.")
             if retrain:
@@ -57,13 +60,13 @@ def training_att(game, mix_str_def, epoch, retrain = False):
     return a_BD
 
 
-
-
 def training_def(game, mix_str_att, epoch, retrain = False):
     if len(mix_str_att) != len(game.att_str):
         raise ValueError("The length of mix_str_att and att_str does not match while retraining")
 
     print("training_def mix_str_att is ", mix_str_att)
+
+    ALREADY_INITIALIZED.clear()
 
     # env = copy.deepcopy(game.env)
     env = game.env
@@ -90,7 +93,7 @@ def training_def(game, mix_str_att, epoch, retrain = False):
                 network=models.mlp(num_hidden=param['num_hidden'], num_layers=param['num_layers']),
                 lr=param['lr'],
                 total_timesteps=param['total_timesteps_def'],
-                exploration_fraction=param['exploration_fraction'],
+                exploration_fraction=param['exploration_fraction_def'],
                 exploration_final_eps=param['exploration_final_eps'],
                 print_freq=param['print_freq'],
                 param_noise=param['param_noise'],

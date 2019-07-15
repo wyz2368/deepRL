@@ -97,6 +97,9 @@ def initialize_with_sess(sess):
     sess.run(tf.variables_initializer(new_variables))
     ALREADY_INITIALIZED.update(new_variables)
 
+def initialize_all(sess):
+    sess.run(tf.global_variables_initializer())
+
 # ================================================================
 # Model components
 # ================================================================

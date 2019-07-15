@@ -10,8 +10,8 @@ import os
 path = os.getcwd() + '/game_data/game_exp1old.pkl'
 game = fp.load_pkl(path)
 
-# print(game.payoffmatrix_def)
-# print(game.payoffmatrix_att)
+print(game.payoffmatrix_def)
+print(game.payoffmatrix_att)
 
 
 # param = (4, 0.7, 0.286)

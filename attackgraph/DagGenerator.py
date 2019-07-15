@@ -80,7 +80,7 @@ class Environment(object):
 
     def load_graph(self):
         nodeset = list(range(1, self.numNodes+1))
-        json_path = os.getcwd() + '/env_data/RandomGraph30N100E6T1.json'
+        json_path = os.getcwd() + '/env_data/RandomGraph30N100E6T1_B.json'
         data = jp.load_json_data(json_path)
         nodes_list = data["nodes"]
         edges_list = data["edges"]
@@ -637,8 +637,12 @@ class Environment(object):
         # print("______:", self.T - self.current_time)
         if self.training_flag == 0: # If the defender is training, attacker builds greedy set. Vice Versa.
             self.attacker.att_greedy_action_builder(self.G, self.T - self.current_time + 1)
+            # print("T in _step:", self.T - self.current_time + 1)
+            # print('*****************************')
         elif self.training_flag == 1:
             self.defender.def_greedy_action_builder(self.G, self.T - self.current_time + 1)
+            # print("T in _step:", self.T - self.current_time + 1)
+            # print('*****************************')
         else:
             raise ValueError("training flag error.")
 
@@ -666,6 +670,12 @@ class Environment(object):
                 if random.uniform(0, 1) <= self.G.nodes[attack]['actProb']:
                     self.G.nodes[attack]['state'] = 1
         # defender's action
+
+        # restrict uniform defener's power
+        # num_resource = 3
+        # if len(defact) > num_resource:
+        #     defact = random.sample(defact,num_resource)
+
         for node in defact:
             self.G.nodes[node]['state'] = 0
             dReward += self.G.nodes[node]['dCost']
@@ -678,8 +688,8 @@ class Environment(object):
         # print("aReward:", aReward)
         # print('dReward:', dReward)
 
-        for node in self.G.nodes:
-            current_state.append(self.G.nodes[node]['state'])
+        # for node in self.G.nodes:
+        #     current_state.append(self.G.nodes[node]['state'])
         # print('current_state:',current_state)
 
         # TODO: update attacker and defender after graph has been changed.
@@ -731,6 +741,7 @@ class Environment(object):
         # print("_att obs:", self.attacker.observation)
         # print('_att canAttack:', canAttack)
         # print('_att inAtt:', inAttackset)
+        # print('T in _step_att:', self.T - self.current_time)
         return np.array(self.attacker.observation + canAttack + inAttackset + [self.T - self.current_time]), \
                immediatereward, False
 

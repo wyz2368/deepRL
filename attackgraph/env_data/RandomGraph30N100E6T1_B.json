@@ -186,15 +186,15 @@
       "id": 14,
       "topoPosition": 19,
       "nodeType": "NONTARGET",
-      "actType": "OR",
+      "actType": "AND",
       "state": "INACTIVE",
       "aReward": 0.0,
       "dPenalty": 0.0,
       "dCost": -3.8407408919770134,
       "posActiveProb": 0.8892757754257734,
       "posInactiveProb": 0.19999065166516258,
-      "aActivationCost": 0.0,
-      "aActivationProb": 0.0
+      "aActivationCost": -3.245582461,
+      "aActivationProb": 0.2050955878
     },
     {
       "id": 15,

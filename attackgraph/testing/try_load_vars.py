@@ -22,8 +22,8 @@ import copy
 
 
 
-load_path = os.getcwd() + '/attacker_strategies/att_str_epoch2.pkl'
+load_path = os.getcwd() + '/learning_curve/def_str_epoch86.pkl'
 
 loaded_params = joblib.load(os.path.expanduser(load_path))
-for i in loaded_params.keys():
+for i in loaded_params:
     print(i)

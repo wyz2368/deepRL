@@ -10,7 +10,7 @@ from attackgraph.simulation import series_sim
 def sim_and_modifiy_Series():
     #TODO: make sure this is correct
     print('Begin simulation and modify payoff matrix.')
-    path = os.getcwd() + '/data/game.pkl'
+    path = os.getcwd() + '/game_data/game.pkl'
     game = fp.load_pkl(path)
 
     env = game.env

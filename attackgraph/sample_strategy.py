@@ -22,8 +22,8 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity, str_dict=None):
         raise ValueError("Length of mixed strategies does not match number of strategies.")
 
 
-    # if np.sum(mix_str) != 1:
-    #     mix_str = mix_str/np.sum(mix_str)
+    if np.sum(mix_str) != 1:
+        mix_str = mix_str/np.sum(mix_str)
 
     picked_str = np.random.choice(str_set, p=mix_str)
     # print('current str:', picked_str)
@@ -45,7 +45,7 @@ def sample_strategy_from_mixed(env, str_set, mix_str, identity, str_dict=None):
     if not fp.isExist(path + picked_str):
         raise ValueError('The strategy picked does not exist!')
 
-    if "epoch1" in picked_str:
+    if "epoch1.pkl" in picked_str:
         act = fp.load_pkl(path + picked_str)
         return act
 

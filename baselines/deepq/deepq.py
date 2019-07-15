@@ -302,7 +302,7 @@ def learn(env,
 
     # Initialize the parameters and copy them to the target network.
     U.initialize()
-    update_target()
+    # update_target()
 
     episode_rewards = [0.0]
     saved_mean_reward = None
@@ -901,6 +901,7 @@ class Learner(object):
                     scope=scope
                 )
 
+
                 act_params = {
                     'make_obs_ph': make_obs_ph,
                     'q_func': q_func,
@@ -927,7 +928,15 @@ class Learner(object):
 
                 # Initialize the parameters and copy them to the target network.
                 U.initialize()
+                # U.initialize_all(self.sess)
                 update_target()
+
+
+                # variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES)
+                # if len(variables) == 0:
+                #     print("Zero")
+                # for v in variables:
+                #     print(v.name)
 
                 mean_rew_list = []
                 retrain_episode_rewards = []
@@ -995,6 +1004,7 @@ class Learner(object):
                         # logger.log('Loaded model from {}'.format(load_path))
 
                     for t in range(total_timesteps):
+
                         if callback is not None:
                             if callback(locals(), globals()):
                                 break

@@ -5,6 +5,7 @@ from attackgraph import file_op as fp
 import os
 import copy
 from psutil import virtual_memory
+import random
 
 
 # # import networkx as nx
@@ -31,9 +32,7 @@ import datetime
 #         return f, Df, H
 #     return solvers.cp(F, A=A, b=b)['x']
 #
-
-a = np.array([1,2,3,4])
-b = np.array([[1],[2],[3],[4]])
-c = np.ones((4,4))
-
-print(c*a)
+a = [1,2,3,4,5,6,7,8]
+a = set(a)
+b = random.sample(a,2)
+print(b)

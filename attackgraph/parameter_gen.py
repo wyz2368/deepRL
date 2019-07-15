@@ -8,11 +8,12 @@ def nn_param():
     param['lr'] = 5e-5
     param['total_timesteps_att'] = 1000000
     param['total_timesteps_def'] = 1000000
-    param['exploration_fraction'] = 0.5
+    param['exploration_fraction_att'] = 0.2
+    param['exploration_fraction_def'] = 0.5
     param['exploration_final_eps'] = 0.03
     param['print_freq'] = 250
     param['param_noise'] = False
-    param['gamma'] = 1
+    param['gamma'] = 0.99
     param['prioritized_replay'] = False
     param['checkpoint_freq'] = 30000
 
@@ -36,12 +37,13 @@ def nn_param1():
     param['lr'] = 5e-5
     param['total_timesteps_att'] = 2000
     param['total_timesteps_def'] = 2000
-    param['exploration_fraction'] = 0.5
+    param['exploration_fraction_att'] = 0.5
+    param['exploration_fraction_def'] = 0.5
     param['exploration_final_eps'] = 0.03
     param['print_freq'] = 250
     param['param_noise'] = False
-    param['gamma'] = 1
-    param['prioritized_replay'] = True
+    param['gamma'] = 0.99
+    param['prioritized_replay'] = False
     param['checkpoint_freq'] = None
 
     #hado
@@ -58,4 +60,4 @@ def nn_param1():
     print("Network parameters have been saved in a json file successfully.")
 
 
-nn_param()
+nn_param1()

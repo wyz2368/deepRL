@@ -5,6 +5,7 @@ import os
 from attackgraph import json_op as jp
 
 #TODO: make sure the path is correct
+#TODO: Warning!! load action will reset env.
 def load_action(path, scope, game, training_flag):
 
     env = game.env
